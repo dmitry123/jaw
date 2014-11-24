@@ -59,10 +59,10 @@ public class WebServer extends NanoHttpd {
 	/**
 	 * @throws Core.InternalError
 	 */
-	public static void run() throws Core.InternalError, IOException {
+	public static void run(Environment environment) throws Core.InternalError {
 
 		WebServer server = new WebServer();
-		Machine terminal = new Machine(null);
+		Machine terminal = new Machine(environment);
 
 		try {
 			server.start();

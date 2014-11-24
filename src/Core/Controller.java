@@ -6,17 +6,11 @@ package Core;
 public abstract class Controller extends Extension {
 
 	/**
-	 * @param model - Controller's model, have to
-	 * 		be bind by child class via super constructor
-	 * @param view - Controller's view, have to
-	 * 		be bind by child class via super constructor
+	 * @param environment - Every core's extension must have environment
+	 * 		with predeclared extensions
 	 */
-	public Controller(Model model, View view) {
-
-		super(model.getEnvironment());
-
-		this.model = model;
-		this.view = view;
+	public Controller(Environment environment) {
+		super(environment);
 	}
 
 	/**
@@ -40,10 +34,24 @@ public abstract class Controller extends Extension {
 	}
 
 	/**
+	 * @param model - Model to set
+	 */
+	public void setModel(Model model) {
+		this.model = model;
+	}
+
+	/**
 	 * @return Current controller's model
 	 */
 	public Model getModel() {
 		return model;
+	}
+
+	/**
+	 * @param view - View to set
+	 */
+	public void setView(View view) {
+		this.view = view;
 	}
 
 	/**

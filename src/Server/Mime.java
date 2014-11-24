@@ -14,14 +14,14 @@ public enum Mime {
 	IMAGE_ICO       (Type.IMAGE, "image/vnd.microsoft.icon", ".ico"),
 	IMAGE_WBMP      (Type.IMAGE, "image/vnd.wap.wbmp"),
 
-	TEXT_CMD        (Type.TEXT, "text/cmd"),
-	TEXT_CSS        (Type.TEXT, "text/css", ".css"),
-	TEXT_CSV        (Type.TEXT, "text/csv", ".csv"),
-	TEXT_HTML       (Type.TEXT, "text/html", ".html"),
-	TEXT_JAVASCRIPT (Type.TEXT, "text/javascript", ".js"),
-	TEXT_PLAIN      (Type.TEXT, "text/plain"),
-	TEXT_PHP        (Type.TEXT, "text/php", ".php"),
-	TEXT_XML        (Type.TEXT, "text/xml", ".xml");
+	TEXT_CMD        (Type.TEXT,  "text/cmd"),
+	TEXT_CSS        (Type.TEXT,  "text/css", ".css"),
+	TEXT_CSV        (Type.TEXT,  "text/csv", ".csv"),
+	TEXT_HTML       (Type.TEXT,  "text/html", ".html"),
+	TEXT_JAVASCRIPT (Type.TEXT,  "text/javascript", ".js"),
+	TEXT_PLAIN      (Type.TEXT,  "text/plain"),
+	TEXT_PHP        (Type.TEXT,  "text/php", ".php"),
+	TEXT_XML        (Type.TEXT,  "text/xml", ".xml");
 
 	public static enum Type {
 		UNKNOWN,

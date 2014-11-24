@@ -2,8 +2,8 @@ package controllers;
 
 import Annotation.Action;
 import Annotation.Controller;
-import Core.Model;
-import Core.View;
+
+import Core.Environment;
 
 /**
  * Created by Savonin on 2014-11-08
@@ -12,11 +12,10 @@ import Core.View;
 public class Index extends Core.Controller {
 
 	/**
-	 * @param model - Controller's model, have to be bind by child class via super constructor
-	 * @param view - Controller's view, have to
+	 * @param environment - Every core's extension must have environment with predeclared extensions
 	 */
-	public Index(Model model, View view) {
-		super(model, view);
+	public Index(Environment environment) {
+		super(environment);
 	}
 
 	/**

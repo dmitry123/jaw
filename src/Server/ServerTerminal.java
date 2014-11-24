@@ -49,6 +49,13 @@ public class ServerTerminal extends Station {
 				}
 			}
 		});
+
+		register(new Instruction(this, "compile", "-c") {
+			@Override
+			public void run(String[] arguments) throws InternalError, InterruptedException {
+				getMachine().getEnvironment().getProjectManager().getCompiler().compile();
+			}
+		});
 	}
 
 	/**
