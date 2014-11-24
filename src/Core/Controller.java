@@ -1,6 +1,4 @@
-package Component;
-
-import Core.Extension;
+package Core;
 
 /**
  * Created by Savonin on 2014-11-02
@@ -14,8 +12,11 @@ public abstract class Controller extends Extension {
 	 * 		be bind by child class via super constructor
 	 */
 	public Controller(Model model, View view) {
-		super(model.getEnvironment()); this.model = model;
-			this.view = view;
+
+		super(model.getEnvironment());
+
+		this.model = model;
+		this.view = view;
 	}
 
 	/**
@@ -38,29 +39,6 @@ public abstract class Controller extends Extension {
 	public void render(String path) {
 	}
 
-	public enum RequestType {
-		Unknown,
-		Post,
-		Get,
-		Request
-	}
-
-	/**
-	 * Set controller's request type
-	 *
-	 * @param requestType - Type of request
-	 */
-	public void setRequestType(RequestType requestType) {
-		this.requestType = requestType;
-	}
-
-	/**
-	 * @return - Current controller's type
-	 */
-	public RequestType getRequestType() {
-		return requestType;
-	}
-
 	/**
 	 * @return Current controller's model
 	 */
@@ -78,5 +56,4 @@ public abstract class Controller extends Extension {
 
 	private Model model;
 	private View view;
-	private RequestType requestType;
 }

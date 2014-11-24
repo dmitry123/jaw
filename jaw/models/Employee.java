@@ -3,8 +3,7 @@ package models;
 import Core.Environment;
 import Core.InternalError;
 import Sql.CortegeRow;
-import Sql.Connection;
-import Component.Model;
+import Core.Model;
 
 import java.sql.ResultSet;
 import java.util.Vector;

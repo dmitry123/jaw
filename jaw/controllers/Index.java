@@ -2,14 +2,14 @@ package controllers;
 
 import Annotation.Action;
 import Annotation.Controller;
-import Component.Model;
-import Component.View;
+import Core.Model;
+import Core.View;
 
 /**
  * Created by Savonin on 2014-11-08
  */
 @Controller
-public class Index extends Component.Controller {
+public class Index extends Core.Controller {
 
 	/**
 	 * @param model - Controller's model, have to be bind by child class via super constructor

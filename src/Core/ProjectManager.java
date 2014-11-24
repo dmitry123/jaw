@@ -12,8 +12,6 @@ public class ProjectManager extends Extension {
 		super(environment);
 	}
 
-
-
 	/**
 	 * @return - Project's compiler
 	 */

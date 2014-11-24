@@ -2,8 +2,7 @@ package models;
 
 import Core.*;
 import Sql.CortegeRow;
-import Sql.Connection;
-import Component.Model;
+import Core.Model;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

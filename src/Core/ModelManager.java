@@ -1,6 +1,4 @@
-package Component;
-
-import Core.Environment;
+package Core;
 
 import java.io.File;
 

@@ -1,7 +1,5 @@
-package Component;
+package Core;
 
-import Core.*;
-import Core.InternalError;
 import Sql.Connection;
 import Sql.CortegeProtocol;
 import Sql.SqlTypeBinder;

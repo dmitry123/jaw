@@ -31,6 +31,28 @@ public class Command implements CommandProtocol {
 	}
 
 	/**
+	 * Apply insert action
+	 * @param columns - Column to insert into table
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CommandProtocol insert(String columns) throws InternalError {
+		return _word("INSERT")._word("INTO")._word("(")._word(columns)._word(")");
+	}
+
+	/**
+	 * Insert values to query
+	 * @param items - Items to insert into table(s)
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CommandProtocol values(String items) throws InternalError {
+		return _word("VALUES")._word("(")._word(items)._word(")");
+	}
+
+	/**
 	 * Apply distinct selection from table
 	 * @param items - Items to select from table(s)
 	 * @return - Current self instance
@@ -384,7 +406,15 @@ public class Command implements CommandProtocol {
 	}
 
 	private Command _word(String string) {
-		sqlQuery += string + " ";
+		return _word(string, false);
+	}
+
+	private Command _word(String string, boolean woSpace) {
+		if (!woSpace) {
+			sqlQuery += string + " ";
+		} else {
+			sqlQuery += string ;
+		}
 		return this;
 	}
 

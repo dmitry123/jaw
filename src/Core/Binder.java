@@ -1,7 +1,6 @@
 package Core;
 
 import Sql.CortegeProtocol;
-import Component.Model;
 
 /**
  * Created by Savonin on 2014-11-08

@@ -14,14 +14,18 @@ public class Logger {
 	/**
 	 * @param log - String to log
 	 */
-	public synchronized void log(String log) throws IOException, InternalError {
+	public synchronized void log(String log) {
 		String strTime = String.format("%s:%s:%s",
 				twoSymbols(calendar.get(Calendar.HOUR_OF_DAY)),
 				twoSymbols(calendar.get(Calendar.MINUTE)),
 				twoSymbols(calendar.get(Calendar.SECOND))
 		);
 		if (logVector.add(strTime + " [" + log + "]\n") && logVector.size() >= FLUSH_LIMIT) {
-			flush();
+			try {
+				flush();
+			} catch (InternalError e) {
+			} catch (IOException e) {
+			}
 		}
 	}
 

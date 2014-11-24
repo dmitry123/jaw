@@ -1,7 +1,7 @@
-package Component;
+package Core;
 
 import Core.*;
-import Router.Router;
+import Core.Router;
 
 /**
  * Created by dmitry on 19.11.14

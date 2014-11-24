@@ -1,4 +1,4 @@
-package Component;
+package Core;
 
 /**
  * Created by Savonin on 2014-11-02

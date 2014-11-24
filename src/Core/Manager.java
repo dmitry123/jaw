@@ -1,6 +1,4 @@
-package Component;
-
-import Core.*;
+package Core;
 
 import java.io.File;
 import java.util.HashMap;

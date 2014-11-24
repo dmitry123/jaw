@@ -1,7 +1,4 @@
-package Component;
-
-import Core.Environment;
-import Core.Extension;
+package Core;
 
 /**
  * Created by dmitry on 18.11.14

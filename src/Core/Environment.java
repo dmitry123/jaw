@@ -1,8 +1,6 @@
 package Core;
 
 import Sql.Connection;
-import Component.ModelManager;
-import Terminal.Station;
 
 import java.io.File;
 
@@ -18,14 +16,18 @@ public class Environment {
 	 * @throws InternalError
 	 */
 	public Environment(Connection connection, String projectPath) throws InternalError {
+
 		if (connection == null || !connection.isClosed()) {
 			connection = new Connection();
 		}
+
 		this.connection = connection;
 		this.projectName = projectPath;
+
 		if (!projectPath.endsWith(File.separator)) {
 			projectPath += File.separator;
 		}
+
 		this.projectPath = projectPath;
 	}
 
@@ -58,6 +60,13 @@ public class Environment {
 	}
 
 	/**
+	 * @return - Project's manager
+	 */
+	public ProjectManager getProjectManager() {
+		return projectManager;
+	}
+
+	/**
 	 * @return - Database connection
 	 */
 	public Connection getConnection() {
@@ -69,6 +78,9 @@ public class Environment {
 
 	private UserValidator userValidator
 			= new UserValidator(this);
+
+	private ProjectManager projectManager
+			= new ProjectManager(this);
 
 	private String projectName;
 	private String projectPath;

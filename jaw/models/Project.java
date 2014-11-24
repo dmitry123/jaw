@@ -2,8 +2,7 @@ package models;
 
 import Core.Environment;
 import Sql.CortegeRow;
-import Sql.Connection;
-import Component.Model;
+import Core.Model;
 
 import java.sql.ResultSet;
 

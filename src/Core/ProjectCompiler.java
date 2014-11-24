@@ -110,7 +110,7 @@ public class ProjectCompiler {
 	 * @param folder - Folder to store file (in binary)
 	 * @throws InternalError
 	 */
-	public void compile(String path, String folder) throws InternalError {
+	private void compile(String path, String folder) throws InternalError {
 
 		Vector<File> handles = new Vector<File>();
 		Vector <String> options = new Vector<String>();
@@ -140,6 +140,8 @@ public class ProjectCompiler {
 		} catch (IOException e) {
 			throw new InternalError("ProjectCompiler/compile() : \"Unable to close file manager\"");
 		}
+
+		Logger.getLogger().log("File compiled (" + path + ")");
 	}
 
 	/**

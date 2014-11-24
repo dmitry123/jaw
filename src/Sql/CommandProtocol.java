@@ -19,6 +19,24 @@ public interface CommandProtocol {
 	public CommandProtocol select(String items) throws Core.InternalError;
 
 	/**
+	 * Apply insert action
+	 *
+	 * @param columns - Column to insert into table
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	public CommandProtocol insert(String columns) throws Core.InternalError;
+
+	/**
+	 * Insert values to query
+	 *
+	 * @param items - Items to insert into table(s)
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	public CommandProtocol values(String items) throws Core.InternalError;
+
+	/**
 	 * Apply distinct selection from table
 	 *
 	 * @param items - Items to select from table(s)
