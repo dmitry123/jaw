@@ -29,26 +29,14 @@ public abstract class Manager<C extends Component> extends Extension {
 			return component;
 		}
 
-		File handle = new File(
-			type.getPath()
-		);
-
-		if (!handle.exists()) {
-			return null;
-		}
-
-		if ((component = find(handle.listFiles())) == null) {
-			return null;
-		}
-
 		return setCached(path, component);
 	}
 
 	/**
-	 * @param dirs - Directories to component
+	 * @param directory - Directories to component
 	 * @return - Found component in filesystem
 	 */
-	protected abstract C find(File[] dirs);
+	protected abstract C find(File directory, String file);
 
 	/**
 	 * @param path - Path to component
@@ -56,6 +44,10 @@ public abstract class Manager<C extends Component> extends Extension {
 	 * @return - Registered component
 	 */
 	private C setCached(String path, C component) {
+
+		if (component == null) {
+			return null;
+		}
 
 		if (cachedComponents.containsKey(path)) {
 			return cachedComponents.get(path);
@@ -78,13 +70,6 @@ public abstract class Manager<C extends Component> extends Extension {
 	}
 
 	/**
-	 * @return - Project's environment
-	 */
-	public Environment getEnvironment() {
-		return environment;
-	}
-
-	/**
 	 * @return - Component type
 	 */
 	public Type getType() {
@@ -94,6 +79,5 @@ public abstract class Manager<C extends Component> extends Extension {
 	private HashMap<String, C> cachedComponents
 			= new HashMap<String, C>();
 
-	private Environment environment;
 	private Type type;
 }

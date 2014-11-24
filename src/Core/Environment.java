@@ -2,6 +2,9 @@ package Core;
 
 import Sql.Connection;
 import Component.ModelManager;
+import Terminal.Station;
+
+import java.io.File;
 
 /**
  * Created by Savonin on 2014-11-08
@@ -19,6 +22,10 @@ public class Environment {
 			connection = new Connection();
 		}
 		this.connection = connection;
+		this.projectName = projectPath;
+		if (!projectPath.endsWith(File.separator)) {
+			projectPath += File.separator;
+		}
 		this.projectPath = projectPath;
 	}
 
@@ -27,6 +34,13 @@ public class Environment {
 	 */
 	public String getProjectPath() {
 		return projectPath;
+	}
+
+	/**
+	 * @return - Project's name
+	 */
+	public String getProjectName() {
+		return projectName;
 	}
 
 	/**
@@ -56,6 +70,7 @@ public class Environment {
 	private UserValidator userValidator
 			= new UserValidator(this);
 
+	private String projectName;
 	private String projectPath;
 	private Connection connection;
 }

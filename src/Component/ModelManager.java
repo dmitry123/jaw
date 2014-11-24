@@ -17,16 +17,12 @@ public class ModelManager extends Manager<Model> {
 	}
 
 	/**
-	 * @param dirs - Directories to component
+	 * @param directory - Directories to component
+	 * @param file
 	 * @return - Found component in filesystem
 	 */
 	@Override
-	protected Model find(File[] dirs) {
-
-		for (File f : dirs) {
-			System.out.println(f.getName());
-		}
-
+	protected Model find(File directory, String file) {
 		return null;
 	}
 }

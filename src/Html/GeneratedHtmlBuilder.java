@@ -246,7 +246,7 @@ abstract class GeneratedHtmlBuilder<T> extends MarkupBuilder<T> {
 	 * @return this, never <code>null</code> 
 	 */
 	public T code() {
-		return start("code", TagClosingPolicy.NORMAL);
+		return start("modules/code", TagClosingPolicy.NORMAL);
 	}
 
 	/**
@@ -1280,7 +1280,7 @@ abstract class GeneratedHtmlBuilder<T> extends MarkupBuilder<T> {
 	 * @return this, never <code>null</code>
 	 */
 	public T code(String value) {
-		return attr("code", value);
+		return attr("modules/code", value);
 	}
 
 	/**

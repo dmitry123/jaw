@@ -1,5 +1,7 @@
 package Core;
 
+import java.io.File;
+
 /**
  * Config
  */
@@ -56,17 +58,17 @@ public class Config {
 	 *
 	 *  BINARY_PATH - path to all compiled binaries
 	 */
-	public static final String SERVER_PATH = "jaw/";
-	public static final String JAVA_PATH = "java/";
-	public static final String TEMPLATE_PATH = JAVA_PATH + "templates/";
-	public static final String CONTROLLER_PATH = JAVA_PATH + "controllers/";
-	public static final String MODEL_PATH = JAVA_PATH + "models/";
-	public static final String VIEW_PATH = JAVA_PATH + "views/";
-	public static final String SCRIPT_PATH = JAVA_PATH + "scripts/";
-	public static final String MODULE_PATH = JAVA_PATH + "modules/";
-	public static final String WIDGET_PATH = JAVA_PATH + "widgets/";
-	public static final String BINARY_PATH = "bin/";
-	public static final String LOG_PATH = "log/";
+	public static final String SERVER_PATH     = "jaw"         + File.separator;
+	public static final String JAVA_PATH       = "java"        + File.separator;
+	public static final String TEMPLATE_PATH   = "templates"   + File.separator;
+	public static final String CONTROLLER_PATH = "controllers" + File.separator;
+	public static final String MODEL_PATH      = "models"      + File.separator;
+	public static final String VIEW_PATH       = "views"       + File.separator;
+	public static final String SCRIPT_PATH     = "scripts"     + File.separator;
+	public static final String MODULE_PATH     = "modules"     + File.separator;
+	public static final String WIDGET_PATH     = "widgets"     + File.separator;
+	public static final String BINARY_PATH     = "binary"      + File.separator;
+	public static final String LOG_PATH        = "log"         + File.separator;
 
 	/**
 	 * Default index page

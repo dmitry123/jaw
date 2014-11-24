@@ -1,4 +1,4 @@
-package jaw.widgets.register;
+package widgets.register;
 
 /**
  * Created by Savonin on 2014-11-02

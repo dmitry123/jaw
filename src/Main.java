@@ -1,3 +1,6 @@
+import Component.Model;
+import Component.ModelManager;
+import Component.Type;
 import Core.*;
 import Core.InternalError;
 import Server.WebServer;
@@ -6,7 +9,7 @@ import Terminal.Adapter;
 import Terminal.Instruction;
 import Terminal.Machine;
 import Terminal.Station;
-
+import Router.*;
 import java.sql.ResultSet;
 
 /**
@@ -76,20 +79,18 @@ public class Main {
 			Config.DBMS_HOST,
 			Config.DBMS_USER,
 			Config.DBMS_PASSWORD
-		), "jaw/");
+		), "jaw");
 
-		ResultSet r = environment.getConnection().command()
-			.select("*")
-			.from("users")
-			.where("login = ?")
-			.execute(
-				new Object[] { "Jaw" }
-			)
-			.select();
+		ModelManager modelManager = new ModelManager(environment);
+		ProjectManager projectManager = new ProjectManager(environment);
 
-		while (r.next()) {
-			System.out.println(r.getInt("id") + " : " + r.getString("login"));
-		}
+		projectManager.getCompiler().compile();
+
+//		ClassSeeker classSeeker = new ClassSeeker(
+//			environment
+//		);
+//
+//		classSeeker.findByAnnotation(Annotation.Controller.class);
 
 //		Machine terminal = new Machine(
 //			environment

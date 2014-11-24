@@ -1,7 +1,6 @@
 package Component;
 
 import Core.Extension;
-import Core.Router;
 
 /**
  * Created by Savonin on 2014-11-02
@@ -60,13 +59,6 @@ public abstract class Controller extends Extension {
 	 */
 	public RequestType getRequestType() {
 		return requestType;
-	}
-
-	/**
-	 * @return - Get controller's router
-	 */
-	public Router getRouter() {
-		return Router.getRouter();
 	}
 
 	/**

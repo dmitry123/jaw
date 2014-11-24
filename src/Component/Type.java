@@ -1,6 +1,7 @@
 package Component;
 
-import Core.Config;
+import Core.*;
+import Router.Router;
 
 /**
  * Created by dmitry on 19.11.14
@@ -24,6 +25,17 @@ public enum Type {
 	private Type(String name, String path) {
 		this.name = name;
 		this.path = path;
+	}
+
+	/**
+	 * Compute absolute path with router
+	 * @param environment - Reference to environment
+	 * @param path - Path to component
+	 * @return - Absolute path to component
+	 * @throws Core.InternalError
+	 */
+	public String getAbsolutePath(Environment environment, String path) throws Core.InternalError {
+		return Router.getAbsolutePath(environment.getProjectPath(), path, getPath());
 	}
 
 	/**
