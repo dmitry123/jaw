@@ -1,6 +1,11 @@
 import Core.*;
+import Core.InternalError;
 import Server.WebServer;
 import Sql.Connection;
+import Terminal.Adapter;
+import Terminal.Instruction;
+import Terminal.Machine;
+import Terminal.Station;
 
 import java.sql.ResultSet;
 
@@ -73,6 +78,25 @@ public class Main {
 			Config.DBMS_PASSWORD
 		), "jaw/");
 
+		ResultSet r = environment.getConnection().command()
+			.select("*")
+			.from("users")
+			.where("login = ?")
+			.execute(
+				new Object[] { "Jaw" }
+			)
+			.select();
+
+		while (r.next()) {
+			System.out.println(r.getInt("id") + " : " + r.getString("login"));
+		}
+
+//		Machine terminal = new Machine(
+//			environment
+//		);
+//
+//		WebServer.run();
+
 //		ResultSet r;
 //
 //		r = environment.getConnection().command()
@@ -105,8 +129,6 @@ public class Main {
 //		projectManager.compile();
 //
 //		Model m = modelManager.get("jaw/company");
-
-		WebServer.run();
 
 //		c.add(new Company.Row());
 //		ClassLoader classLoader = getClassLoader();

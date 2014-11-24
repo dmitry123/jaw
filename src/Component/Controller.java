@@ -1,11 +1,12 @@
 package Component;
 
+import Core.Extension;
 import Core.Router;
 
 /**
  * Created by Savonin on 2014-11-02
  */
-public abstract class Controller {
+public abstract class Controller extends Extension {
 
 	/**
 	 * @param model - Controller's model, have to
@@ -14,8 +15,8 @@ public abstract class Controller {
 	 * 		be bind by child class via super constructor
 	 */
 	public Controller(Model model, View view) {
-		this.model = model;
-		this.view = view;
+		super(model.getEnvironment()); this.model = model;
+			this.view = view;
 	}
 
 	/**

@@ -7,81 +7,137 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Savonin on 2014-11-15
  */
-public abstract class Station implements Runnable {
+public abstract class Station extends Instruction implements Protocol {
 
 	/**
 	 * Construct controller with instructions
+	 * @param machine - Station's machine
 	 */
-	protected Station(Machine machine, Instruction... instructions) throws Core.InternalError {
-		for (Instruction i : instructions) {
-			register(i);
-		}
+	protected Station(Machine machine) throws Core.InternalError {
+		this(machine, null, null, null);
 	}
 
 	/**
-	 * @return - Terminal thread
-	 * @throws Core.InternalError
+	 * Construct controller with instructions
+	 * @param machine - Station's machine
 	 */
-	public static Thread runTerminal(Station station) throws InternalError {
-		Thread thread = new Thread(
-				station
-		);
-		station.thread = thread;
-		thread.start();
-		if (!thread.isAlive()) {
-			throw new Core.InternalError("Unable to start server terminal");
-		}
-		return thread;
+	protected Station(Machine machine, Station parent) throws Core.InternalError {
+		this(machine, parent, null, null);
 	}
 
 	/**
-	 * When an object implementing interface <code>Runnable</code> is used to create a thread, starting the thread
-	 * causes the object's <code>run</code> method to be called in that separately executing thread.
-	 * <p/>
-	 * The general contract of the method <code>run</code> is that it may take any action whatsoever.
-	 * @see Thread#run()
+	 * Construct controller with instructions
+	 * @param machine - Station's machine
+	 */
+	protected Station(Machine machine, Station parent, String name, String tag) throws Core.InternalError {
+
+		super(null, name, tag);
+
+		this.machine = machine;
+		this.parent = parent;
+
+		register(new Instruction(this, "exit", "-e") {
+			@Override
+			public void run(String[] arguments) throws InternalError, InterruptedException {
+				throw new InterruptedException();
+			}
+		});
+
+		register(new Instruction(this, "help", "-h") {
+			@Override
+			public void run(String[] arguments) throws InternalError, InterruptedException {
+				if (arguments.length != 0) {
+					if (arguments.length != 1) {
+						throw new Error(this,
+							"That instruction can't assume more than one argument"
+						);
+					}
+					try {
+						getAbout(getStation().find(arguments[0]));
+					} catch (InternalError e) {
+						throw new Error(this, e.getMessage());
+					}
+				} else {
+					for (Protocol i : getStation().getInstructions()) {
+						getAbout(i);
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Execute instruction or station
+	 * @param arguments - Instruction arguments
 	 */
 	@Override
-	public void run() {
+	public void run(String[] arguments) {
+		getMachine().setActive(this);
+	}
+
+	/**
+	 *
+	 */
+	public void work() throws InternalError {
 		String line;
+		BufferedReader bufferedReader = new BufferedReader(
+			new InputStreamReader(System.in)
+		);
+		printEntry();
 		try {
-			BufferedReader bufferedReader = new BufferedReader(
-					new InputStreamReader(System.in)
-			);
-			System.out.print(" $: ");
 			while ((line = bufferedReader.readLine()) != null) {
 				String[] list = line.split(" ");
 				try {
 					if (list.length == 0) {
 						throw new Exception("Empty instruction");
 					}
-					Instruction instruction = find(list[0]);
+					Protocol protocol = getMachine().getActive().find(list[0]);
 					String[] argumentList = new String[
 							list.length > 1 ? list.length - 1 : 0
 						];
 					if (list.length > 1) {
 						System.arraycopy(list, 1, argumentList, 0, list.length - 1);
 					}
-					instruction.getEvent().make(argumentList);
+					protocol.run(argumentList);
 				} catch (InterruptedException ignored) {
-					break;
+					if (!getMachine().popActive()) {
+						break;
+					}
 				} catch (Error e) {
 					System.out.format("Instruction Error [%s] : \"%s\"\n", e.getInstruction().getName(),
 							e.getMessage());
 				} catch (Exception e) {
 					System.out.format("Internal Error: \"%s\"\n", e.getMessage());
 				}
-				System.out.print(" $: ");
+				printEntry();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new InternalError(
+				"Station/work() : \"" + e.getMessage() + "\""
+			);
 		}
+	}
+
+	/**
+	 * Print terminal's entry
+	 */
+	private void printEntry() {
+		String path = "";
+		if (getMachine().getStack().size() > 1) {
+			for (Station s : getMachine().getStack()) {
+				if (path.length() < 1) {
+					path = " (";
+				}
+				path += s.getName() + "/";
+			}
+		} else if (getMachine().getStack().size() > 0) {
+			path +=  " (" + getMachine().getActive().getName() + ") ";
+		}
+		System.out.format(" $%s: ", path);
 	}
 
 	/**
@@ -90,14 +146,11 @@ public abstract class Station implements Runnable {
 	 * @param instruction - Instruction's instance
 	 * @throws InternalError
 	 */
-	public void register(Instruction instruction) throws InternalError {
-		if (instructionHashMap.containsKey(instruction.getName())) {
+	public void register(Protocol instruction) throws InternalError {
+		if (hashMap.containsKey(instruction.getName())) {
 			throw new Core.InternalError("Instruction with that name already exists");
 		}
-		if (instruction.getStation() != this) {
-			instructionHashMap.put(instruction.getName(), instruction);
-		}
-		instruction.setStation(this);
+		hashMap.put(instruction.getName(), instruction);
 	}
 
 	/**
@@ -106,23 +159,26 @@ public abstract class Station implements Runnable {
 	 * @return - Found instruction in hash map
 	 * @throws InternalError
 	 */
-	public Instruction find(String name) throws InternalError {
-		if (!instructionHashMap.containsKey(name)) {
-			for (Instruction i : getInstructions()) {
+	public Protocol find(String name) throws InternalError {
+		if (!hashMap.containsKey(name)) {
+			for (Protocol i : getInstructions()) {
+				if (!(i instanceof Instruction)) {
+					continue;
+				}
 				if (i.getTag().equals(name)) {
 					return i;
 				}
 			}
 			throw new Core.InternalError("Unknown instruction");
 		}
-		return instructionHashMap.get(name);
+		return hashMap.get(name);
 	}
 
 	/**
 	 * @return - Collection with hash map values
 	 */
-	public Collection<Instruction> getInstructions() {
-		return instructionHashMap.values();
+	public Collection<Protocol> getInstructions() {
+		return hashMap.values();
 	}
 
 	/**
@@ -139,10 +195,9 @@ public abstract class Station implements Runnable {
 		return machine;
 	}
 
-	private HashMap<String, Instruction> instructionHashMap
-			= new HashMap<String, Instruction>();
+	private HashMap<String, Protocol> hashMap
+			= new HashMap<String, Protocol>();
 
-	private Thread thread;
 	private Machine machine;
 	private Station parent;
 }

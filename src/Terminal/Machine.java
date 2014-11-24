@@ -2,7 +2,13 @@ package Terminal;
 
 import Core.*;
 import Core.InternalError;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Created by dmitry on 23.11.14
@@ -30,7 +36,11 @@ public class Machine extends Extension implements Runnable {
 				"Machine/register() : \"Station with that name already exists\""
 			);
 		}
-		return hashMap.put(key, station);
+		if (active == null) {
+			active = station;
+		}
+		hashMap.put(key, station);
+		return station;
 	}
 
 	/**
@@ -49,40 +59,59 @@ public class Machine extends Extension implements Runnable {
 	}
 
 	/**
-	 * Launch machine
+	 * Find station's key (if hasn't been set)
+	 * @param station - Station's instance
+	 * @return - Found key
+	 * @throws InternalError
 	 */
-	public synchronized void launch() throws InternalError {
-		if (thread != null) {
-			if (!thread.isAlive()) {
-				thread.interrupt();
-				try {
-					thread.join();
-				} catch (InterruptedException e) {
-					throw new InternalError(
-						"Machine/launch() : \"Thread has been interrupted\""
-					);
-				}
+	public synchronized String getKeyByInstance(Station station) throws InternalError {
+		for (Map.Entry<String, Station> entry : hashMap.entrySet()) {
+			if (station == entry.getValue()) {
+				return entry.getKey();
 			}
-			thread = new Thread(this);
-			thread.start();
 		}
+		throw new Core.InternalError(
+			"Machine/getKeyByInstance() : \"Unresolved station instance\""
+		);
 	}
 
 	/**
-	 * Change current station to another
-	 * @param key - Station's unique identifier
-	 * @throws InternalError
+	 * Launch machine
 	 */
-	public synchronized void change(String key) throws InternalError {
-		launch();
-		active = find(key);
-
+	public synchronized void start() throws InternalError {
+		if (active == null) {
+			return;
+		}
+		if (thread != null && !thread.isAlive()) {
+			thread.interrupt();
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				throw new InternalError(
+					"Machine/start() : \"Thread has been interrupted\""
+				);
+			}
+		}
+		thread = new Thread(
+			this
+		);
+		thread.start();
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			throw new InternalError(
+					"Machine/start() : \"Thread has been interrupted\""
+			);
+		}
 	}
 
 	/**
 	 * @return - Machine's thread
 	 */
 	public Thread getThread() {
+		if (thread == null) {
+			return Thread.currentThread();
+		}
 		return thread;
 	}
 
@@ -93,8 +122,40 @@ public class Machine extends Extension implements Runnable {
 		return active;
 	}
 
+	/**
+	 * Set new active terminal's station
+	 * @param station - New active station
+	 */
+	public void setActive(Station station) {
+		stationStack.push(active);
+		active = station;
+	}
+
+	/**
+	 * Pop active element from stack and mark as active
+	 * @return - If we can't pop anymore, then return false
+	 */
+	public boolean popActive() {
+		if (stationStack.size() == 0) {
+			return false;
+		}
+		active = stationStack.pop();
+		return true;
+	}
+
+	/**
+	 * Get stack with previous not closed stations
+	 * @return - Stack with stations
+	 */
+	public Stack<Station> getStack() {
+		return stationStack;
+	}
+
 	private HashMap<String, Station> hashMap
 			= new HashMap<String, Station>();
+
+	private Stack<Station> stationStack
+			= new Stack<Station>();
 
 	private Station active = null;
 	private Thread thread = null;
@@ -112,6 +173,10 @@ public class Machine extends Extension implements Runnable {
 	 */
 	@Override
 	public void run() {
-
+		try {
+			getActive().work();
+		} catch (InternalError e) {
+			e.printStackTrace();
+		}
 	}
 }

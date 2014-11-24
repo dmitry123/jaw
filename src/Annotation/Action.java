@@ -13,7 +13,7 @@ public @interface Action {
 	);
 
 	/**
-	 * @return - Information about author
+	 * @return - Information getAbout author
 	 */
 	Author author() default @Author(
 		surname = "Savonin",

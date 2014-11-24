@@ -311,9 +311,7 @@ public class Command implements CommandProtocol {
 	@Override
 	public SqlExecutor execute(Object[] objects) throws InternalError {
 		if (getStatement() == null) {
-			bind(new Object[] {
-				objects
-			});
+			bind(objects);
 		}
 		return execute();
 	}

@@ -1,4 +1,4 @@
-package jaw.widgets.login;
+package widgets.login;
 
 /**
  * Created by Savonin on 2014-11-02

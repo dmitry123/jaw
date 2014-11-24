@@ -1,15 +1,15 @@
 package controllers;
 
 import Annotation.Action;
-import Component.Controller;
+import Annotation.Controller;
 import Component.Model;
 import Component.View;
 
 /**
  * Created by Savonin on 2014-11-08
  */
-@Annotation.Controller
-public class Index extends Controller {
+@Controller
+public class Index extends Component.Controller {
 
 	/**
 	 * @param model - Controller's model, have to be bind by child class via super constructor
@@ -24,6 +24,6 @@ public class Index extends Controller {
 	 */
 	@Override @Action
 	public void actionIndex() {
-		render("jaw.index");
+		render("index");
 	}
 }

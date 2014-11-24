@@ -40,7 +40,7 @@ public class Logger {
 		Vector<String> stringVector = new Vector<String>();
 		try {
 			BufferedReader bufferedReader = new BufferedReader(
-					new FileReader(Config.LOG_PATH + usDate + ".txt")
+				new FileReader(Config.LOG_PATH + usDate + ".txt")
 			);
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
@@ -68,8 +68,8 @@ public class Logger {
 	 */
 	public String todayFileName() {
 		return String.format("%d-%s-%s", calendar.get(Calendar.YEAR),
-				twoSymbols(calendar.get(Calendar.MONTH) + 1),
-				twoSymbols(calendar.get(Calendar.DAY_OF_MONTH))
+			twoSymbols(calendar.get(Calendar.MONTH) + 1),
+			twoSymbols(calendar.get(Calendar.DAY_OF_MONTH))
 		);
 	}
 
@@ -82,7 +82,7 @@ public class Logger {
 			throw new InternalError("Unable to create log file");
 		}
 		FileWriter fileWriter = new FileWriter(
-				logHandle, true
+			logHandle, true
 		);
 		try {
 			for (String s : logVector) {
@@ -103,6 +103,13 @@ public class Logger {
 	}
 
 	/**
+	 * @return - Logger instance
+	 */
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	/**
 	 * Locked
 	 */
 	private Logger() {
@@ -119,13 +126,6 @@ public class Logger {
 
 	private Vector<String> logVector
 			= new Vector<String>();
-
-	/**
-	 * @return - Logger instance
-	 */
-	public static Logger getLogger() {
-		return logger;
-	}
 
 	private static Logger logger
 			= new Logger();

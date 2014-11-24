@@ -7,7 +7,7 @@ public abstract class User implements UserProtocol {
 
 	/**
 	 * User's constructor, which will store basic information
-	 * about user (identifier, login, hash) - only for affected rows.
+	 * getAbout user (identifier, login, hash) - only for affected rows.
 	 * You can extend that class and add more features if you
 	 * want more functionality or simply implement UserProtocol methods
 	 *

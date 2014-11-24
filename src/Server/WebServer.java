@@ -1,7 +1,7 @@
 package Server;
 
 import Core.*;
-import Core.InternalError;
+import Terminal.Machine;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,24 +62,22 @@ public class WebServer extends NanoHttpd {
 	public static void run() throws Core.InternalError, IOException {
 
 		WebServer server = new WebServer();
+		Machine terminal = new Machine(null);
 
 		try {
 			server.start();
 		} catch (IOException ioe) {
-			logger.log("Couldn't start server:\n" + ioe.getMessage());
+			logger.log("Couldn't start server: " + ioe.getMessage());
 			System.exit(-1);
 		}
 
 		logger.log("Server started");
 		System.out.println("Server Terminal:");
 
-		try {
-			ServerTerminal.runTerminal(
-				new ServerTerminal()
-			).join();
-		} catch (InterruptedException ignored) {
-			/* Interrupted :P */
-		}
+		terminal.register("terminal",
+			new ServerTerminal(terminal)
+		);
+		terminal.start();
 
 		server.stop();
 		logger.log("Server stopped");
