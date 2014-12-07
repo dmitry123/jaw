@@ -1,0 +1,46 @@
+<div class="modal fade" id="modal-create-project">
+    <div class="modal-dialog" style="width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Регистрация проекта</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group required">
+                        <label class="col-md-offset-2 col-md-4 control-label">Название проект</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control company-name" placeholder="Название">
+                        </div>
+                    </div><br><br>
+                    <div class="form-group required">
+                        <label class="col-md-offset-2 col-md-4 control-label">Компания</label>
+                        <div class="col-md-4">
+                            <div class="dropdown">
+                                <select class="form-control create-project-companies">
+                                    <option value="-1">Нет</option>
+                                    {{{ Index.Project.Company.List }}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <img src="/jaw/images/ajax-loader.gif" class="ajax-loader">
+                        </div>
+                    </div><br><br>
+                    <div class="form-group required">
+                        <label class="col-md-offset-2 col-md-4 control-label">Лидер проекта</label>
+                        <div class="col-md-4">
+                            <select class="form-control create-project-employees">
+                                <option value="-1">Нет</option>
+                            </select>
+                        </div>
+                    </div><br>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary create-project">Создать</button>
+            </div>
+        </div>
+    </div>
+</div>
