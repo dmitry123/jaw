@@ -1,9 +1,13 @@
 package Core;
 
+import Sql.CortegeProtocol;
+
+import java.io.Serializable;
+
 /**
  * Created by Savonin on 2014-11-22
  */
-public interface UserProtocol {
+public interface UserProtocol extends CortegeProtocol, Serializable {
 
 	/**
 	 * Every information system must have identity system, that mean

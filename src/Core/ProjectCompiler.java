@@ -7,6 +7,7 @@ import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -29,6 +30,8 @@ public class ProjectCompiler {
 	 */
 	public void compile() throws InternalError {
 
+		cleanup();
+
 		String projectName = getProjectManager().getEnvironment()
 				.getProjectName();
 
@@ -47,6 +50,13 @@ public class ProjectCompiler {
 
 		findFiles(files, projectHandle.getPath());
 
+		files.sort(new Comparator<String>() {
+			@Override
+			public int compare(String left, String right) {
+				return left.compareToIgnoreCase(right);
+			}
+		});
+
 		for (String s : files) {
 
 			String newFilePath = s.replace(projectName + File.separator,
@@ -59,7 +69,60 @@ public class ProjectCompiler {
 				/* Ignore */
 			}
 
-			compile(s, newFilePath.substring(0, newFilePath.lastIndexOf(File.separator)));
+			newFilePath = newFilePath.substring(0,
+					newFilePath.lastIndexOf(File.separator));
+
+			compile(s, newFilePath);
+		}
+	}
+
+	public void cleanup() throws InternalError {
+
+		String projectName = getProjectManager().getEnvironment()
+				.getProjectName();
+
+		String projectPath = getProjectManager().getEnvironment()
+				.getProjectPath();
+
+		File projectHandle = new File(
+			projectPath + Config.BINARY_PATH
+		);
+
+		Vector<String> files = new Vector<String>(100);
+
+		findAllFiles(files, projectHandle.getAbsolutePath());
+
+		for (String s : files) {
+			new File(s).delete();
+		}
+	}
+
+	/**
+	 * Find files at path with depth and store it in collection
+	 * @param collection - Collection to store elements
+	 * @param path - Path to directory with files
+	 * @throws InternalError
+	 */
+	private void findAllFiles(Collection<String> collection, String path) throws InternalError {
+		File handle = new File(path);
+		if (!handle.exists()) {
+			if (!handle.mkdir()) {
+				throw new InternalError(
+					"ProjectCompiler/findAllFiles() : \"Unable to create directory (" + handle.getPath() + ")\""
+				);
+			}
+			return ;
+		}
+		File[] files = handle.listFiles();
+		if (files == null) {
+			return ;
+		}
+		for (File f : files) {
+			if (f.isDirectory()) {
+				findAllFiles(collection, f.getPath());
+			} else {
+				collection.add(f.getAbsolutePath());
+			}
 		}
 	}
 
@@ -70,9 +133,7 @@ public class ProjectCompiler {
 	 * @throws InternalError
 	 */
 	private void findFiles(Collection<String> collection, String path) throws InternalError {
-
 		File handle = new File(path);
-
 		if (!handle.exists()) {
 			if (!handle.mkdir()) {
 				throw new InternalError(
@@ -81,17 +142,10 @@ public class ProjectCompiler {
 			}
 			return ;
 		}
-
-		if (!path.endsWith(File.separator)) {
-			path += File.separator;
-		}
-
 		File[] files = handle.listFiles();
-
 		if (files == null) {
 			return ;
 		}
-
 		for (File f : files) {
 			if (f.isDirectory()) {
 				findFiles(collection, f.getPath());
@@ -140,8 +194,6 @@ public class ProjectCompiler {
 		} catch (IOException e) {
 			throw new InternalError("ProjectCompiler/compile() : \"Unable to close file manager\"");
 		}
-
-		Logger.getLogger().log("File compiled (" + path + ")");
 	}
 
 	/**

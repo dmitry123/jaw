@@ -1,128 +1,117 @@
 package models;
 
-import Core.Environment;
+import Core.*;
+import Core.ExternalError;
+import Core.InternalError;
+import Sql.CortegeProtocol;
 import Sql.CortegeRow;
-import Core.Model;
 
+import java.lang.Object;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Created by Savonin on 2014-11-02
+ * Created by Savonin on 2014-12-05
  */
 public class Project extends Model<Project.Row> {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
-	 *
-	 * @param environment
-	 * 		MySql's helper object
+	 * @param environment - Current environment
 	 */
 	public Project(Environment environment) {
 		super(environment, "project");
 	}
 
 	/**
-	 * @param result
-	 * 		- Current cortege from query
-	 * @return - Created row from bind
+	 *
+	 * @param name
+	 * @param leaderID
+	 * @param companyID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	@Override
-	public Row createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getInt("id"),
-			result.getString("name"),
-			result.getInt("leader_id"),
-			result.getInt("company_id"));
+	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws InternalError, ExternalError, SQLException {
+		Model productModel = getEnvironment().getModelManager().get("Product");
+		CortegeProtocol productProtocol = productModel.fetchRow("register", name, companyID, creatorID, 0);
+		getConnection().command()
+			.insert("project", "leader_id, product_id")
+			.values("?, ?")
+			.execute(new Object[] { leaderID, productProtocol.getID() })
+			.insert();
+		return last();
 	}
 
 	/**
-	 * Insert someone in database, where 't' is future object
 	 *
-	 * @param row
-	 * 		Some object, which implements CollageProtocol
-	 * @throws Exception
+	 * @param projectID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	@Override
-	public Row add(Row row) throws Exception {
-		execute("INSERT INTO project (name, company_id, leader_id) VALUES(?, ?, ?)",
-				row.getName(), row.getCompanyID(), row.getLeaderID());
-		return row;
-	}
-
-	/**
-	 * Check project for existence by it's name
-	 * and company's identifier
-	 *
-	 * @param name - Project's name
-	 * @param companyID - Company's identifier
-	 * @return - Found project or null
-	 * @throws java.lang.Exception
-	 */
-	public boolean exists(String name, int companyID) throws Exception {
-		return fetchByName(name, companyID) != null;
-	}
-
-	/**
-	 * Fetch project by it's name and company's identifier
-	 *
-	 * @param name - Project's name
-	 * @param companyID - Company's identifier
-	 * @return - Found project or null
-	 * @throws java.lang.Exception
-	 */
-	public Row fetchByName(String name, int companyID) throws Exception {
-		ResultSet rs = execute("SELECT * FROM project WHERE name=? AND company_id=? LIMIT 1",
-				name, companyID);
-		if (rs.next()) {
-			return createFromSet(rs);
+	public Row delete(Integer projectID) throws InternalError, ExternalError, SQLException {
+		Model productModel = getEnvironment().getModelManager().get("Product");
+		ResultSet projectSet = getConnection().command()
+			.select("*")
+			.from("project")
+			.where("id = ?")
+			.execute(new Object[] { projectID })
+			.select();
+		if (!projectSet.next()) {
+			return null;
 		}
+		int productID = projectSet.getInt("product_id");
+		getConnection().command()
+			.delete("project")
+			.where("id = ?")
+			.execute(new Object[] { projectID })
+			.delete();
+		productModel.fetchRow("delete", productID);
 		return null;
 	}
 
+	/**
+	 *
+	 */
 	public static class Row extends CortegeRow {
 
 		/**
-		 * @param name - Project's name
-		 * @param leaderID - Leader's identifier
-		 * @param companyID - Company's identifier
+		 * @param id Identifier
 		 */
-		public Row(String name, int leaderID, int companyID) {
-			this(0, name, leaderID, companyID);
+		public Row(int id) {
+			super(id);
 		}
 
 		/**
-		 * @param id - Row's identifier
-		 * @param name - Project's name
-		 * @param leaderID - Leader's identifier
-		 * @param companyID - Company's identifier
-		 */
-		public Row(int id, String name, int leaderID, int companyID) {
-			super(id); this.name = name; this.leaderID = leaderID;
-				this.companyID = companyID;
-		}
-
-		/**
-		 * @return - Get project's name
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * @return - Get project's leader identifier
+		 *
+		 * @return
 		 */
 		public int getLeaderID() {
 			return leaderID;
 		}
 
 		/**
-		 * @return - Get project company's identifier
+		 *
+		 * @return
 		 */
-		public int getCompanyID() {
-			return companyID;
+		public int getProductID() {
+			return productID;
 		}
 
-		private String name;
 		private int leaderID;
-		private int companyID;
+		private int productID;
+	}
+
+	/**
+	 * @param result - Current cortege from query
+	 * @return - Created row from bind
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+		return null;
 	}
 }

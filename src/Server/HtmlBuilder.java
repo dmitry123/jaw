@@ -23,7 +23,6 @@ public class HtmlBuilder {
 				    script().type("type/javascript").src("scripts/jquery.js"); end();
 				    script().type("type/javascript").src("scripts/jquery.js"); end();
 				  body();
-				    h1().text("Hello, World");
 			}
 		};
 	}
@@ -36,10 +35,10 @@ public class HtmlBuilder {
 	}
 
 	/**
-	 * @return - Current instance
+	 * @return - Builder's html
 	 */
-	private HtmlBuilder getThis() {
-		return this;
+	public Html getHtml() {
+		return html;
 	}
 
 	private StringWriter writer

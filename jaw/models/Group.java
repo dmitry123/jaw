@@ -1,125 +1,191 @@
 package models;
 
-import Core.Environment;
+import Core.*;
+import Core.ExternalError;
+import Core.InternalError;
+import Sql.CortegeProtocol;
 import Sql.CortegeRow;
-import Core.Model;
 
+import java.lang.Object;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * GroupTable
+ * Created by Savonin on 2014-12-05
  */
 public class Group extends Model<Group.Row> {
-
 	/**
 	 * Basic constructor with helper and table's name as arguments
-	 *
-	 * @param environment
-	 * 		MySql's helper object
+	 * @param environment - Current environment
+	 * @param tableName - Table's name
 	 */
 	public Group(Environment environment) {
 		super(environment, "groups");
 	}
 
 	/**
-	 * Check for group existence by it's name
 	 *
-	 * @param name - Group's name
-	 * @return - Boolean state
-	 * @throws java.lang.Exception
+	 * @param name
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public boolean exists(String name) throws Exception{
-		return find(name) != null;
+	public ResultSet fetchByName(String name) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("groups")
+			.where("name = ?")
+			.execute(new Object[] { name })
+			.select();
 	}
 
 	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
+	 *
+	 * @param userID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	@Override
-	public Row createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getInt("id"), result.getString("name"),
-			result.getInt("precedence"), result.getInt("user_id"));
+	public ResultSet fetchGroupsByUser(Integer userID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.distinct("g.*")
+			.from("users", "u")
+			.join("employee", "e", "e.user_id = u.id")
+			.join("employee_group", "eg", "eg.employee_id = e.id")
+			.join("groups", "g", "g.id = eg.group_id")
+			.where("u.id = ?")
+			.execute(new Object[] { userID })
+			.select();
 	}
 
 	/**
-	 * Insert someone in database, where 't' is future object
 	 *
-	 * @param row
-	 * 		Some object, which implements CollageProtocol
-	 * @throws Exception
+	 * @param userID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	@Override
-	public Row add(Row row) throws Exception {
-		execute("INSERT INTO groups (name, user_id) VALUES (?, ?)",
-			row.getName(), row.getUserID());
-		row.changeID(last().getID());
-		return row;
+	public ResultSet fetchGroupsByEmployee(Integer employeeID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.distinct("g.*")
+			.from("employee", "e")
+			.join("employee_group", "eg", "eg.employee_id = e.id")
+			.join("groups", "g", "g.id = eg.group_id")
+			.where("e.id = ?")
+			.execute(new Object[] { employeeID })
+			.select();
 	}
 
 	/**
-	 * Find object in table by
-	 * name or it's identifier
 	 *
-	 * @param name@return Founded object
-	 * @throws Exception
+	 * @param groupID
+	 * @param employeeID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Row find(String name) throws Exception {
-		ResultSet rs = execute("SELECT * FROM groups WHERE name = ?",
-			name);
-		if (!rs.next()) {
-			return null;
+	public Row bind(Integer groupID, Integer employeeID) throws InternalError, ExternalError, SQLException {
+		getConnection().command()
+			.insert("employee_group", "employee_id, group_id")
+			.values("?, ?")
+			.execute(new Object[] { employeeID, groupID })
+			.insert();
+		return null;
+	}
+
+	/**
+	 *
+	 * @param groupName
+	 * @param employeeID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public Row bindWithGroupName(String groupName, Integer employeeID) throws InternalError, ExternalError, SQLException {
+		ResultSet groupRow = fetchByName(groupName);
+		if (groupRow.next()) {
+			bind(groupRow.getInt("id"), employeeID);
 		}
-		return createFromSet(rs);
+		return null;
 	}
 
+	/**
+	 *
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public Row unbind(Integer groupID, Integer employeeID) throws InternalError, ExternalError, SQLException {
+		getConnection().command()
+			.delete("employee_group")
+			.where("group_id = ?")
+			.and("employee_id = ?")
+			.execute(new Object[] { groupID, employeeID })
+			.delete();
+		return null;
+	}
+
+	/**
+	 *
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public Row unbindWithGroupName(String groupName, Integer employeeID) throws InternalError, ExternalError, SQLException {
+		ResultSet groupRow = fetchByName(groupName);
+		if (groupRow.next()) {
+			unbind(groupRow.getInt("id"), employeeID);
+		}
+		return null;
+	}
+
+	/**
+	 *
+	 */
 	public static class Row extends CortegeRow {
 
 		/**
-		 * Constructor with three parameters
 		 *
-		 * @param name Group's name
-		 * @param precedence Group's precedence
+		 * @param name
 		 */
-		public Row(String name, int precedence, int userID) {
-			this(0, name, precedence, userID);
+		public Row(String name) {
+			this(0, name);
 		}
 
 		/**
-		 * Constructor with four parameters
 		 *
-		 * @param id Group's identifier
-		 * @param name Group's name
-		 * @param precedence Group's precedence
+		 * @param id
+		 * @param name
 		 */
-		public Row(int id, String name, int precedence, int userID) {
-			super(id); this.precedence = precedence; this.name = name;
-			this.userID = userID;
+		public Row(int id, String name) {
+			super(id); this.name = name;
 		}
 
 		/**
-		 * @return - Group's name
+		 *
+		 * @return
 		 */
 		public String getName() {
 			return name;
 		}
 
-		/**
-		 * @return - Group's precedence
-		 */
-		public int getPrecedence() {
-			return precedence;
-		}
+		String name;
+	}
 
-		/**
-		 * @return - Reference to user's identifier
-		 */
-		public int getUserID() {
-			return userID;
-		}
-
-		private String name;
-		private int precedence;
-		private int userID;
+	/**
+	 * @param result - Current cortege from query
+	 * @return - Created row from bind
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+		return new Row(result.getInt("id"), result.getString("name"));
 	}
 }

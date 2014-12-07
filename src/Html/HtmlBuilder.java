@@ -17,7 +17,6 @@
 package Html;
 
 import java.io.Writer;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**

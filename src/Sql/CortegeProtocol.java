@@ -1,6 +1,8 @@
 package Sql;
 
-public interface CortegeProtocol {
+import java.io.Serializable;
+
+public interface CortegeProtocol extends Serializable {
 
     /**
      * Every collage must have

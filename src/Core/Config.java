@@ -19,7 +19,7 @@ public class Config {
 	 * 		MySQL : "com.mysql.jdbc.Driver"
 	 * 		PostgreSQL : "org.postgresql.Driver"
 	 */
-	public final static String DBMS_HOST = "jdbc:postgresql://localhost/jaw";
+	public final static String DBMS_HOST = "jdbc:postgresql://127.0.0.1/jaw";
 	public final static String DBMS_USER = "postgres";
 	public final static String DBMS_PASSWORD = "12345";
 	public final static String DBMS_DRIVER = "org.postgresql.Driver";
@@ -58,8 +58,7 @@ public class Config {
 	 *
 	 *  BINARY_PATH - path to all compiled binaries
 	 */
-	public static final String SERVER_PATH     = "jaw"         + File.separator;
-	public static final String JAVA_PATH       = "java"        + File.separator;
+	public static final String SERVER_PATH     = "server"      + File.separator;
 	public static final String TEMPLATE_PATH   = "templates"   + File.separator;
 	public static final String CONTROLLER_PATH = "controllers" + File.separator;
 	public static final String MODEL_PATH      = "models"      + File.separator;
@@ -67,12 +66,13 @@ public class Config {
 	public static final String SCRIPT_PATH     = "scripts"     + File.separator;
 	public static final String MODULE_PATH     = "modules"     + File.separator;
 	public static final String WIDGET_PATH     = "widgets"     + File.separator;
-	public static final String BINARY_PATH     = "binary"      + File.separator;
+	public static final String BINARY_PATH     = "binaries"    + File.separator;
 	public static final String LOG_PATH        = "log"         + File.separator;
 
 	/**
 	 * Default index page
 	 */
+	public static final String SESSION_PATH = SERVER_PATH + "session" + File.separator;
 	public static final String INDEX_PATH = SERVER_PATH + "views/index.html";
 
 	/**

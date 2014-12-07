@@ -37,8 +37,30 @@ public class Command implements CommandProtocol {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CommandProtocol insert(String columns) throws InternalError {
-		return _word("INSERT")._word("INTO")._word("(")._word(columns)._word(")");
+	public CommandProtocol insert(String table, String columns) throws InternalError {
+		return _word("INSERT")._word("INTO")._word(table)._word("(" + columns + ")");
+	}
+
+	/**
+	 * Delete rows from table
+	 * @param table - Table name
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CommandProtocol delete(String table) throws InternalError {
+		return _word("DELETE")._word("FROM")._word(table);
+	}
+
+	/**
+	 * Set limit to query
+	 * @param value - Row's limit
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CommandProtocol limit(int value) throws InternalError {
+		return _word("LIMIT")._word(Integer.toString(value));
 	}
 
 	/**
@@ -49,7 +71,7 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol values(String items) throws InternalError {
-		return _word("VALUES")._word("(")._word(items)._word(")");
+		return _word("VALUES")._word("(" + items + ")");
 	}
 
 	/**

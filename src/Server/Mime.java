@@ -21,12 +21,18 @@ public enum Mime {
 	TEXT_JAVASCRIPT (Type.TEXT,  "text/javascript", ".js"),
 	TEXT_PLAIN      (Type.TEXT,  "text/plain"),
 	TEXT_PHP        (Type.TEXT,  "text/php", ".php"),
-	TEXT_XML        (Type.TEXT,  "text/xml", ".xml");
+	TEXT_XML        (Type.TEXT,  "text/xml", ".xml"),
+
+	APPLICATION_OCTET_STREAM (Type.APPLICATION, "application/octet-stream",
+		".map", ".ttf", ".eot", ".woff"
+	),
+	APPLICATION_JSON         (Type.APPLICATION, "application/json ", ".json");
 
 	public static enum Type {
 		UNKNOWN,
 		IMAGE,
-		TEXT
+		TEXT,
+		APPLICATION
 	}
 
 	/**
@@ -61,6 +67,10 @@ public enum Mime {
 
 	public boolean isText() {
 		return type == Type.TEXT;
+	}
+
+	public boolean isApplication() {
+		return type == Type.APPLICATION;
 	}
 
 	public boolean isUnknown() {

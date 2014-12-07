@@ -1,12 +1,14 @@
 package Core;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
+import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import java.security.Security;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Random;
+
 import com.sun.crypto.provider.SunJCE;
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 /**
  * Created by Savonin on 2014-11-08
@@ -25,13 +27,36 @@ public class PasswordEncryptor extends UserSecurity {
 	}
 
 	/**
+	 *
+	 * @return
+	 * @throws InternalError
+	 */
+	public static String generateSessionID() throws InternalError {
+
+		// Initialize secure random with default PRGN
+		SecureRandom secureRandom = new SecureRandom();
+
+		// Create 20 bytes block
+		byte[] bytes = new byte[20];
+
+		// Engine this bytes
+		secureRandom.nextBytes(bytes);
+
+		// Generate seed
+		byte[] seed = secureRandom.generateSeed(20);
+
+		// Encode and return as string
+		return HexBin.encode(seed);
+	}
+
+	/**
 	 * Encrypt user's password with it's name as salt
 	 * @param userName - User's name
 	 * @param userPassword - User's password
 	 * @return - Crypted password
-	 * @throws Exception
+	 * @throws InternalError
 	 */
-    public static String crypt(String userName, String userPassword) throws Exception {
+    public static String crypt(String userName, String userPassword) throws InternalError {
 
         Cipher cipher;
 
@@ -47,10 +72,20 @@ public class PasswordEncryptor extends UserSecurity {
 
 		// get secret key factory based on PDE with MD5 and DES
 		SecretKeyFactory secretKeyFactory
-				= SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+				= null;
+		try {
+			secretKeyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+		} catch (NoSuchAlgorithmException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		}
 
 		// generate new secret key
-		SecretKey secretKey = secretKeyFactory.generateSecret(keySpec);
+		SecretKey secretKey = null;
+		try {
+			secretKey = secretKeyFactory.generateSecret(keySpec);
+		} catch (InvalidKeySpecException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		}
 
 		byte[] salt = SALT.clone();
 
@@ -63,14 +98,33 @@ public class PasswordEncryptor extends UserSecurity {
 			= new PBEParameterSpec(salt, ITERATIONS);
 
 		// get cipher
-		cipher = Cipher.getInstance("PBEWithMD5AndDES");
+		try {
+			cipher = Cipher.getInstance("PBEWithMD5AndDES");
+		} catch (NoSuchAlgorithmException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		} catch (NoSuchPaddingException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		}
 
 		// initialize cipher
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
+		try {
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
+		} catch (InvalidKeyException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		} catch (InvalidAlgorithmParameterException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		}
 
-		byte[] bytes = cipher.doFinal();
+		byte[] bytes = new byte[0];
+		try {
+			bytes = cipher.doFinal();
+		} catch (IllegalBlockSizeException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		} catch (BadPaddingException e) {
+			throw new InternalError("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
+		}
 
-        StringBuilder stringBuffer =
+		StringBuilder stringBuffer =
                 new StringBuilder(bytes.length * 2);
 
 		for (byte aByte : bytes) {

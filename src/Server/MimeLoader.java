@@ -22,27 +22,19 @@ public class MimeLoader {
 	 * @param filePath - Path to file to load
 	 * @return - Just loaded file's data
 	 * @throws InternalError
-	 * @throws IOException
 	 */
-	public InputStream load(String filePath) throws InternalError, IOException {
+	public InputStream load(String filePath) throws InternalError {
 		File fileHandle = new File(filePath);
 		if (!fileHandle.exists()) {
 			throw new Core.InternalError("MimeLoader/load : \"Unable to load file (" + filePath + ")\"");
 		}
-		return new FileInputStream(
+		try {
+			return new FileInputStream(
 				fileHandle
-		);
-		/*
-		switch (mime.getType()) {
-			case IMAGE:
-				return loadImage(fileHandle);
-			case TEXT:
-				return loadText(fileHandle);
-			case UNKNOWN:
-				throw new InternalError("MimeLoader/load: \"Unable to load file with unsupported mime type (" + mime.getName() + ")\"");
+			);
+		} catch (FileNotFoundException e) {
+			throw new InternalError("InputStream/load() : \"" + e.getMessage() + "\"");
 		}
-		return null;
-		*/
 	}
 
 	/**

@@ -16,9 +16,6 @@ public class ProjectManager extends Extension {
 	 * @return - Project's compiler
 	 */
 	public ProjectCompiler getCompiler() {
-		return projectCompiler;
+		return new ProjectCompiler(this);
 	}
-
-	private ProjectCompiler projectCompiler
-			= new ProjectCompiler(this);
 }

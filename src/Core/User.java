@@ -1,14 +1,18 @@
 package Core;
 
+import Sql.CortegeRow;
+
+import java.io.Serializable;
+
 /**
  * Created by Savonin on 2014-11-08
  */
-public abstract class User implements UserProtocol {
+public abstract class User extends CortegeRow implements UserProtocol, Serializable {
 
 	/**
 	 * User's constructor, which will store basic information
 	 * getAbout user (identifier, login, hash) - only for affected rows.
-	 * You can extend that class and add more features if you
+	 * You can extend that class and put more features if you
 	 * want more functionality or simply implement UserProtocol methods
 	 *
 	 * @param id - User's unique identifier
@@ -16,19 +20,7 @@ public abstract class User implements UserProtocol {
 	 * @param hash - Hash of user's password (crypted by PasswordEncryptor)
 	 */
 	public User(int id, String login, String hash) {
-		this.id = id;
-		this.login = login;
-		this.hash = hash;
-	}
-
-	/**
-	 * Every information system must have identity system, that mean that you must implement UserProtocol and it's
-	 * methods for user's model and every user must have integer identifier
-	 * @return - User's identifier
-	 */
-	@Override
-	public int getID() {
-		return id;
+		super(id); this.login = login; this.hash = hash;
 	}
 
 	/**
@@ -51,5 +43,4 @@ public abstract class User implements UserProtocol {
 
 	private String login;
 	private String hash;
-	private int id;
 }

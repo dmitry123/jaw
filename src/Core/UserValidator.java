@@ -41,7 +41,7 @@ public class UserValidator extends Extension {
 //			login, PasswordEncryptor.crypt(login, password)
 //		));
 //
-//		userModel.add(user.getCortege());
+//		userModel.put(user.getCortege());
 
 		return null;
 //		return user;

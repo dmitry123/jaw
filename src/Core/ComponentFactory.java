@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.NoSuchFileException;
 
 /**
  * Created by Savonin on 2014-11-24
@@ -27,13 +28,13 @@ public class ComponentFactory extends Extension {
 	 * @return - New component's instance
 	 * @throws InternalError
 	 */
-	public <T> T create(String className) throws InternalError {
+	public <T> T create(String className) throws InternalError, ClassNotFoundException {
 
 		Class<T> modelClass = loadClass(className);
 		Constructor<T> constructor;
 
 		try {
-			constructor = (Constructor<T>) modelClass.getConstructor(
+			constructor = modelClass.getConstructor(
 				Environment.class
 			);
 		} catch (NoSuchMethodException e) {
@@ -58,15 +59,15 @@ public class ComponentFactory extends Extension {
 			);
 		} catch (InstantiationException e) {
 			throw new InternalError(
-					"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
+				"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
 			);
 		} catch (IllegalAccessException e) {
 			throw new InternalError(
-					"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
+				"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
 			);
 		} catch (InvocationTargetException e) {
 			throw new InternalError(
-					"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
+				"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
 			);
 		}
 	}
@@ -78,9 +79,15 @@ public class ComponentFactory extends Extension {
 	 * @return - Loaded class
 	 * @throws InternalError
 	 */
-	private <C> Class<C> loadClass(String className) throws InternalError {
+	private <C> Class<C> loadClass(String className) throws InternalError, ClassNotFoundException {
 
-		File binaryDir = new File(getEnvironment().getProjectPath() + Config.BINARY_PATH);
+		String binaryPath = getEnvironment().getProjectPath() + Config.BINARY_PATH;
+
+		if (className.startsWith(binaryPath)) {
+			className = className.substring(binaryPath.length());
+		}
+
+		File binaryDir = new File(binaryPath);
 
 		if (!binaryDir.exists()) {
 			throw new InternalError(
@@ -100,10 +107,30 @@ public class ComponentFactory extends Extension {
 			url
 		});
 
-		try {
-			return (Class<C>) classLoader.loadClass(className);
-		} catch (ClassNotFoundException e) {
-			throw new InternalError("ComponentFactory/loadClass() : \"" + e.getMessage() + "\"");
+		String[] names = className.split("\\\\|/");
+
+		if (names.length < 2) {
+			throw new ClassNotFoundException(className);
 		}
+
+		File fileDir = new File(
+			binaryDir.getPath() + File.separator + names[0]
+		);
+
+		if (!fileDir.exists()) {
+			throw new ClassNotFoundException(className);
+		}
+
+		String[] files = fileDir.list();
+
+		for (String s : files) {
+			if (s.toLowerCase().equals((names[1] + ".class").toLowerCase())) {
+				return (Class<C>) classLoader.loadClass(
+					names[0] + "." + s.replace(".class", "")
+				);
+			}
+		}
+
+		return (Class<C>) classLoader.loadClass(className);
 	}
 }

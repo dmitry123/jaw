@@ -65,6 +65,21 @@ public class SqlExecutor {
 	}
 
 	/**
+	 * Execute update
+	 * @return - Count of updated rows
+	 * @throws Core.InternalError
+	 */
+	public int delete() throws Core.InternalError {
+		try {
+			return command.getStatement().executeUpdate();
+		} catch (SQLException e) {
+			throw new InternalError(
+					"SqlExecutor/insert() : \"" + e.getMessage() + "\""
+			);
+		}
+	}
+
+	/**
 	 * @return - Executor's command
 	 */
 	public Command getCommand() {

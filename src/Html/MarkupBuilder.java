@@ -465,7 +465,7 @@ public abstract class MarkupBuilder<T> {
 	public final T attr(String ... attrs ) {
 		isTrue(attrs.length  % 2 == 0);
 		if (tagStack.isEmpty() || (tagStack.peek().start)) {
-			throw new IllegalStateException("There are no open tags to add attributes too. " +
+			throw new IllegalStateException("There are no open tags to put attributes too. " +
 					"Markup attributes should only be added " +
 					"immediatly after starting a tag.");
 		}

@@ -1,6 +1,8 @@
 package Core;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.HashMap;
 
 /**
@@ -11,7 +13,7 @@ public abstract class Manager<C extends Component> extends Extension {
 	/**
 	 * @param environment - Project's environment
 	 */
-	public Manager(Environment environment, Type type) {
+	public Manager(Environment environment, ComponentType type) {
 		super(environment); this.type = type;
 	}
 
@@ -23,18 +25,52 @@ public abstract class Manager<C extends Component> extends Extension {
 
 		C component = getCached(path);
 
-		if (component != null) {
-			return component;
+		try {
+			if (component != null) {
+				return (C) component.getClass().getConstructor(
+					Environment.class
+				).newInstance(getEnvironment());
+			}
+		} catch (InstantiationException ignored) {
+		} catch (IllegalAccessException ignored) {
+		} catch (InvocationTargetException ignored) {
+		} catch (NoSuchMethodException ignored) {
 		}
+
+		String binaryPath = type.getBinaryPath(
+			getEnvironment(), path
+		);
+
+		if (binaryPath == null) {
+			return null;
+		}
+
+		int indexOf;
+
+		do {
+			try {
+				component = getEnvironment().getComponentFactory()
+						.create(binaryPath);
+				break;
+			} catch (NoClassDefFoundError ignore) {
+				if ((indexOf = binaryPath.lastIndexOf(File.separator)) != -1) {
+					binaryPath = binaryPath.substring(0, indexOf) + "."
+							+ binaryPath.substring(indexOf + 1);
+				} else {
+					return null;
+				}
+			} catch (ClassNotFoundException ignore) {
+				if ((indexOf = binaryPath.lastIndexOf(File.separator)) != -1) {
+					binaryPath = binaryPath.substring(0, indexOf) + "."
+						+ binaryPath.substring(indexOf + 1);
+				} else {
+					return null;
+				}
+			}
+		} while (true);
 
 		return setCached(path, component);
 	}
-
-	/**
-	 * @param directory - Directories to component
-	 * @return - Found component in filesystem
-	 */
-	protected abstract C find(File directory, String file);
 
 	/**
 	 * @param path - Path to component
@@ -49,9 +85,11 @@ public abstract class Manager<C extends Component> extends Extension {
 
 		if (cachedComponents.containsKey(path)) {
 			return cachedComponents.get(path);
+		} else {
+			cachedComponents.put(path, component);
 		}
 
-		return cachedComponents.put(path, component);
+		return component;
 	}
 
 	/**
@@ -68,14 +106,21 @@ public abstract class Manager<C extends Component> extends Extension {
 	}
 
 	/**
+	 * Cleanup all cached components
+	 */
+	public void cleanup() {
+		cachedComponents.clear();
+	}
+
+	/**
 	 * @return - Component type
 	 */
-	public Type getType() {
+	public ComponentType getType() {
 		return type;
 	}
 
 	private HashMap<String, C> cachedComponents
 			= new HashMap<String, C>();
 
-	private Type type;
+	private ComponentType type;
 }

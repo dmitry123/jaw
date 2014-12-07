@@ -1,13 +1,73 @@
 package Core;
 
-import Core.*;
+import Server.NanoHttpd;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by Savonin on 2014-11-23
  */
-public class Router {
+public class Router extends Extension {
+
+	/**
+	 * @param environment - Every core's extension must have environment
+	 * 		with predeclared extensions
+	 */
+	public Router(Environment environment) {
+		super(environment);
+	}
+
+	/**
+	 * Redirect router to path
+	 * @param path - Path to controller
+	 * @param action - Controller's action
+	 */
+	public void redirect(String path, String action) throws InternalError {
+
+		Controller old = controller;
+
+		// Find main controller
+		controller = getEnvironment().getControllerManager()
+				.get(path);
+
+		if (controller != null) {
+
+			// Find also it's view and model
+			View view = getEnvironment().getViewManager().get(path);
+			Model model = getEnvironment().getModelManager().get(path);
+
+			// Find action method
+			java.lang.reflect.Method[] controllerMethods = controller.getClass().getMethods();
+			java.lang.reflect.Method actionMethod = null;
+
+			for (java.lang.reflect.Method m : controllerMethods) {
+				if (m.getName().toLowerCase().equals("action" + action.toLowerCase())) {
+					actionMethod = m;
+					break;
+				}
+			}
+
+			// Initialize controller
+			controller.setView(view);
+			controller.setModel(model);
+
+			// Initialize session
+			controller.setSession(getSession());
+
+			if (actionMethod != null) {
+				try {
+					actionMethod.invoke(controller);
+				} catch (IllegalAccessException e) {
+					throw new InternalError(e.getCause().getMessage());
+				} catch (InvocationTargetException e) {
+					throw new InternalError(e.getCause().getMessage());
+				}
+			} else {
+				controller = null;
+			}
+		}
+	}
 
 	/**
 	 * Compute absolute path for component by it's project directory. It
@@ -21,39 +81,112 @@ public class Router {
 	 * @throws Core.InternalError
 	 */
 	public static String getAbsolutePath(String projectPath, String componentPath, String componentFolder) throws Core.InternalError {
+		return getPath(projectPath, componentPath, componentFolder, false, false) + ".java";
+	}
 
-		File handle = new File(
-			projectPath
-		);
+	/**
+	 * Compute binary path for compiled component by it's project directory. It
+	 * will find element in filesystem, which for existence and build it's
+	 * absolute path to file with java extension
+	 * @param projectPath - Path to project
+	 * @param componentPath - Name of component, which you'd like to find
+	 * @param componentFolder - Name of component type's folder
+	 * @see Core.Config
+	 * @return - Absolute path to file (about project path)
+	 * @throws Core.InternalError
+	 */
+	public static String getBinaryPath(String projectPath, String componentPath, String componentFolder) throws Core.InternalError {
+		return getPath(projectPath, componentPath, componentFolder, true, false);
+	}
 
+	/**
+	 * Compute static path for compiled component by it's project directory. It
+	 * will find element in filesystem, which for existence and build it's
+	 * absolute path to file with java extension
+	 * @param projectPath - Path to project
+	 * @param componentPath - Name of component, which you'd like to find
+	 * @param componentFolder - Name of component type's folder
+	 * @see Core.Config
+	 * @return - Absolute path to file (about project path)
+	 * @throws Core.InternalError
+	 */
+	public static String getStaticPath(String projectPath, String componentPath, String componentFolder) throws Core.InternalError {
+		return getPath(projectPath, componentPath, componentFolder, false, true);
+	}
+
+	/**
+	 * Compute path to file
+	 * @param projectPath - Path to project
+	 * @param componentPath - Name of component, which you'd like to find
+	 * @param componentFolder - Name of component type's folder
+	 * @see Core.Config
+	 * @return - Path to file (about project path)
+	 * @throws Core.InternalError
+	 */
+	private static String getPath(String projectPath, String componentPath, String componentFolder, boolean seekBinary, boolean withDot) throws InternalError {
+		File handle = new File(projectPath);
 		if (!handle.exists()) {
 			return null;
 		}
-
-		String[] listPath = componentPath.split("/");
+		String[] listPath = componentPath.split("\\.");
 		String componentName = listPath[listPath.length - 1];
 		String absolutePath = projectPath;
-
-		if (listPath.length > 1) {
+		if (seekBinary) {
+			absolutePath += Config.BINARY_PATH;
+		}
+		if (listPath.length > 1 && !Config.WIDGET_PATH.equals(listPath[0] + File.separator)) {
 			absolutePath += Config.MODULE_PATH;
 		}
-
 		for (String s : listPath) {
 			if (s == listPath[listPath.length - 1]) {
 				break;
 			}
-			absolutePath += s + "/";
+			absolutePath += s + File.separator;
+			// TODO Add sub modules support
 		}
-		absolutePath += componentFolder;
-
+		if (!seekBinary) {
+			absolutePath += componentFolder;
+		}
 		File directoryHandle = new File(
 			absolutePath
 		);
-
 		if (!directoryHandle.exists()) {
 			return null;
 		}
-
-		return absolutePath + componentName;
+		if (componentFolder.endsWith("/") || componentFolder.endsWith("\\")) {
+			componentFolder = componentFolder.substring(0, componentFolder.length() - 1);
+		}
+		if (!seekBinary) {
+			return absolutePath + componentName;
+		}
+		return absolutePath + componentFolder + (
+			withDot ? "." : File.separator
+		) + componentName;
 	}
+
+	/**
+	 * @return - Current controller
+	 */
+	public Controller getController() {
+		return controller;
+	}
+
+	/**
+	 *
+	 * @param session
+	 */
+	public void setSession(NanoHttpd.IHTTPSession session) {
+		this.session = session;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public NanoHttpd.IHTTPSession getSession() {
+		return session;
+	}
+
+	private NanoHttpd.IHTTPSession session;
+	private Controller controller;
 }

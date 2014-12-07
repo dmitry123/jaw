@@ -1,290 +1,301 @@
 package models;
 
-import Core.Environment;
+import Core.*;
+import Core.ExternalError;
 import Core.InternalError;
+import Sql.CortegeProtocol;
 import Sql.CortegeRow;
-import Core.Model;
 
+import java.lang.Object;
 import java.sql.ResultSet;
-import java.util.Vector;
+import java.sql.SQLException;
 
 /**
- * Created by Savonin on 2014-11-02
+ * Created by Savonin on 2014-12-05
  */
 public class Employee extends Model<Employee.Row> {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
-	 *
-	 * @param environment
-	 * 		MySql's helper object
-	 * 	@throws java.lang.Exception
+	 * @param environment - Current environment
+	 * @param tableName - Table's name
 	 */
-	public Employee(Environment environment) throws Exception {
+	public Employee(Environment environment) {
 		super(environment, "employee");
 	}
 
 	/**
-	 * @param result
-	 * 		- Current cortege from query
-	 * @return - Created row from bind
-	 * @throws java.lang.Exception
-	 */
-	@Override
-	public Row createFromSet(ResultSet result) throws Exception {
-		return new Row(
-			result.getInt("id"),
-			result.getString("name"),
-			result.getString("surname"),
-			result.getInt("user_id"),
-			result.getInt("manager_id"),
-			result.getInt("director_id"),
-			result.getInt("company_id"));
-	}
-
-	/**
-	 * Insert someone in database, where 't' is future object
 	 *
-	 * @param row
-	 * 		Some object, which implements CollageProtocol
-	 * @throws Exception
+	 * @param name
+	 * @param surname
+	 * @param patronymic
+	 * @param userID
+	 * @param managerID
+	 * @param directorID
+	 * @param companyID
+	 * @return
+	 * @throws InternalError
+	 * @throws SQLException
 	 */
-	@Override
-	public Row add(Row row) throws Exception {
-		execute("INSERT INTO employee (name, surname, user_id, manager_id, director_id) VALUES(?, ?, ?, ?, ?)",
-			row.getName(), row.getSurname(), row.getUserID(), row.getManagerID(), row.getDirectorID());
-		row.changeID(last().getID());
-		return row;
+	public Row register(String name, String surname, String patronymic, Integer userID, Integer managerID, Integer directorID, Integer companyID) throws InternalError, SQLException, ExternalError {
+		getConnection().command()
+			.insert("employee", "name, surname, user_id, manager_id, director_id, company_id, patronymic")
+			.values("?, ?, ?, ?, ?, ?, ?")
+			.execute(new Object[] { name, surname, userID, managerID, directorID, companyID, patronymic })
+			.insert();
+		return last();
 	}
 
 	/**
-	 * Fetch user from employee's reference
 	 *
-	 * @return - Found user
-	 * @throws java.lang.Exception
+	 * @param companyID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public User.Row fetchUser(Row row) throws Exception {
-		ResultSet resultSet = execute("SELECT u.* FROM employee AS e" +
-			"JOIN user AS u ON e.user_id = u.id LIMIT 1");
-		if (!resultSet.next()) {
-			throw new InternalError("EmployeeModel/add() : \"Unable to get user from database (Wtf?)\"");
-		}
-		return userModel.createFromSet(resultSet);
+	public ResultSet fetchByCompanyID(Integer companyID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("employee")
+			.where("company_id = ?")
+			.execute(new Object[] { companyID })
+			.select();
 	}
 
 	/**
-	 * Fetch user from employee's reference
 	 *
-	 * @return - Found user
-	 * @throws java.lang.Exception
+	 * @param userID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Row fetchByUserID(int userID) throws Exception {
-		ResultSet resultSet = execute("SELECT * FROM employee " +
-			"WHERE user_id=?", userID);
-		if (!resultSet.next()) {
-			return null;
-		}
-		return createFromSet(resultSet);
+	public ResultSet fetchByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("employee")
+			.where("user_id = ?")
+			.execute(new Object[] { userID })
+			.select();
 	}
 
 	/**
-	 * Fetch manager from employee's reference
 	 *
-	 * @param employee - Employee
-	 * @return - Found manager
-	 * @throws java.lang.Exception
+	 * @param employeeID
+	 * @param priviligeKey
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Row fetchManager(Row employee) throws Exception {
-		ResultSet resultSet = execute("SELECT e.* FROM employee AS e" +
-				"WHERE e.manager_id = ?", employee.getDirectorID());
-		if (!resultSet.next()) {
-			throw new InternalError("EmployeeModel/add() : \"Unable to get manager from database (Wtf?)\"");
-		}
-		return createFromSet(resultSet);
+	public ResultSet fetchPrivilege(Integer employeeID, String priviligeKey) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("privilege", "p")
+			.join("groups", "g", "p.group_id = g.id")
+			.join("employee_group", "eg", "eg.group_id = g.id")
+			.where("p.id = ?")
+			.and("eg.employee_id = ?")
+			.execute(new Object[] { priviligeKey, employeeID })
+			.select();
 	}
 
 	/**
-	 * Fetch director from employee's reference
 	 *
-	 * @param employee - Employee
-	 * @return - Found director
-	 * @throws java.lang.Exception
+	 * @param userID
+	 * @param companyID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Row fetchDirector(Row employee) throws Exception {
-		ResultSet resultSet = execute("SELECT e.* FROM employee AS e" +
-			"WHERE e.director_id = ?", employee.getDirectorID());
-		if (!resultSet.next()) {
-			throw new Core.InternalError("EmployeeModel/add() : \"Unable to get director from database (Wtf?)\"");
-		}
-		return createFromSet(resultSet);
+	public ResultSet fetchByUserAndCompanyID(Integer userID, Integer companyID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("employee")
+			.where("user_id = ?")
+			.and("company_id = ?")
+			.execute(new Object[] { userID, companyID })
+			.select();
 	}
 
 	/**
-	 * Fetch all employee's modules
 	 *
-	 * @param filter - Module's filter
-	 * @return - Found modules objects
-	 * @throws Exception
+	 * @param employeeID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Vector<Module.Row> fetchModules(Row employee, Filter<Module.Row> filter) throws Exception {
-		ResultSet resultSet = execute("SELECT m.* FROM module_employee_connector AS c" +
-			"JOIN employee AS e ON c.employee_id = e.id" +
-			"JOIN module   AS m ON c.module_id   = m.id WHERE e.id = ?", employee.getID());
-		Vector<Module.Row> result = new Vector<Module.Row>(
-			resultSet.getFetchSize());
-		Module moduleModel
-				= new Module(getEnvironment());
-		while (resultSet.next()) {
-			Module.Row r = moduleModel.createFromSet(resultSet);
-			if (filter == null || filter.test(r)) {
-				result.add(r);
-			}
-		}
-		return result;
+	public ResultSet fetchGroups(Integer employeeID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("g.*")
+			.from("employee", "e")
+			.join("employee_group", "eg", "eg.employee_id = e.id")
+			.join("groups", "g", "g.id = eg.group_id")
+			.where("e.id = ?")
+			.execute(new Object[] { employeeID })
+			.select();
 	}
 
 	/**
-	 * Fetch all employee's modules
 	 *
-	 * @return - Found modules objects
-	 * @throws Exception
+	 * @param employeeID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Vector<Module.Row> fetchModules(Row employee) throws Exception {
-		return fetchModules(employee, null);
+	public ResultSet fetchCompaniesByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("users", "u")
+			.join("employee", "e", "e.user_id = u.id")
+			.join("company", "c", "c.id = e.company_id")
+			.where("u.id = ?")
+			.execute(new Object[] { userID })
+			.select();
 	}
 
 	/**
-	 * Fetch all employee's projects
 	 *
-	 * @param filter - Project's filter
-	 * @return - Found modules objects
-	 * @throws Exception
+	 * @param employeeID
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Vector<Project.Row> fetchProjects(Row employee, Filter<Project.Row> filter) throws Exception {
-		ResultSet resultSet = execute("SELECT p.* FROM project_employee_connector AS c" +
-				"JOIN employee AS e ON c.employee_id = e.id" +
-				"JOIN project  AS p ON c.project_id  = p.id WHERE e.id = ?\", employee.getID()");
-		Vector<Project.Row> result = new Vector<Project.Row>(
-				resultSet.getFetchSize());
-		while (resultSet.next()) {
-			Project.Row r = projectModel.createFromSet(resultSet);
-			if (filter == null || filter.test(r)) {
-				result.add(r);
-			}
-		}
-		return result;
+	public ResultSet fetchProjectsByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("e.*, p.*, r.*")
+			.from("project", "p")
+			.join("product", "r", "r.id = p.product_id")
+			.join("product_employee", "pe", "pe.product_id = r.id")
+			.join("employee", "e", "e.id = pe.employee_id")
+			.join("users", "u", "e.user_id = u.id")
+			.where("u.id = ?")
+			.execute(new Object[] { userID })
+			.select();
 	}
 
 	/**
-	 * Fetch all employee's projects
 	 *
-	 * @return - Found modules objects
-	 * @throws Exception
-	 */
-	public Vector<Project.Row> fetchProjects(Row employee) throws Exception {
-		return fetchProjects(employee, null);
-	}
-
-	/**
-	 * Change employee's company
-	 *
-	 * @param row - Employee's cortege
-	 * @param companyID - Company's identifier
-	 */
-	public void changeCompany(Row row, int companyID) throws Exception {
-		execute("UPDATE employee SET company_id = " + companyID + " WHERE id = ?",
-			row.getID());
-		row.companyID = companyID;
-	}
-
-	/**
-	 * Row
 	 */
 	public static class Row extends CortegeRow {
 
 		/**
-		 * @param name - Employee's first name
-		 * @param surname - Employee's surname
-		 * @param userID - Reference to user's identifier
-		 * @param directorID - Reference to director's identifier
+		 *
+		 * @param name
+		 * @param surname
+		 * @param patronymic
+		 * @param userID
+		 * @param managerID
+		 * @param directorID
+		 * @param companyID
 		 */
-		public Row(String name, String surname, int userID, int managerID, int directorID, int companyID) {
-			this(0, name, surname, userID, managerID, directorID, companyID);
+		public Row(String name, String surname, String patronymic, int userID, int managerID, int directorID, int companyID) {
+			this(0, name, surname, patronymic, userID, managerID, directorID, companyID);
 		}
 
 		/**
-		 * @param id - Primary key
-		 * @param name - Employee's first name
-		 * @param surname - Employee's surname
-		 * @param userID - Reference to user's identifier
-		 * @param directorID - Reference to director's identifier
+		 *
+		 * @param id
+		 * @param name
+		 * @param surname
+		 * @param patronymic
+		 * @param userID
+		 * @param managerID
+		 * @param directorID
+		 * @param companyID
 		 */
-		public Row(int id, String name, String surname, int userID, int managerID, int directorID, int companyID) {
-			super(id); this.name = name; this.surname = surname; this.userID = userID; this.managerID = managerID;
-				this.directorID = directorID; this.companyID = companyID;
+		public Row(int id, String name, String surname, String patronymic, int userID, int managerID, int directorID, int companyID) {
+			super(id); this.name = name; this.surname = surname; this.patronymic = patronymic; this.userID = userID;
+				this.managerID = managerID; this.directorID = directorID; this.companyID = companyID;
 		}
 
 		/**
-		 * @param companyID - New company's identifier
-		 */
-		public void changeCompanyID(int companyID) {
-			this.companyID = companyID;
-		}
-
-		/**
-		 * @return - Employee's name
+		 *
+		 * @return
 		 */
 		public String getName() {
 			return name;
 		}
 
 		/**
-		 * @return - Employee's surname
+		 *
+		 * @return
 		 */
 		public String getSurname() {
 			return surname;
 		}
 
 		/**
-		 * @return - Employee' user identifier
+		 *
+		 * @return
+		 */
+		public String getPatronymic() {
+			return patronymic;
+		}
+
+		/**
+		 *
+		 * @return
 		 */
 		public int getUserID() {
 			return userID;
 		}
 
 		/**
-		 * @return - Employee manager's identifier
+		 *
+		 * @return
 		 */
 		public int getManagerID() {
 			return managerID;
 		}
 
 		/**
-		 * @return - Employee director's identifier
+		 *
+		 * @return
 		 */
 		public int getDirectorID() {
 			return directorID;
 		}
 
 		/**
-		 * @return - Employee company's identifier
+		 *
+		 * @return
 		 */
 		public int getCompanyID() {
 			return companyID;
 		}
 
-		private String name;
-		private String surname;
+		String name;
+		String surname;
+		String patronymic;
 
-		private int userID;
-		private int managerID;
-		private int directorID;
-		private int companyID;
+		int userID;
+		int managerID;
+		int directorID;
+		int companyID;
 	}
 
-	private User userModel
-			= new User(getEnvironment());
-
-	private Project projectModel
-			= new Project(getEnvironment());
+	/**
+	 * @param result - Current cortege from query
+	 * @return - Created row from bind
+	 * @throws Core.InternalError
+	 */
+	@Override
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+		return new Row(
+			result.getInt("id"),
+			result.getString("name"),
+			result.getString("surname"),
+			result.getString("patronymic"),
+			result.getInt("user_id"),
+			result.getInt("manager_id"),
+			result.getInt("director_id"),
+			result.getInt("company_id")
+		);
+	}
 }

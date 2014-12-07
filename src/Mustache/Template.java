@@ -30,7 +30,7 @@ import java.util.Map;
  * hiding sections without binding a sub-context. Arrays, {@link Iterator} and {@link Iterable}
  * implementations are used for sections that repeat, with the context bound to the elements of the
  * array, iterator or iterable. Lambdas are current unsupported, though they would be easy enough
- * to add if desire exists. See the <a href="http://mustache.github.com/mustache.5.html">Mustache
+ * to put if desire exists. See the <a href="http://mustache.github.com/mustache.5.html">Mustache
  * documentation</a> for more details on section behavior. </p>
  */
 public class Template

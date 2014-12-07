@@ -15,7 +15,7 @@ public class ExternalError extends Exception {
 		InvalidLogin           (2, "Invalid login"),
 		InvalidPassword        (3, "Invalid password"),
 		InvalidCompanyBundle   (4, "Invalid company bundle"),
-		UserAlreadyRegistered  (5, "This user is already registered"),
+		UserAlreadyRegistered  (5, "User with that login already registered"),
 		UnknownMimeType        (6, "Unknown mime type"),
 		InvalidPrimaryKey      (7, "Unable to find row in table");
 

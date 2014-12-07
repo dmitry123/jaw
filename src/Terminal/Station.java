@@ -75,8 +75,15 @@ public abstract class Station extends Instruction implements Protocol {
 	 * @param arguments - Instruction arguments
 	 */
 	@Override
-	public void run(String[] arguments) {
-		getMachine().setActive(this);
+	public void run(String[] arguments) throws InternalError, InterruptedException {
+		if (arguments.length > 0) {
+			Protocol p = this.find(arguments[0]);
+			String[] args = new String[arguments.length - 1];
+			System.arraycopy(arguments, 1, args, 0, arguments.length - 1);
+			p.run(args);
+		} else {
+			getMachine().setActive(this);
+		}
 	}
 
 	/**

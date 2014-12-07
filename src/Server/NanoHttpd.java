@@ -551,7 +551,7 @@ public abstract class NanoHttpd {
          */
         private InputStream data;
         /**
-         * Headers for the HTTP response. Use addHeader() to add lines.
+         * Headers for the HTTP response. Use addHeader() to put lines.
          */
         private Map<String, String> header = new HashMap<String, String>();
         /**
@@ -1313,27 +1313,29 @@ public abstract class NanoHttpd {
     }
 
     public static class Cookie {
-        private String n, v, e;
 
-        public Cookie(String name, String value, String expires) {
+        private String n, v, e, p;
+
+        public Cookie(String name, String value, String expires, String path) {
             n = name;
             v = value;
             e = expires;
+			p = path;
         }
 
-        public Cookie(String name, String value) {
-            this(name, value, 30);
+        public Cookie(String name, String value, String path) {
+            this(name, value, 30, path);
         }
 
-        public Cookie(String name, String value, int numDays) {
+        public Cookie(String name, String value, int numDays, String path) {
             n = name;
             v = value;
             e = getHTTPTime(numDays);
+			p = path;
         }
 
         public String getHTTPHeader() {
-            String fmt = "%s=%s; expires=%s";
-            return String.format(fmt, n, v, e);
+            return String.format("%s=%s; expires=%s; path=%s", n, v, e, p);
         }
 
         public static String getHTTPTime(int days) {
@@ -1348,7 +1350,7 @@ public abstract class NanoHttpd {
     /**
      * Provides rudimentary support for cookies.
      * Doesn't support 'path', 'secure' nor 'httpOnly'.
-     * Feel free to improve it and/or add unsupported features.
+     * Feel free to improve it and/or put unsupported features.
      *
      * @author LordFokas
      */
@@ -1410,7 +1412,7 @@ public abstract class NanoHttpd {
         }
 
         /**
-         * Internally used by the webserver to add all queued cookies into the Response's HTTP Headers.
+         * Internally used by the webserver to put all queued cookies into the Response's HTTP Headers.
          *
          * @param response The Response object to which headers the queued cookies will be added.
          */

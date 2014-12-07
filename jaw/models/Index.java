@@ -1,10 +1,12 @@
 package models;
 
-import Core.Environment;
-import Core.Model;
+import Core.*;
+import Core.InternalError;
 import Sql.CortegeProtocol;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Vector;
 
 /**
  * Created by Savonin on 2014-11-24
@@ -20,22 +22,28 @@ public class Index extends Model {
 	}
 
 	/**
+	 *
+	 * @param userID
+	 * @return
+	 */
+	public ResultSet fetchUserEmployee(Integer userID) throws InternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("users", "u")
+			.join("employee", "e", "e.user_id = u.id")
+			.join("company", "c", "c.id = e.company_id")
+			.where("u.id = ?")
+			.execute(new Object[] { userID })
+			.select();
+	}
+
+	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return null;
-	}
-
-	/**
-	 * Insert someone in database, where 't' is future object
-	 * @param cortegeProtocol Some object, which implements CollageProtocol
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol add(CortegeProtocol cortegeProtocol) throws Exception {
+	public CortegeProtocol createFromSet(ResultSet result) throws InternalError, ExternalError, SQLException {
 		return null;
 	}
 }

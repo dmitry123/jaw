@@ -1,10 +1,15 @@
 package Server;
 
 import Core.*;
+import Core.InternalError;
+import Sql.Connection;
 import Terminal.Machine;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,48 +35,156 @@ public class WebServer extends NanoHttpd {
 	@Override
 	public Response serve(IHTTPSession session) throws Exception {
 
-		Method method = session.getMethod();
+		Method sessionMethod = session.getMethod();
 		String uri = session.getUri();
-		Map<String, String> parameters = session.getParms();
-		FileLoader fileLoader = FileLoader.getFileLoader();
 		InputStream uriData = null;
-		String resultPath = Config.SERVER_PATH + uri.substring(1);
-		Mime mime = Mime.findByExtension(getFileExtension(uri));
+		Map<String, String> postFiles = new HashMap<String, String>();
+		View view = null;
 
-		logger.log(method + " '" + uri + "' ");
-
-		try {
-			if (uri.length() > 1 && uri.indexOf(0) != '/' && mime != null) {
-				uriData = mime.getLoader().load(resultPath);
+		// Parse body for post request
+		if (Method.PUT.equals(sessionMethod) || Method.POST.equals(sessionMethod)) {
+			try {
+				session.parseBody(postFiles);
+			} catch (IOException e) {
+				return new Response(Response.Status.OK, Mime.TEXT_PLAIN.getName(), e.getMessage());
+			} catch (ResponseException e) {
+				return new Response(e.getStatus(), Mime.TEXT_PLAIN.getName(), e.getMessage());
 			}
-		} catch (Exception ignored) {
-			logger.log("Can't load file : \"" + uri + "\"");
 		}
 
-		if (uriData == null && mime == null) {
-			return new Response(fileLoader.loadIndex());
-		} else {
-			return new Response(Response.Status.OK,
-					mime.getName(), uriData);
+		try {
+			// Get mime's type
+			Mime mime = Mime.findByExtension(getFileExtension(uri));
+
+			// If we have mime type, then load file
+			if (mime != null) {
+				uri = uri.substring(1);
+				try {
+					return new Response(Response.Status.OK, mime.getName(), mime.getLoader().load(uri));
+				} catch (InternalError ignored) {
+					return new Response(Response.Status.NOT_FOUND, mime.getName(), "");
+				}
+			}
+
+			// Split link into paths
+			String[] pathLink = uri.substring(1).split("/");
+
+			String projectName;
+			String actionName;
+
+			// Try to get project path or throw AccessDenied
+			if (pathLink.length > 0 && pathLink[0].length() > 0) {
+				projectName = pathLink[0];
+			} else {
+				return new Response("<html><body><h1>Access Denied</h1></body></html>");
+			}
+
+			String totalPath = "";
+
+			// Build path to action's controller
+			for (int i = 1; i < pathLink.length - 1; i++) {
+				totalPath += pathLink[i];
+				if (i != pathLink.length - 2) {
+					totalPath += ".";
+				}
+			}
+
+			// Last path should be action
+			actionName = pathLink[pathLink.length - 1];
+
+			// If we have unresolved symbols then set it to default
+			if (pathLink.length == 1) {
+				totalPath = "index";
+				actionName = "view";
+			}
+
+			// Find or create environment by project's name
+			Environment environment = EnvironmentManager.getInstance()
+					.get(projectName);
+
+			// Read session from browser's cookie
+			String sessionID = session.getCookies().read("JAW_SESSION_ID");
+
+			if (sessionID == null) {
+
+				// Generate random session id
+				sessionID = PasswordEncryptor.generateSessionID();
+
+				// Put session identifier into browser's cookie
+				session.getCookies().set(new Cookie(
+					"JAW_SESSION_ID", sessionID, 30, "/"
+				));
+			}
+
+			// Set environment's session ID
+			environment.setSessionID(sessionID);
+
+			// Set router session and redirect to our controller's action
+			environment.getRouter().setSession(session);
+			environment.getRouter().redirect(totalPath, actionName);
+
+			// Get current controller after invocation
+			Controller controller = environment.getRouter().getController();
+
+			if (controller == null) {
+
+				// If we havn't loaded controller, then load index controller
+				controller = environment.getControllerManager().get("index");
+
+				if (controller == null) {
+					return new Response(Response.Status.NOT_FOUND, Mime.TEXT_HTML.getName(),
+						"<html><body><h1>404</h1></body></html>"
+					);
+				}
+
+				// Invoke action 404
+				controller.action404();
+			} else {
+
+				// Load controller's view
+				view = environment.getRouter().getController().getView();
+			}
+
+			if (view != null && view.getHtmlContent() != null) {
+				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
+					environment.getMustacheDefiner().execute(view.getHtmlContent())
+				);
+			} else {
+				if (controller.getAjaxResponse() != null) {
+					return new Response(controller.getAjaxResponse());
+				} else {
+					return new Response("<html><body><h1>Hello, World</h1></body></html>");
+				}
+			}
+		} catch (InternalError e) {
+
+			JSONObject errorResponse = new JSONObject();
+
+			errorResponse.put("status", false);
+			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
+
+			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(), errorResponse.toString());
 		}
 	}
 
 	/**
 	 * @throws Core.InternalError
 	 */
-	public static void run(Environment environment) throws Core.InternalError {
+	public static void run() throws Core.InternalError {
 
 		WebServer server = new WebServer();
-		Machine terminal = new Machine(environment);
+		Machine terminal = new Machine(
+			EnvironmentManager.getInstance().get("jaw")
+		);
 
 		try {
 			server.start();
 		} catch (IOException ioe) {
-			logger.log("Couldn't start server: " + ioe.getMessage());
+			logger.log("couldn't start server: " + ioe.getMessage());
 			System.exit(-1);
 		}
 
-		logger.log("Server started");
+		logger.log("server started");
 		System.out.println("Server Terminal:");
 
 		terminal.register("terminal",
@@ -80,7 +193,7 @@ public class WebServer extends NanoHttpd {
 		terminal.start();
 
 		server.stop();
-		logger.log("Server stopped");
+		logger.log("server stopped");
 	}
 
 	/**

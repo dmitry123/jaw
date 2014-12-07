@@ -1,10 +1,11 @@
 package Server;
 
+import Core.*;
 import Core.InternalError;
-import Core.Logger;
 import Terminal.*;
 import Terminal.Error;
 
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -53,7 +54,130 @@ public class ServerTerminal extends Station {
 		register(new Instruction(this, "compile", "-c") {
 			@Override
 			public void run(String[] arguments) throws InternalError, InterruptedException {
-				getMachine().getEnvironment().getProjectManager().getCompiler().compile();
+				if (arguments.length != 1) {
+					throw new Error(this,
+							"That instruction can assume only one argument"
+					);
+				}
+				Environment e = EnvironmentManager.getInstance().get(arguments[0]);
+				if (e == null) {
+					throw new Error(this,
+							"Unresolved project name (" + arguments[0] + ")"
+					);
+				}
+				e.getModelManager().cleanup();
+				e.getViewManager().cleanup();
+				e.getControllerManager().cleanup();
+				e.getProjectManager().getCompiler().cleanup();
+				e.getProjectManager().getCompiler().compile();
+			}
+		});
+
+		register(new Instruction(this, "cleanup", "-r") {
+			@Override
+			public void run(String[] arguments) throws InternalError, InterruptedException {
+				if (arguments.length != 1) {
+					throw new Error(this,
+							"That instruction can assume only one argument"
+					);
+				}
+				Environment e = EnvironmentManager.getInstance().get(arguments[0]);
+				if (e == null) {
+					throw new Error(this,
+							"Unresolved project name (" + arguments[0] + ")"
+					);
+				}
+				e.getModelManager().cleanup();
+				e.getViewManager().cleanup();
+				e.getControllerManager().cleanup();
+			}
+		});
+
+		register(new Station(machine, this) {
+			{
+				register(new Instruction(this, "show", "-s") {
+					@Override
+					public void run(String[] arguments) throws InternalError, InterruptedException {
+						if (arguments.length != 1) {
+							throw new Error(this,
+									"That instruction can assume only one argument"
+							);
+						}
+						Environment e = EnvironmentManager.getInstance().get(arguments[0]);
+						for (Map.Entry<String, User> i : e.getUserSessionManager().getUserHashMap().entrySet()) {
+							System.out.format(" + [%s] -> (%s)\n", i.getKey(), i.getValue().getLogin());
+						}
+						if (e.getUserSessionManager().getUserHashMap().size() == 0) {
+							System.out.println(" + No sessions open");
+						}
+					}
+				});
+
+				register(new Instruction(this, "clear", "-c") {
+					@Override
+					public void run(String[] arguments) throws InternalError, InterruptedException {
+						if (arguments.length != 1) {
+							throw new Error(this,
+									"That instruction can assume only one argument"
+							);
+						}
+						EnvironmentManager.getInstance().get(arguments[0])
+								.getUserSessionManager().getUserHashMap().clear();
+					}
+				});
+
+				register(new Instruction(this, "drop", "-d") {
+					@Override
+					public void run(String[] arguments) throws InternalError, InterruptedException {
+						if (arguments.length != 2) {
+							throw new Error(this,
+								"That instruction can assume only two arguments"
+							);
+						}
+						Map<String, User> stringUserMap = EnvironmentManager.getInstance().get(arguments[0])
+								.getUserSessionManager().getUserHashMap();
+						for (Map.Entry<String, User> i : stringUserMap.entrySet()) {
+							if (i.getValue().getLogin().equals(arguments[1])) {
+								stringUserMap.remove(i.getKey());
+								System.out.println(" + Session dropped [" + i.getKey() + "]");
+							}
+						}
+					}
+				});
+
+				register(new Instruction(this, "save", "-sf") {
+					@Override
+					public void run(String[] arguments) throws InternalError, InterruptedException {
+						if (arguments.length != 1) {
+							throw new Error(this,
+								"That instruction can assume only two arguments"
+							);
+						}
+						EnvironmentManager.getInstance().get(arguments[0]).getUserSessionManager().save();
+					}
+				});
+
+				register(new Instruction(this, "load", "-lf") {
+					@Override
+					public void run(String[] arguments) throws InternalError, InterruptedException {
+						if (arguments.length != 1) {
+							throw new Error(this,
+								"That instruction can assume only two arguments"
+							);
+						}
+						EnvironmentManager.getInstance().get(arguments[0]).getUserSessionManager().load();
+					}
+				});
+			}
+
+			@Override
+			public String getName() {
+				return "session";
+			}
+
+			@Override
+			public String getTag() {
+				return "-s";
 			}
 		});
 	}

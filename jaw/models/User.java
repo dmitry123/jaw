@@ -1,11 +1,15 @@
 package models;
 
 import Core.Environment;
+import Core.ExternalError;
 import Core.InternalError;
+import Sql.Command;
 import Sql.CortegeRow;
 import Core.Model;
 
+import javax.xml.transform.Result;
 import java.sql.*;
+import java.sql.SQLException;
 
 /**
  * UserTable
@@ -28,7 +32,7 @@ public class User extends Model<User.Row> {
 	 * 		already exists
 	 * 	@throws InternalError
 	 */
-	public boolean exists(String login) throws InternalError {
+	public boolean exists(String login) throws InternalError, ExternalError, SQLException {
 		try {
 			return execute("SELECT * FROM users WHERE login=?", login)
 					.next();
@@ -43,28 +47,32 @@ public class User extends Model<User.Row> {
 	 * @return - Created row from bind
 	 */
 	@Override
-	public Row createFromSet(ResultSet result) throws Exception {
+	public Row createFromSet(ResultSet result) throws InternalError, ExternalError, SQLException {
 		return new Row(result.getInt("id"), result.getString("login"),
-			result.getString("hash"));
+			result.getString("hash"), result.getString("email"));
 	}
 
 	/**
-	 * Insert someone in database, where 't' is future object
 	 *
-	 * @param row
-	 * 		Some object, which implements CollageProtocol
-	 * @throws Exception
+	 * @param login
+	 * @param hash
+	 * @param email
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-    @Override
-    public Row add(Row row) throws Exception {
-        if (fetchByLogin(row.getLogin()) != null) {
-            throw new InternalError("UserTable/add : 'User with that name already exists (" + row.getLogin() + ")'");
-        }
-		execute("INSERT INTO users (login, hash) VALUES(?, ?)",
-			row.getLogin(), row.getHash());
-		row.changeID(last().getID());
-		return row;
-    }
+	public Row register(String login, String hash, String email) throws InternalError, ExternalError, SQLException {
+		if (exists(login)) {
+			throw new ExternalError(ExternalError.Code.UserAlreadyRegistered);
+		}
+		getConnection().command()
+			.insert("users", "login, hash, email")
+			.values("?, ?, ?")
+			.execute(new Object[] { login, hash, email })
+			.insert();
+		return last();
+	}
 
 	/**
 	 * Find object in table by
@@ -72,67 +80,85 @@ public class User extends Model<User.Row> {
 	 *
 	 * @param login - User's login
 	 * @return Founded object
-	 * @throws Exception
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
 	 */
-	public Row fetchByLogin(String login) throws Exception {
-		ResultSet rs = execute("SELECT * FROM users WHERE login = ?",
-				login);
-		if (!rs.next()) {
-			return null;
-		}
-		return createFromSet(rs);
+	public ResultSet fetchByLogin(String login) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("users")
+			.where("LOWER(login) = LOWER(?)")
+			.execute(new Object[] { login })
+			.select();
+	}
+
+	/**
+	 *
+	 * @param login
+	 * @param hash
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public ResultSet fetchByLoginAndHash(String login, String hash) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("users")
+			.where("LOWER(login) = LOWER(?)")
+			.and("hash = ?")
+			.execute(new Object[] { login, hash })
+			.select();
+	}
+
+	/**
+	 *
+	 * @param email
+	 * @return
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public ResultSet fetchByMail(String email) throws InternalError, ExternalError, SQLException {
+		return getConnection().command()
+			.select("*")
+			.from("users")
+			.where("email = ?")
+			.execute(new Object[] { email })
+			.select();
 	}
 
 	/**
 	 * UserRow
 	 */
-	public static class Row extends CortegeRow {
+	public static class Row extends Core.User {
 
 		/**
 		 * @param login User's Name
-		 * @param passwordHash Password hash
+		 * @param hash Password hash
 		 */
-		public Row(String login, String passwordHash) {
-			this(0, login, passwordHash);
+		public Row(String login, String hash, String email) {
+			super(0, login, hash); this.email = email;
 		}
 
 		/**
 		 * @param id - User's ID
 		 * @param login - User's Name
-		 * @param passwordHash - Password hash
+		 * @param hash - Password hash
 		 */
-		public Row(int id, String login, String passwordHash) {
-			super(id); this.login = login; this.passwordHash = passwordHash;
+		public Row(int id, String login, String hash, String email) {
+			super(id, login, hash); this.email = email;
 		}
 
 		/**
-		 * @return User's name
+		 * @return - User's email
 		 */
-		public String getLogin() {
-			return login;
+		public String getEmail() {
+			return email;
 		}
 
-		/**
-		 * @return User's password
-		 */
-		public String getHash() {
-			return passwordHash;
-		}
-
-		/**
-		 * User's Name
-		 */
-		private String login;
-
-		/**
-		 * Password Hash
-		 */
-		private String passwordHash;
+		private String email;
 	}
-
-	/**
-	 * Group Table
-	 */
-	private Group groupModel
-		= new Group(getEnvironment());
 }

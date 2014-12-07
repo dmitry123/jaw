@@ -3,7 +3,8 @@ package Core;
 import Sql.Connection;
 import Sql.CortegeProtocol;
 import Sql.SqlTypeBinder;
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,7 +41,151 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Created row from bind
 	 * @throws Core.InternalError
 	 */
-	public abstract CortegeProtocol createFromSet(ResultSet result) throws Exception;
+	public abstract CortegeProtocol createFromSet(ResultSet result) throws InternalError, ExternalError, SQLException;
+
+	/**
+	 * Fetch row from list via it's action name
+	 * @param fetchAction - Fetch action name
+	 * @param argumentList - List with arguments
+	 * @return - Found row
+	 * @throws InternalError
+	 */
+	public T fetchRow(String fetchAction, Object... argumentList) throws InternalError, ExternalError, SQLException {
+		Method method;
+		Class<?>[] typeList = new Class<?>[
+			argumentList.length
+		];
+		try {
+			int i = 0;
+			for (Object a : argumentList) {
+				typeList[i++] = a.getClass();
+			}
+			method = getClass().getMethod(
+				fetchAction, typeList
+			);
+		} catch (NoSuchMethodException e) {
+			throw new InternalError(
+				"Model/fetchRow() : \"" + e.getMessage() + "\""
+			);
+		}
+		try {
+			Object result = method.invoke(this, argumentList);
+			if (result instanceof ResultSet) {
+				if (((ResultSet) result).next()) {
+					return (T) createFromSet(((ResultSet) result));
+				}
+				return null;
+			} else {
+				return ((T) result);
+			}
+		} catch (IllegalAccessException e) {
+			throw new InternalError(
+				"Model/fetchRow() : \"" + e.getMessage() + "\""
+			);
+		} catch (InvocationTargetException e) {
+			throw new InternalError(
+				e.getCause().getMessage()
+			);
+		}
+	}
+
+	/**
+	 * Fetch row from list via it's action name
+	 * @param fetchAction - Fetch action name
+	 * @param argumentList - List with arguments
+	 * @return - Found row
+	 * @throws InternalError
+	 */
+	public ResultSet fetchSet(String fetchAction, Object... argumentList) throws InternalError, ExternalError, SQLException {
+		Method method;
+		Class<?>[] typeList = new Class<?>[
+				argumentList.length
+			];
+		try {
+			int i = 0;
+			for (Object a : argumentList) {
+				typeList[i++] = a.getClass();
+			}
+			method = getClass().getMethod(
+					fetchAction, typeList
+			);
+		} catch (NoSuchMethodException e) {
+			throw new InternalError(
+				"Model/fetchSet() : \"No such method - " + e.getMessage() + "\""
+			);
+		}
+		try {
+			Object result = method.invoke(this, argumentList);
+			if (result instanceof ResultSet) {
+				return ((ResultSet) result);
+			} else {
+				return null;
+			}
+		} catch (IllegalAccessException e) {
+			throw new InternalError(
+				"Model/fetchSet() : \"" + e.getMessage() + "\""
+			);
+		} catch (InvocationTargetException e) {
+			throw new InternalError(
+				e.getCause().getMessage()
+			);
+		}
+	}
+
+	/**
+	 * Fetch row from list via it's action name
+	 * @param fetchAction - Fetch action name
+	 * @param argumentList - List with arguments
+	 * @return - Found row
+	 * @throws InternalError
+	 */
+	public Vector<CortegeProtocol> fetchVector(String fetchAction, Object... argumentList) throws InternalError, ExternalError, SQLException {
+		Method method;
+		Class<?>[] typeList = new Class<?>[
+			argumentList.length
+		];
+		try {
+			int i = 0;
+			for (Object a : argumentList) {
+				typeList[i++] = a.getClass();
+			}
+			method = getClass().getMethod(
+				fetchAction, typeList
+			);
+		} catch (NoSuchMethodException e) {
+			throw new InternalError(
+				"Model/fetchVector() : \"" + e.getMessage() + "\""
+			);
+		}
+		try {
+			final Object result = method.invoke(
+				this, argumentList
+			);
+			if (result instanceof ResultSet) {
+				ResultSet rs = ((ResultSet) result);
+				Vector<CortegeProtocol> rv = new Vector<CortegeProtocol>(rs.getFetchSize());
+				while (rs.next()) {
+					rv.add(createFromSet(rs));
+				}
+				return rv;
+			}
+			try {
+				return (Vector<CortegeProtocol>) result;
+			} catch (ClassCastException e) {
+				return new Vector<CortegeProtocol>() {{
+					add(((T) result));
+				}};
+			}
+		} catch (IllegalAccessException e) {
+			throw new InternalError(
+				"Model/fetchVector() : \"" + e.getMessage() + "\""
+			);
+		} catch (InvocationTargetException e) {
+			throw new InternalError(
+				e.getCause().getMessage()
+			);
+		}
+	}
 
 	/**
 	 * Execute/Update/Prepare query
@@ -52,7 +197,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Result with executed statement
 	 * @throws Core.InternalError
 	 */
-    public ResultSet executeQuery(String query) throws InternalError {
+    public ResultSet executeQuery(String query) throws InternalError, ExternalError, SQLException {
 		try {
 			return getConnection().statement().executeQuery(query);
 		} catch (SQLException e) {
@@ -70,7 +215,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Result with executed statement
 	 * @throws Core.InternalError
 	 */
-    public int executeUpdate(String query) throws InternalError {
+    public int executeUpdate(String query) throws InternalError, ExternalError, SQLException {
 		try {
 			return getConnection().statement().executeUpdate(query);
 		} catch (SQLException e) {
@@ -88,7 +233,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Result with executed statement
 	 * @throws Core.InternalError
 	 */
-    public PreparedStatement prepareStatement(String query) throws InternalError {
+    public PreparedStatement prepareStatement(String query) throws InternalError, ExternalError, SQLException {
 		try {
 			return getConnection().getSqlConnection().prepareStatement(query);
 		} catch (SQLException e) {
@@ -109,7 +254,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Result with executed statement
 	 * @throws InternalError
 	 */
-	public ResultSet execute(String query, Object... list) throws InternalError {
+	public ResultSet execute(String query, Object... list) throws InternalError, ExternalError, SQLException {
 		try {
 			PreparedStatement preparedStatement = getConnection().getSqlConnection()
 				.prepareStatement(query);
@@ -133,24 +278,18 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	}
 
 	/**
-	 * Insert someone in database, where
-	 * 't' is future object
-	 *
-	 * @param t
-	 * 		Some object, which implements CollageProtocol
-	 * @throws Exception
-	 */
-    public abstract T add(T t) throws Exception;
-
-	/**
 	 * @return - Last element in db
 	 * @throws Exception
 	 */
-	public T last() throws Exception {
+	public T last() throws InternalError, ExternalError, SQLException {
 		ResultSet rs = execute("SELECT * FROM " + tableName +
 			" ORDER BY id DESC LIMIT 1");
-		if (!rs.next()) {
-			throw new InternalError("ModelHelper/last() \"Row hasn't been attached to table\"");
+		try {
+			if (!rs.next()) {
+				throw new InternalError("ModelHelper/last() \"Row hasn't been attached to table\"");
+			}
+		} catch (SQLException e) {
+			throw new InternalError("Model/last() : \"" + e.getMessage() + "\"");
 		}
 		return ((T) createFromSet(rs));
 	}
@@ -164,25 +303,28 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Founded object
 	 * @throws Exception
 	 */
-    public T fetchByID(int id) throws Exception {
-		ResultSet rs = execute("SELECT * FROM " + tableName +
-			" WHERE id = ?", id);
-		if (!rs.next()) {
-			throw new ExternalError(ExternalError.Code.InvalidPrimaryKey);
+    public ResultSet fetchByID(Integer id) throws InternalError, ExternalError, SQLException {
+		ResultSet resultSet = getConnection().command()
+			.select("*")
+			.from(tableName)
+			.where("id = ?")
+			.execute(new Object[] { id })
+			.select();
+		if (!resultSet.next()) {
+			throw new InternalError("Model/fetchByID() : \"Invalid primary key (" + id + ")\"");
 		}
-		return ((T) createFromSet(rs));
+		return resultSet;
 	}
 
 	/**
 	 * Build fetchList with all elements
 	 * by 'where' statement
 	 *
-	 * @param
-	 * 		where Where statement
+	 * @param where Where statement
 	 * @return Vector with founded rows
 	 * @throws Exception
 	 */
-    public Vector<T> fetchList(String where) throws Exception {
+    public Vector<T> fetchList(String where) throws InternalError, ExternalError, SQLException {
 
 		ResultSet rs = execute("SELECT * FROM " + tableName + "" +
 			(where.length() > 0 ? "WHERE " + where : ""));
@@ -204,7 +346,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * 		Some object, which implements CollageProtocol
 	 * @throws Exception
 	 */
-    public void erase(T t) throws Exception {
+    public void erase(T t) throws InternalError, ExternalError, SQLException {
 		if (t.getID() != 0) {
 			erase(t.getID());
 		} else {
@@ -219,7 +361,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @param id - Row's identifier
 	 * @throws Exception
 	 */
-    public void erase(int id) throws Exception {
+    public void erase(int id) throws InternalError, ExternalError, SQLException {
 		execute("DELETE FROM " + tableName + "WHERE id=?", id);
 	}
 
@@ -227,7 +369,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Table's size
 	 * @throws Exception
 	 */
-    public int size() throws Exception {
+    public int size() throws InternalError, ExternalError, SQLException {
 		int size = 0;
 		ResultSet resultSet =  executeQuery("SELECT * FROM " + tableName);
 		while (resultSet.next()) {
@@ -245,7 +387,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Boolean state
 	 * @throws Exception
 	 */
-    public boolean exists(int id) throws Exception {
+    public boolean exists(int id) throws InternalError, ExternalError, SQLException {
         return fetchByID(id) != null;
     }
 
@@ -256,7 +398,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return vector with results
 	 * @throws Exception
 	 */
-	public Vector<T> list() throws Exception {
+	public Vector<T> list() throws InternalError, ExternalError, SQLException {
         return fetchList("");
     }
 
@@ -270,7 +412,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Vector with founded rows
 	 * @throws Exception
 	 */
-	public Vector<T> filter(Filter<T> f) throws Exception {
+	public Vector<T> filter(Filter<T> f) throws InternalError, ExternalError, SQLException {
         Vector<T> list = fetchList("");
         for (int i = 0; i < list.size(); i++) {
             if (!f.test(list.get(i))) {
@@ -279,15 +421,6 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
         }
         return list;
     }
-
-	/**
-	 * Truncate current table
-	 *
-	 * @throws Exception
-	 */
-	public void truncate() throws Exception {
-		executeUpdate("TRUNCATE " + tableName);
-	}
 
 	/**
 	 * Get MySql's helper object,

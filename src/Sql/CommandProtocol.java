@@ -11,7 +11,6 @@ public interface CommandProtocol {
 
 	/**
 	 * Apply selection from table
-	 *
 	 * @param items - Items to select from table(s)
 	 * @return - Current self instance
 	 * @throws Core.InternalError
@@ -20,12 +19,27 @@ public interface CommandProtocol {
 
 	/**
 	 * Apply insert action
-	 *
 	 * @param columns - Column to insert into table
 	 * @return - Current self instance
 	 * @throws Core.InternalError
 	 */
-	public CommandProtocol insert(String columns) throws Core.InternalError;
+	public CommandProtocol insert(String table, String columns) throws Core.InternalError;
+
+	/**
+	 * Delete rows from table
+	 * @param table - Table name
+	 * @return - Current self instance
+	 * @throws InternalError
+	 */
+	public CommandProtocol delete(String table) throws InternalError;
+
+	/**
+	 * Set limit to query
+	 * @param value - Row's limit
+	 * @return - Current self instance
+	 * @throws Core.InternalError
+	 */
+	public CommandProtocol limit(int value) throws Core.InternalError;
 
 	/**
 	 * Insert values to query
