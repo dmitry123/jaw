@@ -1,25 +1,90 @@
 <div class="modal fade" id="modal-god-controller">
-    <div class="modal-dialog" style="width: 500px;">
+    <div class="modal-dialog" style="width: 550px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Контроллер Бога</h4>
+                <h4 class="modal-title">Панель администратора</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-xs-11 col-xs-offset-1">
-                            <b>Привилегии</b>
-                        </div>
-                        <br><br>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" title="" placeholder="Ключ">
-                        </div>
-                        <div class="col-xs-3">
-                            <input type="text" class="form-control" title="" placeholder="Название">
-                        </div>
-                        <div class="col-xs-4">
-                            <input type="text" class="form-control" title="" placeholder="Описание">
+                        <div class="panel-group col-md-10 col-md-offset-1" id="accordion" role="tablist" aria-multiselectable="true">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="headingOne">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            Привилегии
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                    <div class="panel-body">
+                                        <div class="col-md-3 col-md-offset-1">
+                                            <h5>Ключ</h5>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" title="" placeholder="Ключ">
+                                        </div>
+                                        <br><br>
+                                        <div class="col-md-3 col-md-offset-1">
+                                            <h5>Имя</h5>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" title="" placeholder="Имя">
+                                        </div>
+                                        <br><br>
+                                        <div class="col-md-3 col-md-offset-1">
+                                            <h5>Описание</h5>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" title="" placeholder="Описание">
+                                        </div>
+                                        <br><br>
+                                        <div class="col-md-offset-4">
+                                            <button class="btn btn-danger" style="margin-left: -10px;">Удалить</button>
+                                            <button class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="headingTwo">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            Группы
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                    <div class="panel-body">
+                                        <div class="col-md-3 col-md-offset-1">
+                                            <h5>Ключ</h5>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" title="" placeholder="Ключ">
+                                        </div>
+                                        <br><br>
+                                        <div class="col-md-3 col-md-offset-1">
+                                            <h5>Имя</h5>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" title="" placeholder="Имя">
+                                        </div>
+                                        <br><br>
+                                        <div class="col-md-3 col-md-offset-1">
+                                            <h5>Описание</h5>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <input type="text" class="form-control" title="" placeholder="Описание">
+                                        </div>
+                                        <br><br>
+                                        <div class="col-md-offset-4">
+                                            <button class="btn btn-danger" style="margin-left: -10px;">Удалить</button>
+                                            <button class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

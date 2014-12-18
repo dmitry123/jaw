@@ -112,7 +112,7 @@ public class Employee extends Model<Employee.Row> {
 	 */
 	public ResultSet fetchByUserAndCompanyID(Integer userID, Integer companyID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
-			.select("*")
+			.distinct("*")
 			.from("employee")
 			.where("user_id = ?")
 			.and("company_id = ?")
