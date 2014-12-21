@@ -106,7 +106,7 @@ public class ProjectCompiler {
 	private void findAllFiles(Collection<String> collection, String path) throws InternalError {
 		File handle = new File(path);
 		if (!handle.exists()) {
-			if (!handle.mkdir()) {
+			if (!handle.mkdirs()) {
 				throw new InternalError(
 					"ProjectCompiler/findAllFiles() : \"Unable to create directory (" + handle.getPath() + ")\""
 				);

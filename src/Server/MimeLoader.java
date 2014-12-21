@@ -1,5 +1,6 @@
 package Server;
 
+import Core.Config;
 import Core.InternalError;
 
 import javax.imageio.ImageIO;

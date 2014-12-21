@@ -2,13 +2,10 @@ package Server;
 
 import Core.*;
 import Core.InternalError;
-import Sql.Connection;
 import Terminal.Machine;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +38,7 @@ public class WebServer extends NanoHttpd {
 		Map<String, String> postFiles = new HashMap<String, String>();
 		View view = null;
 
-		// Parse body for post request
+		// Parse body for post/put requests
 		if (Method.PUT.equals(sessionMethod) || Method.POST.equals(sessionMethod)) {
 			try {
 				session.parseBody(postFiles);
@@ -60,7 +57,7 @@ public class WebServer extends NanoHttpd {
 			if (mime != null) {
 				uri = uri.substring(1);
 				try {
-					return new Response(Response.Status.OK, mime.getName(), mime.getLoader().load(uri));
+					return new Response(Response.Status.OK, mime.getName(), mime.getLoader().load(Config.PROJECT_PATH + uri));
 				} catch (InternalError ignored) {
 					return new Response(Response.Status.NOT_FOUND, mime.getName(), "");
 				}

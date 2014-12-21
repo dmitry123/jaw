@@ -72,8 +72,9 @@ public class Config {
 	/**
 	 * Default index page
 	 */
-	public static final String SESSION_PATH = SERVER_PATH + "session" + File.separator;
+	public static final String SESSION_PATH = SERVER_PATH + "sessions" + File.separator;
 	public static final String INDEX_PATH = SERVER_PATH + "views/index.html";
+	public static final String PROJECT_PATH = SERVER_PATH + "projects" + File.separator;
 
 	/**
 	 * Default server port

@@ -32,7 +32,7 @@ public class Environment {
 			projectName += File.separator;
 		}
 
-		this.projectPath = projectName;
+		this.projectPath = Config.PROJECT_PATH + projectName;
 	}
 
 	/**
