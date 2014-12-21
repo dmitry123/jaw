@@ -1,0 +1,67 @@
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img src="/jaw/images/logo-small.png" width="35" height="22">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <!-- Проект -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Проект</a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Создать файл</a></li>
+                        <li><a href="#">Открыть файл</a></li>
+                        <li><a href="#">Удалить файл</a></li>
+                        <!--<li class="divider"></li>-->
+                    </ul>
+                </li>
+                <!-- Компания -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Компания</a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" onclick="$('#modal-employee').modal()">Сотрудники</a></li>
+                        <!--<li class="divider"></li>-->
+                    </ul>
+                </li>
+                <!-- Управление -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Управление</a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Создать</a></li>
+                        <li><a href="#">Открыть</a></li>
+                        <li><a href="#">Удалить</a></li>
+                        <!--<li class="divider"></li>-->
+                    </ul>
+                </li>
+                <!-- Контроль версий -->
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">VCS</a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Создать файл</a></li>
+                        <li><a href="#">Открыть файл</a></li>
+                        <li><a href="#">Удалить файл</a></li>
+                        <!--<li class="divider"></li>-->
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#">
+                        <span class="glyphicon glyphicon-user"></span>
+                        <span class="system-login">{{User.Login}}</span>
+                        <span class="caret"></span>
+                    </a>
+                </li>
+                <li><a href="/jaw/user/logout"><span class="glyphicon glyphicon-log-out"></span></a></li>
+            </ul>
+        </div>
+    </div>
+</nav><br><br><br>
