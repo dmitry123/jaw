@@ -2,6 +2,7 @@ package Core;
 
 import Server.HtmlBuilder;
 import Server.NanoHttpd;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -182,6 +183,16 @@ public abstract class Controller extends Component {
 			throw new InternalError("Controller/setModel() : \"Controller already has view\"");
 		}
 		this.view = view;
+	}
+
+	/**
+	 * @param message - Message to show
+	 */
+	public void postErrorMessage(String message) {
+		JSONObject jsonResponse = new JSONObject();
+		jsonResponse.put("status", false);
+		jsonResponse.put("message", message);
+		setAjaxResponse(jsonResponse.toString());
 	}
 
 	/**

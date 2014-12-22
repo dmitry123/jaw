@@ -40,34 +40,39 @@ public class Project extends Controller {
 		// Find user for current session
 		final Core.User user = getEnvironment().getUserSessionManager().get();
 
+		if (user == null) {
+			postErrorMessage("Доступ закрыт, обновите страницу");
+			return;
+		}
+
 		// Create json response object
 		JSONObject jsonResponse = new JSONObject();
 
-		if (user != null) {
+		// Fetch cortege with current employee's identifier
+		CortegeProtocol employeeProtocol = employeeModel.fetchRow("fetchByUserAndCompanyID",
+			user.getID(), companyID
+		);
 
-			// Fetch cortege with current employee's identifier
-			CortegeProtocol employeeProtocol = employeeModel.fetchRow("fetchByUserAndCompanyID",
-				user.getID(), companyID
-			);
-
-			if (employeeProtocol != null) {
-
-				// Register new project with it's product in database
-				projectModel.fetchRow("register", name, leaderID, companyID, employeeProtocol.getID());
-
-				// Set status to true
-				jsonResponse.put("message", "Проект был успешно добавлен");
-				jsonResponse.put("status", true);
-
-			} else {
-				jsonResponse.put("message", "Только сотрудники компании могут создавать проекты");
-				jsonResponse.put("status", false);
-			}
-
-		} else {
-			jsonResponse.put("message", "Доступ закрыт, обновите страницу");
-			jsonResponse.put("status", false);
+		if (employeeProtocol == null) {
+			postErrorMessage("Только сотрудники компании могут создавать проекты");
+			return;
 		}
+
+		boolean isAllowed = employeeModel.fetchSet("fetchPrivilege",
+			employeeProtocol.getID(), "create-project"
+		).next();
+
+		if (!isAllowed) {
+			postErrorMessage("Недостаточно прав для совершения действий");
+			return;
+		}
+
+		// Register new project with it's product in database
+		projectModel.fetchRow("register", name, leaderID, companyID, employeeProtocol.getID());
+
+		// Set status to true
+		jsonResponse.put("message", "Проект был успешно добавлен");
+		jsonResponse.put("status", true);
 
 		setAjaxResponse(jsonResponse.toString());
 	}

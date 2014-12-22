@@ -1,5 +1,3 @@
-var helloWorld = "Hello, World";
-
 var ErrorMessage = {
 	activate: function() {
 		if (parseInt($(".error-message").css("left")) < 0) {
@@ -409,7 +407,7 @@ var GodButton = {
 };
 
 $(document).ready(function() {
-	//BackgroundParallax.construct();
+//	BackgroundParallax.construct();
 	ErrorMessage.construct();
 	FormLogin.construct();
 	ModalRegister.construct();

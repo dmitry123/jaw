@@ -18,25 +18,11 @@ public class Employee extends Model<Employee.Row> {
 	/**
 	 * Basic constructor with helper and table's name as arguments
 	 * @param environment - Current environment
-	 * @param tableName - Table's name
 	 */
 	public Employee(Environment environment) {
 		super(environment, "employee");
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @param surname
-	 * @param patronymic
-	 * @param userID
-	 * @param managerID
-	 * @param directorID
-	 * @param companyID
-	 * @return
-	 * @throws InternalError
-	 * @throws SQLException
-	 */
 	public Row register(String name, String surname, String patronymic, Integer userID, Integer managerID, Integer directorID, Integer companyID) throws InternalError, SQLException, ExternalError {
 		getConnection().command()
 			.insert("employee", "name, surname, user_id, manager_id, director_id, company_id, patronymic")
@@ -46,14 +32,6 @@ public class Employee extends Model<Employee.Row> {
 		return last();
 	}
 
-	/**
-	 *
-	 * @param companyID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
 	public ResultSet fetchByCompanyID(Integer companyID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.select("*")
@@ -63,14 +41,6 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param userID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
 	public ResultSet fetchByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.select("*")
@@ -80,16 +50,7 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param employeeID
-	 * @param priviligeKey
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchPrivilege(Integer employeeID, String priviligeKey) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchPrivilege(Integer employeeID, String privilegeKey) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.select("*")
 			.from("privilege", "p")
@@ -97,19 +58,10 @@ public class Employee extends Model<Employee.Row> {
 			.join("employee_group", "eg", "eg.group_id = g.id")
 			.where("p.id = ?")
 			.and("eg.employee_id = ?")
-			.execute(new Object[] { priviligeKey, employeeID })
+			.execute(new Object[] { privilegeKey, employeeID })
 			.select();
 	}
 
-	/**
-	 *
-	 * @param userID
-	 * @param companyID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
 	public ResultSet fetchByUserAndCompanyID(Integer userID, Integer companyID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.distinct("*")
@@ -120,14 +72,6 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
 	public ResultSet fetchGroups(Integer employeeID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.select("g.*")
@@ -139,14 +83,6 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
 	public ResultSet fetchCompaniesByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.select("*")
@@ -158,14 +94,6 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
 	public ResultSet fetchProjectsByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
 			.select("e.*, p.*, r.*")
@@ -179,93 +107,41 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 */
 	public static class Row extends CortegeRow {
 
-		/**
-		 *
-		 * @param name
-		 * @param surname
-		 * @param patronymic
-		 * @param userID
-		 * @param managerID
-		 * @param directorID
-		 * @param companyID
-		 */
 		public Row(String name, String surname, String patronymic, int userID, int managerID, int directorID, int companyID) {
 			this(0, name, surname, patronymic, userID, managerID, directorID, companyID);
 		}
 
-		/**
-		 *
-		 * @param id
-		 * @param name
-		 * @param surname
-		 * @param patronymic
-		 * @param userID
-		 * @param managerID
-		 * @param directorID
-		 * @param companyID
-		 */
 		public Row(int id, String name, String surname, String patronymic, int userID, int managerID, int directorID, int companyID) {
 			super(id); this.name = name; this.surname = surname; this.patronymic = patronymic; this.userID = userID;
 				this.managerID = managerID; this.directorID = directorID; this.companyID = companyID;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public String getName() {
 			return name;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public String getSurname() {
 			return surname;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public String getPatronymic() {
 			return patronymic;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public int getUserID() {
 			return userID;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public int getManagerID() {
 			return managerID;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public int getDirectorID() {
 			return directorID;
 		}
 
-		/**
-		 *
-		 * @return
-		 */
 		public int getCompanyID() {
 			return companyID;
 		}

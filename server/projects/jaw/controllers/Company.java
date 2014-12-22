@@ -39,7 +39,7 @@ public class Company extends Controller {
 	public void actionRegister() throws InternalError, ExternalError, SQLException {
 
 		JSONObject jsonResponse = new JSONObject();
-		boolean isAllowed = false;
+		boolean isAllowed = true;
 
 		// Initialize post variables
 		final String companyName = POST("company");
@@ -57,9 +57,7 @@ public class Company extends Controller {
 
 		// Check for opened user's session
 		if (user == null) {
-			jsonResponse.put("status", false);
-			jsonResponse.put("message", "Доступ запрещен, обновите страницу");
-			setAjaxResponse(jsonResponse.toString());
+			postErrorMessage("Доступ запрещен, обновите страницу");
 			return;
 		}
 
@@ -68,23 +66,14 @@ public class Company extends Controller {
 
 		// If employee isn't null, then check it's privilege to create companies
 		if (employee != null) {
-
-			// Fetch set with privilege
-			ResultSet privilegeSet = employeeModel.fetchSet("fetchPrivilege", employee.getID(), "create-company");
-
-			// Get flag and set to allow boolean cause
-			if (privilegeSet.next()) {
-				isAllowed = privilegeSet.getBoolean("flag");
-			} else {
-				isAllowed = true;
-			}
+			isAllowed = employeeModel.fetchSet("fetchPrivilege",
+				employee.getID(), "company-create"
+			).next();
 		}
 
 		// Don't allow to apply changes to employee without necessary privilege
 		if (!isAllowed) {
-			jsonResponse.put("status", false);
-			jsonResponse.put("message", "Недостаточно прав для совершения действий");
-			setAjaxResponse(jsonResponse.toString());
+			postErrorMessage("Недостаточно прав для совершения действий");
 			return;
 		}
 
