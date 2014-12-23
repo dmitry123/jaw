@@ -1,15 +1,15 @@
 package models;
 
-import Core.Environment;
-import Core.ExternalError;
+import Core.*;
 import Core.InternalError;
 import Sql.Command;
 import Sql.CortegeRow;
-import Core.Model;
 
 import javax.xml.transform.Result;
 import java.sql.*;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Vector;
 
 /**
  * UserTable
@@ -128,6 +128,28 @@ public class User extends Model<User.Row> {
 			.where("email = ?")
 			.execute(new Object[] { email })
 			.select();
+	}
+	/**
+	 * Fetch all elements from table
+	 * @return - List with elements
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public Vector<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, ExternalError, SQLException {
+		ResultSet resultSet = getConnection().command()
+			.select("*")
+			.from("users", "u")
+			.join("employee", "e", "e.user_id = u.id")
+			.execute()
+			.select();
+		Vector<LinkedHashMap<String, String>> result
+			= new Vector<>();
+		while (resultSet.next()) {
+			LinkedHashMap<String, String> map =
+				buildMap(resultSet);
+		}
+		return result;
 	}
 
 	/**

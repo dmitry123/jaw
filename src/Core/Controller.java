@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public abstract class Controller extends Component {
 	/**
 	 * Default index action
 	 */
-	public abstract void actionView() throws InternalError;
+	public abstract void actionView() throws InternalError, ExternalError, SQLException;
 
 	/**
 	 * Action error 404

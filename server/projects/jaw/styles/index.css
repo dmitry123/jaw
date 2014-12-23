@@ -1,5 +1,5 @@
-body, html {
-    width: 99%;
+body, html .vertical-center {
+	/*width: 100%;*/
 }
 
 .center {
@@ -11,7 +11,6 @@ body, html {
 }
 
 .vertical-center {
-	min-height: 100%;
 	min-height: 100vh;
 	display: flex;
 	align-items: center;
@@ -155,4 +154,9 @@ button {
 	right: 0;
 	top: 50px;
 	cursor: pointer;
+}
+
+.jaw-table-wrapper {
+	margin-left: 10px;
+	width: calc(100% - 20px);
 }

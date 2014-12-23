@@ -9,12 +9,8 @@ import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Vector;
 import java.sql.ResultSet;
 
-/**
- * Created by Savonin on 2014-12-05
- */
 public class Company extends Controller {
 
 	/**

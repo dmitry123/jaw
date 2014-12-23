@@ -398,10 +398,11 @@ var ModalCreateProject = {
 var GodButton = {
 	construct: function() {
 		$(".god-button").click(function() {
-			$("#modal-god-controller").modal({
+			window.location.href = "/jaw/admin/view";
+			/* $("#modal-god-controller").modal({
 				backdrop: 'static',
 				keyboard: false
-			});
+			}); */
 		});
 	}
 };

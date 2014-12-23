@@ -52,10 +52,10 @@ public class Employee extends Model<Employee.Row> {
 
 	public ResultSet fetchPrivilege(Integer employeeID, String privilegeKey) throws InternalError, ExternalError, SQLException {
 		return getConnection().command()
-			.select("*")
+			.select("p.*")
 			.from("privilege", "p")
-			.join("groups", "g", "p.group_id = g.id")
-			.join("employee_group", "eg", "eg.group_id = g.id")
+			.join("group_privilege", "gp", "gp.privilege_id = p.id")
+			.join("employee_group", "eg", "eg.group_id = gp.group_id")
 			.where("p.id = ?")
 			.and("eg.employee_id = ?")
 			.execute(new Object[] { privilegeKey, employeeID })

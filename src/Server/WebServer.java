@@ -142,17 +142,27 @@ public class WebServer extends NanoHttpd {
 				view = environment.getRouter().getController().getView();
 			}
 
+			Response response;
+
 			if (view != null && view.getHtmlContent() != null) {
-				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
+				response = new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
 					environment.getMustacheDefiner().execute(view.getHtmlContent())
 				);
 			} else {
 				if (controller.getAjaxResponse() != null) {
-					return new Response(controller.getAjaxResponse());
+					response = new Response(controller.getAjaxResponse());
 				} else {
-					return new Response("<html><body><h1>Hello, World</h1></body></html>");
+					response = new Response("<html><body><h1>Hello, World</h1></body></html>");
 				}
 			}
+
+			String sitePath = projectName + "/" + totalPath + "/" + actionName;
+
+			if (controller.getAjaxResponse() == null) {
+				response.addHeader("Location", "0; url=/" + sitePath);
+			}
+
+			return response;
 		} catch (InternalError e) {
 
 			JSONObject errorResponse = new JSONObject();

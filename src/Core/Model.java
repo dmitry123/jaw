@@ -3,11 +3,17 @@ package Core;
 import Sql.Connection;
 import Sql.CortegeProtocol;
 import Sql.SqlTypeBinder;
+import org.json.JSONArray;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 /**
@@ -185,6 +191,44 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 				e.getCause().getMessage()
 			);
 		}
+	}
+
+	/**
+	 * Build vector with associated with it's value, column and table results
+	 * @param page - Current page
+	 * @param limit - Limit per page
+	 * @return - Vector with results
+	 * @throws InternalError
+	 * @throws ExternalError
+	 * @throws SQLException
+	 */
+	public Vector<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, ExternalError, SQLException {
+		ResultSet resultSet = getConnection().command()
+			.select("*")
+			.from(getTableName())
+			.execute()
+			.select();
+		Vector<LinkedHashMap<String, String>> result
+			= new Vector<LinkedHashMap<String, String>>();
+		while (resultSet.next()) {
+			result.add(buildMap(resultSet));
+		}
+		return result;
+	}
+
+	/**
+	 * Associate columns with tables
+	 * @param resultSet - Set with results
+	 * @return - Map with names and values
+	 */
+	public static LinkedHashMap<String, String> buildMap(ResultSet resultSet) throws SQLException{
+		ResultSetMetaData columns = resultSet.getMetaData();
+		LinkedHashMap<String, String> columnMap
+			= new LinkedHashMap<String, String>();
+		for (int i = 1; i <= columns.getColumnCount(); i++) {
+			columnMap.put(columns.getTableName(i) + "." + columns.getColumnName(i), resultSet.getString(i));
+		}
+		return columnMap;
 	}
 
 	/**
