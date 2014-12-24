@@ -13,7 +13,8 @@ public enum ComponentType {
 	MODULE     ("module",     Config.MODULE_PATH),
 	WIDGET     ("widget",     Config.WIDGET_PATH),
 	BINARY     ("binary",     Config.BINARY_PATH),
-	LOG        ("log",        Config.LOG_PATH);
+	LOG        ("log",        Config.LOG_PATH),
+	COMPONENT  ("component",  Config.COMPONENT_PATH);
 
 	/**
 	 * @param name - Name

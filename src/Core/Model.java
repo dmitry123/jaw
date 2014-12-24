@@ -47,7 +47,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Created row from bind
 	 * @throws Core.InternalError
 	 */
-	public abstract CortegeProtocol createFromSet(ResultSet result) throws InternalError, ExternalError, SQLException;
+	public abstract CortegeProtocol createFromSet(ResultSet result) throws InternalError, SQLException;
 
 	/**
 	 * Fetch row from list via it's action name
@@ -56,7 +56,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Found row
 	 * @throws InternalError
 	 */
-	public T fetchRow(String fetchAction, Object... argumentList) throws InternalError, ExternalError, SQLException {
+	public T fetchRow(String fetchAction, Object... argumentList) throws InternalError, SQLException {
 		Method method;
 		Class<?>[] typeList = new Class<?>[
 			argumentList.length
@@ -102,7 +102,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Found row
 	 * @throws InternalError
 	 */
-	public ResultSet fetchSet(String fetchAction, Object... argumentList) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchSet(String fetchAction, Object... argumentList) throws InternalError, SQLException {
 		Method method;
 		Class<?>[] typeList = new Class<?>[
 				argumentList.length
@@ -145,7 +145,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Found row
 	 * @throws InternalError
 	 */
-	public Vector<CortegeProtocol> fetchVector(String fetchAction, Object... argumentList) throws InternalError, ExternalError, SQLException {
+	public Vector<CortegeProtocol> fetchVector(String fetchAction, Object... argumentList) throws InternalError, SQLException {
 		Method method;
 		Class<?>[] typeList = new Class<?>[
 			argumentList.length
@@ -199,12 +199,11 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @param limit - Limit per page
 	 * @return - Vector with results
 	 * @throws InternalError
-	 * @throws ExternalError
 	 * @throws SQLException
 	 */
-	public Vector<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, ExternalError, SQLException {
+	public Collection<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, SQLException {
 		ResultSet resultSet = getConnection().command()
-			.select("*")
+			.distinct("*")
 			.from(getTableName())
 			.execute()
 			.select();
@@ -226,7 +225,21 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		LinkedHashMap<String, String> columnMap
 			= new LinkedHashMap<String, String>();
 		for (int i = 1; i <= columns.getColumnCount(); i++) {
-			columnMap.put(columns.getTableName(i) + "." + columns.getColumnName(i), resultSet.getString(i));
+			String field = columns.getTableName(i) + "." + columns.getColumnName(i);
+			if (columnMap.containsKey(field)) {
+				String value = columnMap.get(field);
+				if (value.startsWith("[")) {
+					JSONArray array = new JSONArray(value);
+					array.put(resultSet.getString(i));
+					columnMap.put(field, array.toString());
+				} else {
+					JSONArray array = new JSONArray();
+					array.put(resultSet.getString(i));
+					columnMap.put(field, array.toString());
+				}
+			} else {
+				columnMap.put(field, resultSet.getString(i));
+			}
 		}
 		return columnMap;
 	}
@@ -241,7 +254,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Result with executed statement
 	 * @throws Core.InternalError
 	 */
-    public ResultSet executeQuery(String query) throws InternalError, ExternalError, SQLException {
+    public ResultSet executeQuery(String query) throws InternalError, SQLException {
 		try {
 			return getConnection().statement().executeQuery(query);
 		} catch (SQLException e) {
@@ -259,7 +272,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Result with executed statement
 	 * @throws Core.InternalError
 	 */
-    public int executeUpdate(String query) throws InternalError, ExternalError, SQLException {
+    public int executeUpdate(String query) throws InternalError, SQLException {
 		try {
 			return getConnection().statement().executeUpdate(query);
 		} catch (SQLException e) {
@@ -277,7 +290,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Result with executed statement
 	 * @throws Core.InternalError
 	 */
-    public PreparedStatement prepareStatement(String query) throws InternalError, ExternalError, SQLException {
+    public PreparedStatement prepareStatement(String query) throws InternalError, SQLException {
 		try {
 			return getConnection().getSqlConnection().prepareStatement(query);
 		} catch (SQLException e) {
@@ -298,7 +311,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Result with executed statement
 	 * @throws InternalError
 	 */
-	public ResultSet execute(String query, Object... list) throws InternalError, ExternalError, SQLException {
+	public ResultSet execute(String query, Object... list) throws InternalError, SQLException {
 		try {
 			PreparedStatement preparedStatement = getConnection().getSqlConnection()
 				.prepareStatement(query);
@@ -325,7 +338,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Last element in db
 	 * @throws Exception
 	 */
-	public T last() throws InternalError, ExternalError, SQLException {
+	public T last() throws InternalError, SQLException {
 		ResultSet rs = execute("SELECT * FROM " + tableName +
 			" ORDER BY id DESC LIMIT 1");
 		try {
@@ -347,7 +360,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Founded object
 	 * @throws Exception
 	 */
-    public ResultSet fetchByID(Integer id) throws InternalError, ExternalError, SQLException {
+    public ResultSet fetchByID(Integer id) throws InternalError, SQLException {
 		ResultSet resultSet = getConnection().command()
 			.select("*")
 			.from(tableName)
@@ -368,7 +381,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Vector with founded rows
 	 * @throws Exception
 	 */
-    public Vector<T> fetchList(String where) throws InternalError, ExternalError, SQLException {
+    public Vector<T> fetchList(String where) throws InternalError, SQLException {
 
 		ResultSet rs = execute("SELECT * FROM " + tableName + "" +
 			(where.length() > 0 ? "WHERE " + where : ""));
@@ -390,7 +403,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * 		Some object, which implements CollageProtocol
 	 * @throws Exception
 	 */
-    public void erase(T t) throws InternalError, ExternalError, SQLException {
+    public void erase(T t) throws InternalError, SQLException {
 		if (t.getID() != 0) {
 			erase(t.getID());
 		} else {
@@ -405,15 +418,19 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @param id - Row's identifier
 	 * @throws Exception
 	 */
-    public void erase(int id) throws InternalError, ExternalError, SQLException {
-		execute("DELETE FROM " + tableName + "WHERE id=?", id);
+    public void erase(int id) throws InternalError, SQLException {
+		getConnection().command()
+			.delete(getTableName())
+			.where("id = ?")
+			.execute(new Object[] { id })
+			.delete();
 	}
 
 	/**
 	 * @return Table's size
 	 * @throws Exception
 	 */
-    public int size() throws InternalError, ExternalError, SQLException {
+    public int size() throws InternalError, SQLException {
 		int size = 0;
 		ResultSet resultSet =  executeQuery("SELECT * FROM " + tableName);
 		while (resultSet.next()) {
@@ -431,7 +448,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Boolean state
 	 * @throws Exception
 	 */
-    public boolean exists(int id) throws InternalError, ExternalError, SQLException {
+    public boolean exists(int id) throws InternalError, SQLException {
         return fetchByID(id) != null;
     }
 
@@ -442,7 +459,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return vector with results
 	 * @throws Exception
 	 */
-	public Vector<T> list() throws InternalError, ExternalError, SQLException {
+	public Vector<T> list() throws InternalError, SQLException {
         return fetchList("");
     }
 
@@ -456,7 +473,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return Vector with founded rows
 	 * @throws Exception
 	 */
-	public Vector<T> filter(Filter<T> f) throws InternalError, ExternalError, SQLException {
+	public Vector<T> filter(Filter<T> f) throws InternalError, SQLException {
         Vector<T> list = fetchList("");
         for (int i = 0; i < list.size(); i++) {
             if (!f.test(list.get(i))) {

@@ -116,6 +116,13 @@ public class WebServer extends NanoHttpd {
 			// Set environment's session ID
 			environment.setSessionID(sessionID);
 
+			Core.User user = environment.getUserSessionManager().get();
+
+			if (user != null) {
+				environment.getMustacheDefiner().put("User.Login", user.getLogin());
+				environment.getMustacheDefiner().put("User.ID", Integer.toString(user.getID()));
+			}
+
 			// Set router session and redirect to our controller's action
 			environment.getRouter().setSession(session);
 			environment.getRouter().redirect(totalPath, actionName);
@@ -152,7 +159,11 @@ public class WebServer extends NanoHttpd {
 				if (controller.getAjaxResponse() != null) {
 					response = new Response(controller.getAjaxResponse());
 				} else {
-					response = new Response("<html><body><h1>Hello, World</h1></body></html>");
+					controller = environment.getControllerManager().get("Index");
+					controller.action404();
+					response = new Response(Response.Status.NOT_FOUND, Mime.TEXT_PLAIN.getName(),
+						controller.getAjaxResponse()
+					);
 				}
 			}
 
@@ -163,14 +174,29 @@ public class WebServer extends NanoHttpd {
 			}
 
 			return response;
+
 		} catch (InternalError e) {
+
+			StringWriter stringWriter = new StringWriter();
+
+			PrintWriter writer = new PrintWriter(
+				stringWriter
+			);
+
+			e.printStackTrace(writer);
 
 			JSONObject errorResponse = new JSONObject();
 
 			errorResponse.put("status", false);
 			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
 
-			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(), errorResponse.toString());
+			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
+				errorResponse.toString()
+			);
+
+//			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
+//				"<body style=\"width:100%; height:100%;background-color:lightgray;\"><pre style=\"color: #7b1010;\">" + stringWriter.toString() + "</pre></body>"
+//			);
 		}
 	}
 

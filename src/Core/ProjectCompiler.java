@@ -59,8 +59,9 @@ public class ProjectCompiler {
 
 		for (String s : files) {
 
-			String newFilePath = s.replace(projectName + File.separator,
-					projectName + File.separator + Config.BINARY_PATH);
+			String newFilePath = s.replace(projectPath,
+				projectPath + Config.BINARY_PATH
+			);
 
 			newFilePath = newFilePath.substring(0,
 				newFilePath.lastIndexOf(File.separator));

@@ -1,7 +1,6 @@
 package models;
 
 import Core.*;
-import Core.ExternalError;
 import Core.InternalError;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
@@ -17,21 +16,12 @@ public class Group extends Model<Group.Row> {
 	/**
 	 * Basic constructor with helper and table's name as arguments
 	 * @param environment - Current environment
-	 * @param tableName - Table's name
 	 */
 	public Group(Environment environment) {
 		super(environment, "groups");
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchByName(String name) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchByName(String name) throws InternalError, SQLException {
 		return getConnection().command()
 			.select("*")
 			.from("groups")
@@ -40,15 +30,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param userID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchGroupsByUser(Integer userID) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchGroupsByUser(Integer userID) throws InternalError, SQLException {
 		return getConnection().command()
 			.distinct("g.*")
 			.from("users", "u")
@@ -60,15 +42,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param userID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchGroupsByEmployee(Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchGroupsByEmployee(Integer employeeID) throws InternalError, SQLException {
 		return getConnection().command()
 			.distinct("g.*")
 			.from("employee", "e")
@@ -79,16 +53,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param groupID
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row bind(Integer groupID, Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public Row bind(Integer groupID, Integer employeeID) throws InternalError, SQLException {
 		getConnection().command()
 			.insert("employee_group", "employee_id, group_id")
 			.values("?, ?")
@@ -97,16 +62,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	/**
-	 *
-	 * @param groupName
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row bindWithGroupName(String groupName, Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public Row bindWithGroupName(String groupName, Integer employeeID) throws InternalError, SQLException {
 		ResultSet groupRow = fetchByName(groupName);
 		if (groupRow.next()) {
 			bind(groupRow.getInt("id"), employeeID);
@@ -114,14 +70,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	/**
-	 *
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row unbind(Integer groupID, Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public Row unbind(Integer groupID, Integer employeeID) throws InternalError, SQLException {
 		getConnection().command()
 			.delete("employee_group")
 			.where("group_id = ?")
@@ -131,14 +80,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	/**
-	 *
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row unbindWithGroupName(String groupName, Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public Row unbindWithGroupName(String groupName, Integer employeeID) throws InternalError, SQLException {
 		ResultSet groupRow = fetchByName(groupName);
 		if (groupRow.next()) {
 			unbind(groupRow.getInt("id"), employeeID);
@@ -185,7 +127,7 @@ public class Group extends Model<Group.Row> {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
 		return new Row(result.getInt("id"), result.getString("name"));
 	}
 }

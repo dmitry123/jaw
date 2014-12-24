@@ -1,7 +1,6 @@
 package models;
 
 import Core.*;
-import Core.ExternalError;
 import Core.InternalError;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
@@ -23,17 +22,7 @@ public class Project extends Model<Project.Row> {
 		super(environment, "project");
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @param leaderID
-	 * @param companyID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws InternalError, ExternalError, SQLException {
+	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws InternalError, SQLException {
 		Model productModel = getEnvironment().getModelManager().get("Product");
 		CortegeProtocol productProtocol = productModel.fetchRow("register", name, companyID, creatorID, 0);
 		getConnection().command()
@@ -44,15 +33,7 @@ public class Project extends Model<Project.Row> {
 		return last();
 	}
 
-	/**
-	 *
-	 * @param projectID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row delete(Integer projectID) throws InternalError, ExternalError, SQLException {
+	public Row delete(Integer projectID) throws InternalError, SQLException {
 		Model productModel = getEnvironment().getModelManager().get("Product");
 		ResultSet projectSet = getConnection().command()
 			.select("*")
@@ -111,7 +92,7 @@ public class Project extends Model<Project.Row> {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
 		return null;
 	}
 }

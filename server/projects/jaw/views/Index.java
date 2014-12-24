@@ -58,7 +58,6 @@ public class Index extends View {
 		template("modal/join-company");
 		template("modal/create-project");
 		template("modal/join-project");
-		template("modal/god-controller");
 		template("common/footer");
 	}
 }

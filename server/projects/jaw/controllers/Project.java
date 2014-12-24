@@ -1,7 +1,6 @@
 package controllers;
 
 import Core.*;
-import Core.ExternalError;
 import Core.InternalError;
 import Sql.CortegeProtocol;
 import org.json.JSONObject;
@@ -19,13 +18,12 @@ public class Project extends Controller {
 		super(environment);
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public void actionRegister() throws InternalError, ExternalError, SQLException {
+	@Override
+	public void actionGetTable() throws InternalError, SQLException {
+		super.actionGetTable();
+	}
+
+	public void actionRegister() throws InternalError, SQLException {
 
 		// Get post data fields
 		final int leaderID = Integer.parseInt(POST("leader_id"));
@@ -77,13 +75,7 @@ public class Project extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public void actionDelete() throws InternalError, ExternalError, SQLException {
+	public void actionDelete() throws InternalError, SQLException {
 
 		// Get post data fields
 		final int projectID = Integer.parseInt(POST("id"));

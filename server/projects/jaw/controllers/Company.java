@@ -1,7 +1,6 @@
 package controllers;
 
 import Core.*;
-import Core.ExternalError;
 import Core.InternalError;
 import Sql.CortegeProtocol;
 import org.json.JSONArray;
@@ -28,11 +27,12 @@ public class Company extends Controller {
 		redirect("Index", "Denied");
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 */
-	public void actionRegister() throws InternalError, ExternalError, SQLException {
+	@Override
+	public void actionGetTable() throws InternalError, SQLException {
+		super.actionGetTable();
+	}
+
+	public void actionRegister() throws InternalError, SQLException {
 
 		JSONObject jsonResponse = new JSONObject();
 		boolean isAllowed = true;
@@ -106,7 +106,7 @@ public class Company extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	public void actionDelete() throws InternalError, ExternalError, SQLException {
+	public void actionDelete() throws InternalError, SQLException {
 
 		JSONObject jsonResponse = new JSONObject();
 		boolean isAllowed = false;
@@ -163,13 +163,7 @@ public class Company extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public void actionGetCompanyEmployees() throws InternalError, ExternalError, SQLException {
+	public void actionGetCompanyEmployees() throws InternalError, SQLException {
 
 		JSONObject jsonResponse = new JSONObject();
 

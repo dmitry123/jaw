@@ -44,7 +44,7 @@ public class Index extends Controller {
 	 *
 	 * @throws InternalError
 	 */
-	public void actionProject() throws InternalError, ExternalError, SQLException {
+	public void actionProject() throws InternalError, SQLException {
 
 		Model companyModel = getModel("Company");
 
@@ -77,7 +77,7 @@ public class Index extends Controller {
 	 *
 	 * @throws InternalError
 	 */
-	public void actionGetEmployeeProjects() throws InternalError, ExternalError, SQLException {
+	public void actionGetEmployeeProjects() throws InternalError, SQLException {
 
 		// Load models
 		Model employeeModel = getModel("Employee");

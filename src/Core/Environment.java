@@ -46,6 +46,16 @@ public class Environment {
 			= new ModelManager(this);
 
 	/**
+	 * @return - Component's manager
+	 */
+	public ComponentManager getComponentManager() {
+		return componentManager;
+	}
+
+	private ComponentManager componentManager
+			= new ComponentManager(this);
+
+	/**
 	 * @return - Controller manager
 	 */
 	public ControllerManager getControllerManager() {
@@ -107,7 +117,7 @@ public class Environment {
 
 	/**
 	 *
-	 * @return
+	 * @return - User session manager
 	 */
 	public UserSessionManager getUserSessionManager() {
 		return userSessionManager;
@@ -118,7 +128,7 @@ public class Environment {
 
 	/**
 	 *
-	 * @return
+	 * @return - Mustache definer
 	 */
 	public MustacheDefiner getMustacheDefiner() {
 		return mustacheDefiner;
@@ -149,16 +159,14 @@ public class Environment {
 	}
 
 	/**
-	 *
-	 * @return
+	 * @return - Session's id
 	 */
 	public String getSessionID() {
 		return sessionID;
 	}
 
 	/**
-	 *
-	 * @param sessionID
+	 * @param sessionID - Session's id
 	 */
 	public void setSessionID(String sessionID) {
 		this.sessionID = sessionID;

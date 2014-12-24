@@ -18,13 +18,12 @@ public class User extends Controller {
 		super(environment);
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public void actionLogin() throws InternalError, ExternalError, SQLException {
+	@Override
+	public void actionGetTable() throws InternalError, SQLException {
+		super.actionGetTable();
+	}
+
+	public void actionLogin() throws InternalError, SQLException {
 
 		final String login = POST("login");
 		final String password = POST("password");
@@ -50,13 +49,7 @@ public class User extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public void actionRegister() throws InternalError, ExternalError, SQLException {
+	public void actionRegister() throws InternalError, SQLException {
 
 		final String login = POST("login");
 		final String password = POST("password");
@@ -80,10 +73,6 @@ public class User extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	/**
-	 *
-	 * @throws InternalError
-	 */
 	public void actionLogout() throws InternalError {
 
 		getSession().getCookies().delete("JAW_SESSION_ID");

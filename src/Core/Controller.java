@@ -2,11 +2,13 @@ package Core;
 
 import Server.HtmlBuilder;
 import Server.NanoHttpd;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +29,18 @@ public abstract class Controller extends Component {
 	/**
 	 * Default index action
 	 */
-	public abstract void actionView() throws InternalError, ExternalError, SQLException;
+	public abstract void actionView() throws InternalError, SQLException;
+
+	/**
+	 * Override that method to check privileges for action
+	 * @param privileges - List with privileges or rules
+	 * @return - True if access accepted else false
+	 * @throws InternalError
+	 * @throws SQLException
+	 */
+	public boolean checkAccess(String... privileges) throws InternalError, SQLException {
+		return true;
+	}
 
 	/**
 	 * Action error 404
@@ -36,6 +49,34 @@ public abstract class Controller extends Component {
 	public void action404() throws InternalError {
 		getHtmlBuilder().getHtml()
 			.h1().text("404");
+	}
+
+	/**
+	 * Default action to get information from database, to allow access
+	 * to table from controller override that method and invoke super method
+	 * @throws InternalError
+	 * @throws SQLException
+	 */
+	public void actionGetTable() throws InternalError, SQLException {
+		final String action = GET("action");
+		if (checkAccess()) {
+			JSONObject jsonResponse = new JSONObject();
+			jsonResponse.put("action", action);
+			if (action.equals("fetch")) {
+				jsonResponse.put("table", new JSONArray(
+					getModel().fetchTable(0, 0)
+				));
+			} else if (action.equals("add")) {
+			} else if (action.equals("update")) {
+			} else if (action.equals("delete")) {
+			} else {
+				postErrorMessage("Unknown action");
+			}
+			jsonResponse.put("status", true);
+			setAjaxResponse(jsonResponse.toString());
+		} else {
+			postErrorMessage("Недостаточно прав");
+		}
 	}
 
 	/**

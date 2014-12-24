@@ -61,6 +61,7 @@ public class Config {
 	public static final String SERVER_PATH     = "server"      + File.separator;
 	public static final String TEMPLATE_PATH   = "templates"   + File.separator;
 	public static final String CONTROLLER_PATH = "controllers" + File.separator;
+	public static final String COMPONENT_PATH  = "components"  + File.separator;
 	public static final String MODEL_PATH      = "models"      + File.separator;
 	public static final String VIEW_PATH       = "views"       + File.separator;
 	public static final String SCRIPT_PATH     = "scripts"     + File.separator;

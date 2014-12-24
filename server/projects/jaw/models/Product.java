@@ -1,7 +1,6 @@
 package models;
 
 import Core.*;
-import Core.ExternalError;
 import Core.InternalError;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
@@ -24,18 +23,7 @@ public class Product extends Model<Product.Row> {
 		super(environment, "product");
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @param companyID
-	 * @param creatorID
-	 * @param parentID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row register(String name, Integer companyID, Integer creatorID, Integer parentID) throws InternalError, ExternalError, SQLException{
+	public Row register(String name, Integer companyID, Integer creatorID, Integer parentID) throws InternalError, SQLException{
 		getConnection().command()
 			.insert("product", "name, company_id, creator_id, parent_id")
 			.values("?, ?, ?, ?")
@@ -44,15 +32,7 @@ public class Product extends Model<Product.Row> {
 		return last();
 	}
 
-	/**
-	 *
-	 * @param projectID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row delete(Integer productID) throws InternalError, ExternalError, SQLException {
+	public Row delete(Integer productID) throws InternalError, SQLException {
 		getConnection().command()
 			.delete("product")
 			.where("id = ?")
@@ -61,16 +41,7 @@ public class Product extends Model<Product.Row> {
 		return null;
 	}
 
-	/**
-	 *
-	 * @param productID
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row bind(Integer productID, Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public Row bind(Integer productID, Integer employeeID) throws InternalError, SQLException {
 		getConnection().command()
 			.insert("product_employee", "product_id, employee_id")
 			.values("?, ?")
@@ -79,16 +50,7 @@ public class Product extends Model<Product.Row> {
 		return last();
 	}
 
-	/**
-	 *
-	 * @param productID
-	 * @param employeeID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row unbind(Integer productID, Integer employeeID) throws InternalError, ExternalError, SQLException {
+	public Row unbind(Integer productID, Integer employeeID) throws InternalError, SQLException {
 		getConnection().command()
 			.delete("product_employee")
 			.where("product_id = ?")
@@ -183,7 +145,7 @@ public class Product extends Model<Product.Row> {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
 		return new Row(
 			result.getInt("id"),
 			result.getString("name"),

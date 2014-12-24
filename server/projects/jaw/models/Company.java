@@ -1,11 +1,12 @@
 package models;
 
 import Core.*;
-import Core.ExternalError;
 import Core.InternalError;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
-
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Vector;
 import java.lang.Integer;
 import java.lang.Object;
 import java.sql.ResultSet;
@@ -19,19 +20,11 @@ public class Company extends Model<Company.Row> {
 	/**
 	 * Basic constructor with helper and table's name as arguments
 	 * @param environment - Current environment
-	 * @param tableName - Table's name
 	 */
 	public Company(Environment environment) {
 		super(environment, "company");
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @return
-	 * @throws InternalError
-	 * @throws SQLException
-	 */
 	public boolean exists(String name) throws InternalError, SQLException {
 		ResultSet resultSet = getConnection().command()
 			.select("*")
@@ -42,15 +35,7 @@ public class Company extends Model<Company.Row> {
 		return resultSet.next();
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchByName(String name) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchByName(String name) throws InternalError, SQLException {
 		return getConnection().command()
 			.select("*")
 			.from("company")
@@ -59,15 +44,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param userID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchByUserID(Integer userID) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchByUserID(Integer userID) throws InternalError, SQLException {
 		return getConnection().command()
 			.select("c.*")
 			.from("company", "c")
@@ -78,15 +55,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param companyID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public ResultSet fetchEmployees(Integer companyID) throws InternalError, ExternalError, SQLException {
+	public ResultSet fetchEmployees(Integer companyID) throws InternalError, SQLException {
 		return getConnection().command()
 			.select("e.*")
 			.from("employee", "e")
@@ -95,16 +64,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @param director
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public CortegeRow updateDirector(String name, Integer director) throws InternalError, ExternalError, SQLException {
+	public CortegeRow updateDirector(String name, Integer director) throws InternalError, SQLException {
 		getConnection().command()
 			.update("company")
 			.set("director_id = ?")
@@ -114,13 +74,7 @@ public class Company extends Model<Company.Row> {
 		return null;
 	}
 
-	/**
-	 *
-	 * @return
-	 * @throws InternalError
-	 * @throws SQLException
-	 */
-	public CortegeRow register(String name) throws InternalError, ExternalError, SQLException {
+	public CortegeRow register(String name) throws InternalError, SQLException {
 		if (exists(name)) {
 			throw new InternalError(
 				"Company/register() : \"Company with that name already registered\""
@@ -134,15 +88,7 @@ public class Company extends Model<Company.Row> {
 		return last();
 	}
 
-	/**
-	 *
-	 * @param projectID
-	 * @return
-	 * @throws InternalError
-	 * @throws ExternalError
-	 * @throws SQLException
-	 */
-	public Row delete(Integer projectID) throws InternalError, ExternalError, SQLException {
+	public Row delete(Integer projectID) throws InternalError, SQLException {
 		getConnection().command()
 			.delete("project")
 			.where("id = ?")
@@ -151,9 +97,22 @@ public class Company extends Model<Company.Row> {
 		return null;
 	}
 
-	/**
-	 *
-	 */
+	@Override
+	public Collection<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, SQLException {
+		ResultSet resultSet = getConnection().command()
+			.distinct("*")
+			.from("company", "c")
+			.join("employee", "e", "c.director_id = e.id")
+			.execute()
+			.select();
+		Vector<LinkedHashMap<String, String>> result
+				= new Vector<LinkedHashMap<String, String>>();
+		while (resultSet.next()) {
+			result.add(buildMap(resultSet));
+		}
+		return result;
+	}
+
 	public static class Row extends CortegeRow {
 
 		/**
@@ -198,7 +157,7 @@ public class Company extends Model<Company.Row> {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
 		return new Row(result.getInt("id"), result.getString("name"), result.getInt("director_id"));
 	}
 }

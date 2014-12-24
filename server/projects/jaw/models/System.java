@@ -26,7 +26,7 @@ public class System extends Model {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, ExternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
 		return null;
 	}
 }

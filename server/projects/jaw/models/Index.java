@@ -42,7 +42,7 @@ public class Index extends Model {
 	 * @throws Core.InternalError
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws InternalError, ExternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws InternalError, SQLException {
 		return null;
 	}
 }
