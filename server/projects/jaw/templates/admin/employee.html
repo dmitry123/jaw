@@ -1,0 +1,38 @@
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-employee"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-employee", {
+            header: [
+                {
+                    id: "employee.id",
+                    name: "#",
+                    style: "width: 10px; text-align: center;"
+                },  {
+                    id: "employee.surname",
+                    name: "Фамилия"
+                },  {
+                    id: "employee.name",
+                    name: "Имя"
+                }, {
+                    id: "employee.patronymic",
+                    name: "Отчество"
+                }, {
+                    id: "users.login",
+                    name: "Пользователь"
+                }, /*{
+                    id: "employee.manager_id",
+                    name: "Менеджер"
+                }, {
+                    id: "employee.director_id",
+                    name: "Директор"
+                }, */{
+                    id: "company.name",
+                    name: "Компания"
+                }
+            ],
+            url: "/jaw/employee/getTable"
+        });
+    });
+</script>
