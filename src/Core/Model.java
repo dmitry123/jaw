@@ -225,6 +225,24 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			.delete();
 	}
 
+	private boolean isInteger(String s) {
+		try {
+			Integer.parseInt(s);
+		} catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+
+	private boolean isFloat(String s) {
+		try {
+			Float.parseFloat(s);
+		} catch(NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Update cortege by it's primary key
 	 * @param id - Row's identifier
@@ -242,7 +260,13 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			if (--size > 0) {
 				set += ", ";
 			}
-			objects.add(k.getValue());
+			if (isInteger(k.getValue())) {
+				objects.add(Integer.parseInt(k.getValue()));
+			} else if (isFloat(k.getValue())) {
+				objects.add(Float.parseFloat(k.getValue()));
+			} else {
+				objects.add(k.getValue());
+			}
 		}
 		objects.add(id);
 		return getConnection().command()

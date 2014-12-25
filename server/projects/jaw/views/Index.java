@@ -27,7 +27,6 @@ public class Index extends View {
 	public void renderView(Map<String, Object> hashData) throws Core.InternalError {
 		template("common/header");
 		template("index/view");
-		template("common/error");
 		template("modal/register");
 		template("modal/choose-project");
 		template("common/footer");
@@ -52,7 +51,6 @@ public class Index extends View {
 	public void renderProject(Map<String, Object> hashData) throws InternalError {
 		template("common/header");
 		template("index/project");
-		template("common/error");
 		template("modal/choose-project");
 		template("modal/create-company");
 		template("modal/join-company");

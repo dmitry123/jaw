@@ -65,7 +65,7 @@ var ModalRegister = {
                     if (!json.status) {
                         return ErrorMessage.post(json.message);
                     }
-                    window.location.href = "/jaw/system/view";
+                    window.location.href = "/jaw/index/project";
                 });
             });
         });
