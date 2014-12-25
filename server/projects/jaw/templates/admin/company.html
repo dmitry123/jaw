@@ -13,8 +13,14 @@
                     id: "company.name",
                     name: "Название",
                     style: "width: 100px"
-                },  {
-                    id: [
+                }, {
+                    id: "company.director_id",
+                    name: "Директор",
+                    type: "number",
+                    style: "width: 10px; text-align: center;"
+                }, {
+                    id: "company.id",
+                    show: [
                         "employee.surname",
                         "employee.name",
                         "employee.patronymic"
@@ -24,6 +30,7 @@
                     href: "/jaw/admin/employee?id=employee.id"
                 }
             ],
+            table: "company",
             url: "/jaw/company/getTable"
         });
     });

@@ -22,6 +22,7 @@ public class Admin extends View {
 		template("common/header");
 		template("admin/menu");
 		template("admin/user");
+		template("modal/jaw-table");
 		template("common/footer");
 	}
 
@@ -29,6 +30,7 @@ public class Admin extends View {
 		template("common/header");
 		template("admin/menu");
 		template("admin/employee");
+		template("modal/jaw-table");
 		template("common/footer");
 	}
 
@@ -36,6 +38,7 @@ public class Admin extends View {
 		template("common/header");
 		template("admin/menu");
 		template("admin/company");
+		template("modal/jaw-table");
 		template("common/footer");
 	}
 
@@ -43,6 +46,7 @@ public class Admin extends View {
 		template("common/header");
 		template("admin/menu");
 		template("admin/group");
+		template("modal/jaw-table");
 		template("common/footer");
 	}
 
@@ -50,6 +54,7 @@ public class Admin extends View {
 		template("common/header");
 		template("admin/menu");
 		template("admin/privilege");
+		template("modal/jaw-table");
 		template("common/footer");
 	}
 }

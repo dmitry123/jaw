@@ -84,6 +84,14 @@ var Jaw = Jaw || {
         this._widget = $(selector);
         this._properties = properties;
         this._selector = this.render();
+        this._active = null;
+    };
+
+    Table.prototype.active = function(active) {
+        if (arguments.length > 0) {
+            this._active = active;
+        }
+        return this._active;
     };
 
     Table.prototype.property = function(field, value) {
@@ -114,7 +122,69 @@ var Jaw = Jaw || {
         return this._selector;
     };
 
-    Table.prototype.action = function() {
+    Table.prototype.build = function(modal, row, readonly) {
+        var header = this.property("header");
+        var head = function(id) {
+            for (var i in header) {
+                if (header[i].id == id) {
+                    return header[i];
+                }
+            }
+            return null;
+        };
+        var form = modal.find(".jaw-table-form");
+        form.empty();
+        var stack = [];
+        for (var k in row) {
+            if (!head(k)) {
+                continue;
+            }
+            var name = head(k).name == "#" ? "Идентификатор" : head(k).name;
+            if (readonly && head(k).type == "password") {
+                continue;
+            }
+            var input = $("<input>", {
+                type: head(k).type || "text",
+                placeholder: name,
+                class: "form-control",
+                id: head(k).id.replace(".", "_"),
+                value: head(k).type != "password" ? row[k] : ""
+            });
+            if (readonly || head(k).id.endsWith(".id") && !head(k).type) {
+                input.attr("disabled", "disabled");
+            }
+            var group = $("<div></div>", {
+                class: "form-group required"
+            }).append(
+                $("<label></label>", {
+                    class: "col-md-offset-1 col-md-4 control-label",
+                    text: name
+                })
+            ).append(
+                $("<div></div>", {
+                    class: "col-md-6"
+                }).append(
+                    input
+                )
+            ).append(
+                $("<br>")
+            );
+            stack.push(group);
+        }
+        var order;
+        for (k in row) {
+            order = !(k.endsWith(".id"));
+            break;
+        }
+        for (var i in stack) {
+            form.append(stack[order ? stack.length - i - 1 : i]);
+        }
+        modal.modal();
+        this.active(row);
+    };
+
+    Table.prototype.action = function(row) {
+        var me = this;
         var container = $("<div></div>", {
             style: "text-align: center"
         });
@@ -123,12 +193,16 @@ var Jaw = Jaw || {
             $("<span></span>", {
                 class: "glyphicon glyphicon-pencil",
                 style: style
+            }).click(function() {
+                me.build($("#modal-jaw-table-edit"), row);
             })
         );
         container.append(
             $("<span></span>", {
                 class: "glyphicon glyphicon-remove",
                 style: style
+            }).click(function() {
+                me.build($("#modal-jaw-table-delete"), row, true);
             })
         );
         return container;
@@ -160,6 +234,7 @@ var Jaw = Jaw || {
     };
 
     Table.prototype.render = function() {
+        var me = this;
         var i;
         if (!this.has("header") || !this.has("url")) {
             return $("<div></div>", {
@@ -194,7 +269,7 @@ var Jaw = Jaw || {
             });
             var data = this.property("data")[k];
             for (i in head) {
-                var id = head[i].id;
+                var id = head[i].show || head[i].id;
                 var c;
                 if ($.isArray(id)) {
                     var separator = head[i].separator || ", ";
@@ -217,10 +292,6 @@ var Jaw = Jaw || {
                     for (var d in data) {
                         href = href.replace(d, data[d]);
                     }
-                    c = $("<button></button>", {
-                        class: "btn btn-link",
-                        href: href
-                    }).append(c);
                 }
                 body.append(c);
             }
@@ -228,11 +299,51 @@ var Jaw = Jaw || {
                 $("<td></td>", {
                     style: "width: 100px;"
                 }).append(
-                    this.action()
+                    this.action(data)
                 )
             );
             table.append(body);
         }
+        var editModal = $("#modal-jaw-table-edit");
+        var deleteModal = $("#modal-jaw-table-delete");
+        editModal
+            .find("#jaw-table-save").click(function() {
+                var attributes = {};
+                var form = editModal.find(".jaw-table-form");
+                for (var h in head) {
+                    var s = form.find("#" + head[h].id.replace(".", "_"));
+                    if (!s.val().length) {
+                        s.parents(".form-group").addClass("has-error");
+                        return true;
+                    }
+                    attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
+                }
+                var button = $(this).button("loading");
+                $.get(me.property("url") + "?action=update", attributes, function(data) {
+                    var json = $.parseJSON(data);
+                    if (!json.status) {
+                        return ErrorMessage.post(json.message);
+                    }
+                    button.button("reset");
+                    editModal.modal("hide");
+                    me.update();
+                });
+            });
+        deleteModal
+            .find("#jaw-table-delete").click(function() {
+                var button = $(this).button("loading");
+                $.get(me.property("url") + "?action=delete", {
+                    id: me.active()[me.property("table") + ".id"]
+                }, function(data) {
+                    var json = $.parseJSON(data);
+                    if (!json.status) {
+                        return ErrorMessage.post(json.message);
+                    }
+                    button.button("reset");
+                    deleteModal.modal("hide");
+                    me.update();
+                });
+            });
         return table;
     };
 
@@ -336,6 +447,10 @@ var Jaw = Jaw || {
         child.prototype=  new F();
         child.prototype.constructor = child;
         child.superclass = parent.prototype;
+    };
+
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
 
 })(Jaw);

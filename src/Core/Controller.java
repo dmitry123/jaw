@@ -4,6 +4,7 @@ import Server.HtmlBuilder;
 import Server.NanoHttpd;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import sun.security.util.Password;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -68,7 +69,22 @@ public abstract class Controller extends Component {
 				));
 			} else if (action.equals("add")) {
 			} else if (action.equals("update")) {
+				int id = Integer.parseInt(GET("id"));
+				getSession().getParms().remove("id");
+				getSession().getParms().remove("action");
+				if (getSession().getParms().containsKey("hash")) {
+					String password = getSession().getParms().remove("hash");
+					getSession().getParms().put("hash",
+						PasswordEncryptor.crypt(GET("login"), password)
+					);
+				}
+				getModel().updateByID(
+					id, getSession().getParms()
+				);
 			} else if (action.equals("delete")) {
+				getModel().deleteByID(
+					Integer.parseInt(GET("id"))
+				);
 			} else {
 				postErrorMessage("Unknown action");
 			}

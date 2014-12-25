@@ -1,7 +1,3 @@
-body, html .vertical-center {
-	/*width: 100%;*/
-}
-
 .center {
 	text-align: center;
 }
@@ -22,7 +18,7 @@ body, html .vertical-center {
 	background-color: #2c82af;
 	box-shadow: 15px 15px 10px rgba(70, 70, 70, 0.75);
     height: auto;
-    padding: 5px;
+    padding: 15px;
 }
 
 .login-login {
@@ -154,9 +150,4 @@ button {
 	right: 0;
 	top: 50px;
 	cursor: pointer;
-}
-
-.jaw-table-wrapper {
-	margin-left: 10px;
-	width: calc(100% - 20px);
 }

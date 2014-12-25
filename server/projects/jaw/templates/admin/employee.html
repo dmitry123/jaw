@@ -19,19 +19,18 @@
                     id: "employee.patronymic",
                     name: "Отчество"
                 }, {
-                    id: "users.login",
-                    name: "Пользователь"
-                }, /*{
-                    id: "employee.manager_id",
-                    name: "Менеджер"
+                    id: "users.id",
+                    name: "Пользователь",
+                    show: "users.login",
+                    type: "number"
                 }, {
-                    id: "employee.director_id",
-                    name: "Директор"
-                }, */{
-                    id: "company.name",
-                    name: "Компания"
+                    id: "company.id",
+                    name: "Компания",
+                    show: "company.name",
+                    type: "number"
                 }
             ],
+            table: "employee",
             url: "/jaw/employee/getTable"
         });
     });

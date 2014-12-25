@@ -1,8 +1,6 @@
 package Core;
 
-import Sql.Connection;
-import Sql.CortegeProtocol;
-import Sql.SqlTypeBinder;
+import Sql.*;
 import org.json.JSONArray;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,10 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * AbstractTable
@@ -205,6 +200,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		ResultSet resultSet = getConnection().command()
 			.distinct("*")
 			.from(getTableName())
+			.order("id")
 			.execute()
 			.select();
 		Vector<LinkedHashMap<String, String>> result
@@ -213,6 +209,48 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			result.add(buildMap(resultSet));
 		}
 		return result;
+	}
+
+	/**
+	 * Delete cortege from table by identifier
+	 * @param id - Row's identifier
+	 * @throws InternalError
+	 * @throws SQLException
+	 */
+	public int deleteByID(Integer id) throws InternalError, SQLException {
+		return getConnection().command()
+			.delete(getTableName())
+			.where("id = ?")
+			.execute(new Object[] { id })
+			.delete();
+	}
+
+	/**
+	 * Update cortege by it's primary key
+	 * @param id - Row's identifier
+	 * @param values - Map with values
+	 * @return - Count of updates
+	 * @throws InternalError
+	 * @throws SQLException
+	 */
+	public int updateByID(Integer id, Map<String, String> values) throws InternalError, SQLException {
+		String set = "";
+		Vector<Object> objects = new Vector<Object>();
+		int size = values.size();
+		for (Map.Entry<String, String> k : values.entrySet()) {
+			set += k.getKey() + " = ?";
+			if (--size > 0) {
+				set += ", ";
+			}
+			objects.add(k.getValue());
+		}
+		objects.add(id);
+		return getConnection().command()
+			.update(getTableName())
+			.set(set)
+			.where("id = ?")
+			.execute(objects.toArray())
+			.update();
 	}
 
 	/**
