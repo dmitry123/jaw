@@ -4,10 +4,7 @@ import Core.*;
 import Core.InternalError;
 import org.omg.CORBA.INTERNAL;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * MySqlHelper
@@ -83,7 +80,10 @@ public class Connection {
 	 */
 	public PreparedStatement prepare(String sql) throws Core.InternalError {
 		try {
-			return sqlConnection.prepareStatement(sql);
+			return sqlConnection.prepareStatement(sql,
+				ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_READ_ONLY
+			);
 		} catch (SQLException e) {
 			throw new InternalError(
 				"Connection/prepare() : \"" + e.getMessage() + "\""
@@ -101,7 +101,7 @@ public class Connection {
 	/**
 	 * @return - New command
 	 */
-	public Command command() {
+	public Command createCommand() {
 		return new Command(this);
 	}
 

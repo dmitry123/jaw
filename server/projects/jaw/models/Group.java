@@ -22,7 +22,7 @@ public class Group extends Model<Group.Row> {
 	}
 
 	public ResultSet fetchByName(String name) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("*")
 			.from("groups")
 			.where("name = ?")
@@ -31,30 +31,30 @@ public class Group extends Model<Group.Row> {
 	}
 
 	public ResultSet fetchGroupsByUser(Integer userID) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.distinct("g.*")
-			.from("users", "u")
-			.join("employee", "e", "e.user_id = u.id")
-			.join("employee_group", "eg", "eg.employee_id = e.id")
-			.join("groups", "g", "g.id = eg.group_id")
+			.from("users as u")
+			.join("employee as e", "e.user_id = u.id")
+			.join("employee_group as eg", "eg.employee_id = e.id")
+			.join("groups as g", "g.id = eg.group_id")
 			.where("u.id = ?")
 			.execute(new Object[] { userID })
 			.select();
 	}
 
 	public ResultSet fetchGroupsByEmployee(Integer employeeID) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.distinct("g.*")
-			.from("employee", "e")
-			.join("employee_group", "eg", "eg.employee_id = e.id")
-			.join("groups", "g", "g.id = eg.group_id")
+			.from("employee as e")
+			.join("employee_group as eg", "eg.employee_id = e.id")
+			.join("groups as g", "g.id = eg.group_id")
 			.where("e.id = ?")
 			.execute(new Object[] { employeeID })
 			.select();
 	}
 
 	public Row bind(Integer groupID, Integer employeeID) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.insert("employee_group", "employee_id, group_id")
 			.values("?, ?")
 			.execute(new Object[] { employeeID, groupID })
@@ -71,7 +71,7 @@ public class Group extends Model<Group.Row> {
 	}
 
 	public Row unbind(Integer groupID, Integer employeeID) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.delete("employee_group")
 			.where("group_id = ?")
 			.and("employee_id = ?")

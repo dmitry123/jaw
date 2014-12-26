@@ -26,11 +26,11 @@ public class Index extends Model {
 	 * @return
 	 */
 	public ResultSet fetchUserEmployee(Integer userID) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("*")
-			.from("users", "u")
-			.join("employee", "e", "e.user_id = u.id")
-			.join("company", "c", "c.id = e.company_id")
+			.from("users as u")
+			.join("employee as e", "e.user_id = u.id")
+			.join("company as c", "c.id = e.company_id")
 			.where("u.id = ?")
 			.execute(new Object[] { userID })
 			.select();

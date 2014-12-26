@@ -7,72 +7,6 @@ var Jaw = Jaw || {
     "use strict";
 
     /*
-      ___ _____ _ _____ ___
-     / __|_   _/_\_   _| __|
-     \__ \ | |/ _ \| | | _|
-     |___/ |_/_/ \_\_| |___|
-
-     */
-
-    var State = function(machine, name, index) {
-        this._machine = machine;
-        this._name = name;
-        this._index = index;
-    };
-
-    State.prototype.load = function() {
-        throw new Error("State/load() - Not implemented");
-    };
-
-    State.prototype.unload = function() {
-        throw new Error("State/unload() - Not implemented");
-    };
-
-    State.prototype.machine = function() {
-        return this._machine;
-    };
-
-    State.prototype.name = function(name) {
-        if (arguments.length > 0) {
-            this._name = name;
-        }
-        return this._name;
-    };
-
-    State.prototype.index = function(index) {
-        if (arguments.length > 0) {
-            this._index = index;
-        }
-        return this._index;
-    };
-
-    /*
-      __  __   _   ___ _  _ ___ _  _ ___
-     |  \/  | /_\ / __| || |_ _| \| | __|
-     | |\/| |/ _ \ (__| __ || || .` | _|
-     |_|  |_/_/ \_\___|_||_|___|_|\_|___|
-
-     */
-
-    var Machine = function() {
-        this._states = [];
-    };
-
-    Machine.prototype.add = function(state) {
-        if (state in this._states) {
-            throw new Error("Machine/add() - State already in that machine");
-        }
-        state.index(this._states.length);
-        this._states.push(state);
-    };
-
-    Machine.prototype.drop = function(state) {
-        if (!(state in this._states)) {
-            throw new Error("Machine/add() - Unresolved state");
-        }
-    };
-
-    /*
       _____ _   ___ _    ___
      |_   _/_\ | _ ) |  | __|
        | |/ _ \| _ \ |__| _|
@@ -84,7 +18,57 @@ var Jaw = Jaw || {
         this._widget = $(selector);
         this._properties = properties;
         this._selector = this.render();
-        this._active = null;
+        this._active = undefined;
+        this._order = undefined;
+        this._page = undefined;
+        this._where = undefined;
+        this._clicked = undefined;
+        this._limit = undefined;
+        this.property("limit", this.property("limit") || [
+            10, 25, 50, 100, 200
+        ]);
+        var me = this;
+        var head = this.property("header");
+        var editModal = $("#modal-jaw-table-edit");
+        var deleteModal = $("#modal-jaw-table-delete");
+        editModal
+            .find("#jaw-table-save").click(function() {
+                var attributes = {};
+                var form = editModal.find(".jaw-table-form");
+                for (var h in head) {
+                    var s = form.find("#" + head[h].id.replace(".", "_"));
+                    if (!s.val().length) {
+                        s.parents(".form-group").addClass("has-error");
+                        return true;
+                    }
+                    attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
+                }
+                var button = $(this).button("loading");
+                $.get(me.property("url") + "?action=update", attributes, function(data) {
+                    var json = $.parseJSON(data);
+                    if (!json.status) {
+                        return ErrorMessage.post(json.message);
+                    }
+                    button.button("reset");
+                    editModal.modal("hide");
+                    me.update();
+                });
+            });
+        deleteModal
+            .find("#jaw-table-delete").click(function() {
+                var button = $(this).button("loading");
+                $.get(me.property("url") + "?action=delete", {
+                    id: me.active()[me.property("table") + ".id"]
+                }, function(data) {
+                    var json = $.parseJSON(data);
+                    if (!json.status) {
+                        return ErrorMessage.post(json.message);
+                    }
+                    button.button("reset");
+                    deleteModal.modal("hide");
+                    me.update();
+                });
+            });
     };
 
     Table.prototype.active = function(active) {
@@ -92,6 +76,13 @@ var Jaw = Jaw || {
             this._active = active;
         }
         return this._active;
+    };
+
+    Table.prototype.clicked = function(clicked) {
+        if (arguments.length > 0) {
+            this._clicked = clicked;
+        }
+        return this._clicked;
     };
 
     Table.prototype.property = function(field, value) {
@@ -113,6 +104,38 @@ var Jaw = Jaw || {
 
     Table.prototype.has = function(field) {
         return this._properties[field] !== undefined;
+    };
+
+    Table.prototype.order = function(order) {
+        if (arguments.length > 0) {
+            if (this._order && this._order == order) {
+                this._order += " desc";
+            } else {
+                this._order = order;
+            }
+        }
+        return this._order;
+    };
+
+    Table.prototype.limit = function(limit) {
+        if (arguments.length > 0) {
+            this._limit = limit;
+        }
+        return this._limit;
+    };
+
+    Table.prototype.page = function(page) {
+        if (arguments.length > 0) {
+            this._page = page;
+        }
+        return this._page;
+    };
+
+    Table.prototype.where = function(where) {
+        if (arguments.length > 0) {
+            this._where = where;
+        }
+        return this._where;
     };
 
     Table.prototype.selector = function(selector) {
@@ -208,7 +231,7 @@ var Jaw = Jaw || {
         return container;
     };
 
-    Table.prototype.update = function() {
+    Table.prototype.update = function(strict) {
         var me = this;
         if (!this.has("url")) {
             return false;
@@ -220,15 +243,29 @@ var Jaw = Jaw || {
             })
         );
         $.get(this.property("url"), {
-            action: "fetch"
+            action: "fetch",
+            order: me.order(),
+            page: me.page() || 1,
+            limit: this.limit() || this.property("limit")[0],
+            where: me.where()
         }, function(data) {
             var json = $.parseJSON(data);
             if (!json.status) {
+                me.where(null);
+                me.order(null);
+                if (!strict) {
+                    me.update(true);
+                }
                 return ErrorMessage.post(json.message);
             }
+            me.property("length", json["length"]);
             me.property("data", json["table"]);
+            me.property("pages", json["pages"]);
             me.widget().empty().append(
                 me.selector(me.render())
+            );
+            me.widget().find("#page").val(
+                (+me.page() || 1) + "/" + me.property("pages")
             );
         });
     };
@@ -243,23 +280,24 @@ var Jaw = Jaw || {
             });
         }
         var header = $("<tr></tr>", {
-            style: "background-color: lightgray"
+            style: "background-color: #ddd;"
         });
         var head = this.property("header");
         for (i in head) {
-            header.append($("<td></td>", {
+            $("<td></td>", {
                 html: "<b>" + head[i].name + "</b>",
-                style: head[i].name == "#" ?
-                    "width: 30px; text-align: center;" : ""
-            }));
+                style: head[i].name == "#" ? "width: 30px; text-align: center; cursor: pointer;"
+                    : "cursor: pointer;"
+            }).click(function() {
+                me.order($(this).data("id"));
+                me.update();
+            }).data("id", head[i].id)
+                .appendTo(header);
         }
-        header.append($("<td><b>Действия<b></td>", {
-        }));
+        header.append($("<td><b>Действия<b></td>"));
         var table = $("<table></table>", {
             class: "table table-striped table-bordered"
-        }).append(
-            $("<tbody></tbody>").append(header)
-        );
+        }).append(header);
         if (!this.has("data")) {
             return table;
         }
@@ -267,6 +305,7 @@ var Jaw = Jaw || {
             var body = $("<tr></tr>", {
                 class: "default"
             });
+            var global = "id";
             var data = this.property("data")[k];
             for (i in head) {
                 var id = head[i].show || head[i].id;
@@ -276,6 +315,9 @@ var Jaw = Jaw || {
                     var html = "";
                     for (var j in id) {
                         html += data[id[j]] + (j != id.length - 1 ? separator : "");
+                        if (id[j].endsWith(".id")) {
+                            global = id[j];
+                        }
                     }
                     c = $("<td></td>", {
                         html: html,
@@ -286,6 +328,9 @@ var Jaw = Jaw || {
                         html: data[id],
                         style: head[i].style
                     });
+                    if (id.endsWith(".id")) {
+                        global = id;
+                    }
                 }
                 if (head[i].href) {
                     var href = head[i].href;
@@ -301,50 +346,142 @@ var Jaw = Jaw || {
                 }).append(
                     this.action(data)
                 )
-            );
+            ).click(function() {
+                    history.pushState(null, null, window.location.hash +
+                        "?id=" + $(this).data("id")
+                    );
+                    if (me.clicked()) {
+                        me.clicked().removeClass("info");
+                    }
+                    me.clicked($(this).addClass("info"));
+                }
+            ).data("id", data[global]);
             table.append(body);
         }
-        var editModal = $("#modal-jaw-table-edit");
-        var deleteModal = $("#modal-jaw-table-delete");
-        editModal
-            .find("#jaw-table-save").click(function() {
-                var attributes = {};
-                var form = editModal.find(".jaw-table-form");
-                for (var h in head) {
-                    var s = form.find("#" + head[h].id.replace(".", "_"));
-                    if (!s.val().length) {
-                        s.parents(".form-group").addClass("has-error");
-                        return true;
-                    }
-                    attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
-                }
-                var button = $(this).button("loading");
-                $.get(me.property("url") + "?action=update", attributes, function(data) {
-                    var json = $.parseJSON(data);
-                    if (!json.status) {
-                        return ErrorMessage.post(json.message);
-                    }
-                    button.button("reset");
-                    editModal.modal("hide");
-                    me.update();
-                });
-            });
-        deleteModal
-            .find("#jaw-table-delete").click(function() {
-                var button = $(this).button("loading");
-                $.get(me.property("url") + "?action=delete", {
-                    id: me.active()[me.property("table") + ".id"]
-                }, function(data) {
-                    var json = $.parseJSON(data);
-                    if (!json.status) {
-                        return ErrorMessage.post(json.message);
-                    }
-                    button.button("reset");
-                    deleteModal.modal("hide");
-                    me.update();
-                });
-            });
-        return table;
+        var query = $("<input>", {
+            type: "text",
+            placeholder: "Условие поиска",
+            class: "form-control",
+            id: "query",
+            style: "width: 350px; float: left;",
+            value: this.where()
+        });
+        var button = $("<button></button>", {
+            text: "Отправить",
+            class: "btn btn-primary",
+            style: "margin-left: 10px;"
+        }).click(function() {
+            var value = footer.find("#query").val();
+            if (value) {
+                me.where(value);
+            }
+            me.update();
+        });
+        var select = $("<select></select>", {
+            class: "form-control",
+            style: "width: auto"
+        }).change(function() {
+            me.limit(+$(this).val());
+            me.update();
+        });
+        for (i in this.property("limit")) {
+            select.append($("<option></option>", {
+                text: this.property("limit")[i],
+                value: this.property("limit")[i]
+            }));
+        }
+        select.val(me.limit());
+        var footer = $("<table></table>", {
+            style: "width: 100%"
+        }).append(
+            $("<tr></tr>", {
+                colspan: head.length + 1
+            }).append(
+                $("<td></td>", {
+                    style: "width: 550px"
+                }).append(query).append(button)
+            ).append(
+                $("<td></td>", {
+                    style: "width: 200px; vertical-align: middle",
+                    valign: "middle"
+                }).append(
+                    $("<span></span>", {
+                        style: "float: left; line-height: 30px; margin-right: 5px; cursor: pointer",
+                        class: "glyphicon glyphicon-chevron-left"
+                    }).click(function() {
+                        var value = +$(this).parent().children("#page").val().split("/")[0];
+                        if (value <= 1) {
+                            return true;
+                        }
+                        $(this).parent().children("#page").val(
+                            (value - 1) + "/" + me.property("pages")
+                        );
+                        me.page(value - 1);
+                        me.update();
+                    })
+                ).append(
+                    $("<input>", {
+                        style: "width: 60px; float: left; text-align: center",
+                        type: "text",
+                        class: "form-control",
+                        disabled: "disabled",
+                        value: "1/0",
+                        id: "page"
+                    })
+                ).append(
+                    $("<span></span>", {
+                        style: "float: left; line-height: 30px; margin-left: 5px; cursor: pointer",
+                        class: "glyphicon glyphicon-chevron-right"
+                    }).click(function() {
+                        var value = +$(this).parent().children("#page").val().split("/")[0];
+                        if (me.property("pages") && value >= +me.property("pages")) {
+                            return true;
+                        }
+                        $(this).parent().children("#page").val(
+                            (value + 1) + "/" + me.property("pages")
+                        );
+                        me.page(value + 1);
+                        me.update();
+                    })
+                )
+            ).append(
+                $("<td></td>", {
+                    style: "width: auto"
+                }).append(select)
+            ).append(
+                $("<td></td>", {
+                    style: "text-align: center; width: 30px;"
+                }).append(
+                    $("<span></span>", {
+                        class: "glyphicon glyphicon-cloud",
+                        style: "font-size: 20px; line-height: 30px; cursor: pointer;"
+                    }).click(function() {
+                        me.where(null);
+                        me.page(1);
+                        me.limit(me.property("limit")[0]);
+                        me.update(me.where())
+                    })
+                )
+            ).append(
+                $("<td></td>", {
+                    style: "text-align: right; width: 30px;"
+                }).append(
+                    $("<span></span>", {
+                        class: "glyphicon glyphicon-refresh",
+                        style: "font-size: 20px; line-height: 30px; cursor: pointer;"
+                    }).click(function() {
+                        me.update();
+                    })
+                )
+            )
+        );
+        return $("<div></div>", {
+            class: "panel panel-default"
+        }).append(table).append(
+            $("<div></div>", {
+                class: "panel-footer"
+            }).append(footer)
+        );
     };
 
     /*
@@ -380,7 +517,6 @@ var Jaw = Jaw || {
      */
 
     var propertyManager = new PropertyManager();
-    var siteMachine = new Machine();
 
     /*
          _  ___      __
@@ -401,10 +537,6 @@ var Jaw = Jaw || {
 
     Jaw.getPropertyManager = function() {
         return propertyManager;
-    };
-
-    Jaw.getMachine = function() {
-        return siteMachine;
     };
 
     Jaw.setProperty = function(properties) {

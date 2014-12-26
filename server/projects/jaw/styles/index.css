@@ -151,3 +151,12 @@ button {
 	top: 50px;
 	cursor: pointer;
 }
+
+.reference-wrapper {
+	margin-left: 10px;
+	width: calc(100% - 20px);
+}
+
+.reference-wrapper .panel-body {
+	margin-bottom: -20px;
+}

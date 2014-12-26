@@ -78,16 +78,6 @@ public interface CommandProtocol {
 	public CommandProtocol update(String table) throws InternalError;
 
 	/**
-	 * From which table we should select
-	 *
-	 * @param table - Table's name
-	 * @param as - Table's macros
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol from(String table, String as) throws InternalError;
-
-	/**
 	 * Update rows in table
 	 *
 	 * @param expression - Update expression
@@ -143,17 +133,6 @@ public interface CommandProtocol {
 	public CommandProtocol join(String table, String on) throws InternalError;
 
 	/**
-	 * Join some table with on condition
-	 *
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol join(String table, String as, String on) throws InternalError;
-
-	/**
 	 * Left join some table with condition
 	 *
 	 * @param table - Table name
@@ -162,17 +141,6 @@ public interface CommandProtocol {
 	 * @throws InternalError
 	 */
 	public CommandProtocol left(String table, String on) throws InternalError;
-
-	/**
-	 * Left join some table with condition
-	 *
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol left(String table, String as, String on) throws InternalError;
 
 	/**
 	 * Right join some table with condition
@@ -185,17 +153,6 @@ public interface CommandProtocol {
 	public CommandProtocol right(String table, String on) throws InternalError;
 
 	/**
-	 * Right join some table with condition
-	 *
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol right(String table, String as, String on) throws InternalError;
-
-	/**
 	 * Inner join some table with condition
 	 *
 	 * @param table - Table name
@@ -204,17 +161,6 @@ public interface CommandProtocol {
 	 * @throws InternalError
 	 */
 	public CommandProtocol inner(String table, String on) throws InternalError;
-
-	/**
-	 * Inner join some table with condition
-	 *
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol inner(String table, String as, String on) throws InternalError;
 
 	/**
 	 * Outer join some table with condition
@@ -227,17 +173,6 @@ public interface CommandProtocol {
 	public CommandProtocol outer(String table, String on) throws InternalError;
 
 	/**
-	 * Outer join some table with condition
-	 *
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol outer(String table, String as, String on) throws InternalError;
-
-	/**
 	 * Cross join some table with condition
 	 *
 	 * @param table - Table name
@@ -246,17 +181,6 @@ public interface CommandProtocol {
 	 * @throws InternalError
 	 */
 	public CommandProtocol cross(String table, String on) throws InternalError;
-
-	/**
-	 * Cross join some table with condition
-	 *
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws InternalError
-	 */
-	public CommandProtocol cross(String table, String as, String on) throws InternalError;
 
 	/**
 	 * Order result with some condition

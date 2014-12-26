@@ -82,6 +82,9 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol distinct(String items) throws InternalError {
+		if (items == null) {
+			return this;
+		}
 		return _word("SELECT DISTINCT")._word(items);
 	}
 
@@ -105,18 +108,6 @@ public class Command implements CommandProtocol {
 	@Override
 	public CommandProtocol update(String table) throws InternalError {
 		return _word("UPDATE")._word(table);
-	}
-
-	/**
-	 * From which table we should select
-	 * @param table - Table's name
-	 * @param as - Table's macros
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol from(String table, String as) throws InternalError {
-		return from(table).as(as);
 	}
 
 	/**
@@ -149,6 +140,9 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol where(String statement) throws InternalError {
+		if (statement == null || statement.length() == 0) {
+			return this;
+		}
 		return _where(statement);
 	}
 
@@ -187,19 +181,6 @@ public class Command implements CommandProtocol {
 	}
 
 	/**
-	 * Join some table with on condition
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol join(String table, String as, String on) throws InternalError {
-		return ((Command) _word("JOIN")._word(table).as(as))._word("ON")._word(on);
-	}
-
-	/**
 	 * Left join some table with condition
 	 * @param table - Table name
 	 * @param on - Join condition
@@ -208,20 +189,10 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol left(String table, String on) throws InternalError {
+		if (table == null || on == null) {
+			return this;
+		}
 		return _word("LEFT").join(table, on);
-	}
-
-	/**
-	 * Left join some table with condition
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol left(String table, String as, String on) throws InternalError {
-		return _word("LEFT").join(table, as, on);
 	}
 
 	/**
@@ -233,20 +204,10 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol right(String table, String on) throws InternalError {
+		if (table == null || on == null) {
+			return this;
+		}
 		return _word("RIGHT").join(table, on);
-	}
-
-	/**
-	 * Right join some table with condition
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol right(String table, String as, String on) throws InternalError {
-		return _word("RIGHT").join(table, as, on);
 	}
 
 	/**
@@ -258,20 +219,10 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol inner(String table, String on) throws InternalError {
+		if (table == null || on == null) {
+			return this;
+		}
 		return _word("INNER").join(table, on);
-	}
-
-	/**
-	 * Inner join some table with condition
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol inner(String table, String as, String on) throws InternalError {
-		return _word("INNER").join(table, as, on);
 	}
 
 	/**
@@ -283,20 +234,10 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol outer(String table, String on) throws InternalError {
+		if (table == null || on == null) {
+			return this;
+		}
 		return _word("OUTER").join(table, on);
-	}
-
-	/**
-	 * Outer join some table with condition
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol outer(String table, String as, String on) throws InternalError {
-		return _word("OUTER").join(table, as, on);
 	}
 
 	/**
@@ -308,20 +249,10 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol cross(String table, String on) throws InternalError {
+		if (table == null || on == null) {
+			return this;
+		}
 		return _word("CROSS").join(table, on);
-	}
-
-	/**
-	 * Cross join some table with condition
-	 * @param table - Table name
-	 * @param as - Table macros
-	 * @param on - Join condition
-	 * @return - Current self instance
-	 * @throws Core.InternalError
-	 */
-	@Override
-	public CommandProtocol cross(String table, String as, String on) throws InternalError {
-		return _word("CROSS").join(table, as, on);
 	}
 
 	/**
@@ -332,7 +263,10 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol order(String condition) throws InternalError {
-		return _word("ORDER")._word("BY")._word(condition);
+		if (condition == null || condition.length() == 0) {
+			return this;
+		}
+		return _order("ORDER")._order("BY")._order(condition);
 	}
 
 	/**
@@ -343,6 +277,9 @@ public class Command implements CommandProtocol {
 	 */
 	@Override
 	public CommandProtocol command(CommandProtocol command) throws InternalError {
+		if (command == null) {
+			return this;
+		}
 		return _word("(" + ((Command) command)._build() + ")");
 	}
 
@@ -383,10 +320,10 @@ public class Command implements CommandProtocol {
 	public PreparedStatement bind(Object[] objects) throws InternalError {
 
 		PreparedStatement preparedStatement = connection
-				.prepare(_build().trim());
+			.prepare(_build().trim());
 
 		SqlTypeBinder sqlTypeBinder = new SqlTypeBinder(
-				preparedStatement
+			preparedStatement
 		);
 
 		statement = sqlTypeBinder.bind(objects)
@@ -410,10 +347,13 @@ public class Command implements CommandProtocol {
 	}
 
 	private String _build() {
-		return sqlQuery + sqlWhere;
+		return sqlQuery + sqlWhere + sqlOrder;
 	}
 
 	private Command _where(String string, String clause) {
+		if (string == null || clause == null) {
+			return this;
+		}
 		if (sqlWhere.length() < 1) {
 			return _where(string);
 		}
@@ -421,6 +361,9 @@ public class Command implements CommandProtocol {
 	}
 
 	private Command _where(String string) {
+		if (string == null) {
+			return this;
+		}
 		if (sqlWhere.length() > 0) {
 			return _where(string, "AND");
 		}
@@ -431,7 +374,18 @@ public class Command implements CommandProtocol {
 		return _word(string, false);
 	}
 
+	private Command _order(String string) {
+		if (string == null) {
+			return this;
+		}
+		sqlOrder += string + " ";
+		return this;
+	}
+
 	private Command _word(String string, boolean woSpace) {
+		if (string == null) {
+			return this;
+		}
 		if (!woSpace) {
 			sqlQuery += string + " ";
 		} else {
@@ -447,6 +401,7 @@ public class Command implements CommandProtocol {
 
 	private String sqlQuery = "";
 	private String sqlWhere = "";
+	private String sqlOrder = "";
 
 	private PreparedStatement statement;
 	private Connection connection;

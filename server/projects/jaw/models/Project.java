@@ -25,7 +25,7 @@ public class Project extends Model<Project.Row> {
 	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws InternalError, SQLException {
 		Model productModel = getEnvironment().getModelManager().get("Product");
 		CortegeProtocol productProtocol = productModel.fetchRow("register", name, companyID, creatorID, 0);
-		getConnection().command()
+		getConnection().createCommand()
 			.insert("project", "leader_id, product_id")
 			.values("?, ?")
 			.execute(new Object[] { leaderID, productProtocol.getID() })
@@ -35,7 +35,7 @@ public class Project extends Model<Project.Row> {
 
 	public Row delete(Integer projectID) throws InternalError, SQLException {
 		Model productModel = getEnvironment().getModelManager().get("Product");
-		ResultSet projectSet = getConnection().command()
+		ResultSet projectSet = getConnection().createCommand()
 			.select("*")
 			.from("project")
 			.where("id = ?")
@@ -45,7 +45,7 @@ public class Project extends Model<Project.Row> {
 			return null;
 		}
 		int productID = projectSet.getInt("product_id");
-		getConnection().command()
+		getConnection().createCommand()
 			.delete("project")
 			.where("id = ?")
 			.execute(new Object[] { projectID })

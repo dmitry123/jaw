@@ -2,6 +2,7 @@ package models;
 
 import Core.*;
 import Core.InternalError;
+import Sql.CommandProtocol;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
 import java.util.Collection;
@@ -26,7 +27,7 @@ public class Company extends Model<Company.Row> {
 	}
 
 	public boolean exists(String name) throws InternalError, SQLException {
-		ResultSet resultSet = getConnection().command()
+		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from("company")
 			.where("name = ?")
@@ -36,7 +37,7 @@ public class Company extends Model<Company.Row> {
 	}
 
 	public ResultSet fetchByName(String name) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("*")
 			.from("company")
 			.where("lower(name) = lower(?)")
@@ -45,27 +46,27 @@ public class Company extends Model<Company.Row> {
 	}
 
 	public ResultSet fetchByUserID(Integer userID) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("c.*")
-			.from("company", "c")
-			.join("employee", "e", "e.company_id = c.id")
-			.join("users", "u", "e.user_id = u.id")
+			.from("company as c")
+			.join("employee as e", "e.company_id = c.id")
+			.join("users as u", "e.user_id = u.id")
 			.where("u.id = ?")
 			.execute(new Object[] { userID })
 			.select();
 	}
 
 	public ResultSet fetchEmployees(Integer companyID) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("e.*")
-			.from("employee", "e")
+			.from("employee as e")
 			.where("company_id = ?")
 			.execute(new Object[] { companyID })
 			.select();
 	}
 
 	public CortegeRow updateDirector(String name, Integer director) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.update("company")
 			.set("director_id = ?")
 			.where("name = ?")
@@ -80,7 +81,7 @@ public class Company extends Model<Company.Row> {
 				"Company/register() : \"Company with that name already registered\""
 			);
 		}
-		getConnection().command()
+		getConnection().createCommand()
 			.insert("company", "name")
 			.values("?")
 			.execute(new Object[]{name})
@@ -89,7 +90,7 @@ public class Company extends Model<Company.Row> {
 	}
 
 	public Row delete(Integer projectID) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.delete("project")
 			.where("id = ?")
 			.execute(new Object[] { projectID })
@@ -98,19 +99,11 @@ public class Company extends Model<Company.Row> {
 	}
 
 	@Override
-	public Collection<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, SQLException {
-		ResultSet resultSet = getConnection().command()
+	public CommandProtocol getResultSetForTable() throws InternalError, SQLException {
+		return getConnection().createCommand()
 			.distinct("*")
-			.from("company", "c")
-			.join("employee", "e", "c.director_id = e.id")
-			.execute()
-			.select();
-		Vector<LinkedHashMap<String, String>> result
-				= new Vector<LinkedHashMap<String, String>>();
-		while (resultSet.next()) {
-			result.add(buildMap(resultSet));
-		}
-		return result;
+			.from("company")
+			.join("employee", "company.director_id = employee.id");
 	}
 
 	public static class Row extends CortegeRow {

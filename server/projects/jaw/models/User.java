@@ -2,14 +2,9 @@ package models;
 
 import Core.*;
 import Core.InternalError;
-import Sql.Command;
-import Sql.CortegeRow;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
-import java.util.Vector;
 
 /**
  * UserTable
@@ -42,7 +37,7 @@ public class User extends Model<User.Row> {
 	}
 
 	public Row register(String login, String hash, String email) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.insert("users", "login, hash, email")
 			.values("?, ?, ?")
 			.execute(new Object[] { login, hash, email })
@@ -51,7 +46,7 @@ public class User extends Model<User.Row> {
 	}
 
 	public ResultSet fetchByLogin(String login) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("*")
 			.from("users")
 			.where("LOWER(login) = LOWER(?)")
@@ -60,7 +55,7 @@ public class User extends Model<User.Row> {
 	}
 
 	public ResultSet fetchByLoginAndHash(String login, String hash) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("*")
 			.from("users")
 			.where("LOWER(login) = LOWER(?)")
@@ -70,7 +65,7 @@ public class User extends Model<User.Row> {
 	}
 
 	public ResultSet fetchByMail(String email) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.select("*")
 			.from("users")
 			.where("email = ?")

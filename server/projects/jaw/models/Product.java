@@ -24,7 +24,7 @@ public class Product extends Model<Product.Row> {
 	}
 
 	public Row register(String name, Integer companyID, Integer creatorID, Integer parentID) throws InternalError, SQLException{
-		getConnection().command()
+		getConnection().createCommand()
 			.insert("product", "name, company_id, creator_id, parent_id")
 			.values("?, ?, ?, ?")
 			.execute(new Object[] { name, companyID, creatorID, parentID })
@@ -33,7 +33,7 @@ public class Product extends Model<Product.Row> {
 	}
 
 	public Row delete(Integer productID) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.delete("product")
 			.where("id = ?")
 			.execute(new Object[] { productID })
@@ -42,7 +42,7 @@ public class Product extends Model<Product.Row> {
 	}
 
 	public Row bind(Integer productID, Integer employeeID) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.insert("product_employee", "product_id, employee_id")
 			.values("?, ?")
 			.execute(new Object[] { productID, employeeID })
@@ -51,7 +51,7 @@ public class Product extends Model<Product.Row> {
 	}
 
 	public Row unbind(Integer productID, Integer employeeID) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.delete("product_employee")
 			.where("product_id = ?")
 			.and("employee_id = ?")

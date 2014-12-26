@@ -57,4 +57,12 @@ public class Admin extends View {
 		template("modal/jaw-table");
 		template("common/footer");
 	}
+
+	public void renderReference(Map<String, Object> hashData) throws Core.InternalError {
+		template("common/header");
+		template("admin/menu");
+		template("admin/reference");
+		template("modal/jaw-table");
+		template("common/footer");
+	}
 }

@@ -11,7 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -64,10 +66,21 @@ public abstract class Controller extends Component {
 			JSONObject jsonResponse = new JSONObject();
 			jsonResponse.put("action", action);
 			if (action.equals("fetch")) {
-				jsonResponse.put("table", new JSONArray(
-					getModel().fetchTable(0, 0)
-				));
+				String page = getSession().getParms().get("page");
+				String limit = getSession().getParms().get("limit");
+				Collection<LinkedHashMap<String, String>> wrapper = getModel().fetchTable(
+					page != null ? Integer.parseInt(page) : 0,
+					limit != null ? Integer.parseInt(limit) : 0,
+					getSession().getParms().get("where"),
+					getSession().getParms().get("order")
+				);
+				jsonResponse.put("table", new JSONArray(wrapper.toArray()));
+				jsonResponse.put("length", jsonResponse.getJSONArray("table").length());
+				jsonResponse.put("page", page != null ? Integer.parseInt(page) : 0);
+				jsonResponse.put("limit", limit != null ? Integer.parseInt(limit) : 0);
+				jsonResponse.put("pages", ((Model.Wrapper)wrapper).getPages());
 			} else if (action.equals("add")) {
+				// ignored
 			} else if (action.equals("update")) {
 				int id = Integer.parseInt(GET("id"));
 				getSession().getParms().remove("id");

@@ -65,6 +65,14 @@ public class Admin extends Controller {
 		}
 	}
 
+	public void actionReference() throws InternalError, SQLException {
+		if (checkAccess()) {
+			render("Reference");
+		} else {
+			redirect("Index", "View");
+		}
+	}
+
 	/**
 	 * Check user's access
 	 * @param privileges - List with privileges

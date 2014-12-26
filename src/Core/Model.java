@@ -189,26 +189,81 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	}
 
 	/**
+	 * Override that method to return your own columns for fetchTable method
+	 * @return - Command with your query
+	 * @throws InternalError
+	 * @throws SQLException
+	 */
+	public CommandProtocol getResultSetForTable() throws InternalError, SQLException {
+		return getConnection().createCommand()
+			.distinct("*")
+			.from(getTableName());
+	}
+
+	public static class Wrapper extends Vector<LinkedHashMap<String, String>> {
+
+		public Wrapper() {
+			this(0);
+		}
+
+		public Wrapper(int pages) {
+			this.pages = pages;
+		}
+
+		public int getPages() {
+			return pages;
+		}
+
+		private int pages;
+	}
+
+	/**
 	 * Build vector with associated with it's value, column and table results
 	 * @param page - Current page
 	 * @param limit - Limit per page
+	 * @param where - Where cause
 	 * @return - Vector with results
 	 * @throws InternalError
 	 * @throws SQLException
 	 */
-	public Collection<LinkedHashMap<String, String>> fetchTable(Integer page, Integer limit) throws InternalError, SQLException {
-		ResultSet resultSet = getConnection().command()
-			.distinct("*")
-			.from(getTableName())
-			.order("id")
+	public final Collection<LinkedHashMap<String, String>> fetchTable(int page, int limit, String where, String order) throws InternalError, SQLException {
+		ResultSet resultSet = getResultSetForTable()
+			.where(where)
+			.order(order)
 			.execute()
 			.select();
-		Vector<LinkedHashMap<String, String>> result
-			= new Vector<LinkedHashMap<String, String>>();
+		Wrapper wrapper;
+		int total = 0;
 		while (resultSet.next()) {
-			result.add(buildMap(resultSet));
+			++total;
 		}
-		return result;
+		resultSet.beforeFirst();
+		if (page != 0) {
+			int pages = total / limit + (total / limit * limit != total ? 1 : 0);
+			if (page > pages) {
+				return new Wrapper(pages);
+			}
+			int amount = limit;
+			int skip = amount * (page - 1);
+			while (skip != 0 && resultSet.next()) {
+				if (skip-- == 0) {
+					break;
+				}
+			}
+			wrapper = new Wrapper(pages);
+			while (amount != 0 && resultSet.next()) {
+				wrapper.add(buildMap(resultSet));
+				if (amount-- <= 0) {
+					break;
+				}
+			}
+		} else {
+			wrapper = new Wrapper(1);
+			while (resultSet.next()) {
+				wrapper.add(buildMap(resultSet));
+			}
+		}
+		return wrapper;
 	}
 
 	/**
@@ -218,7 +273,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws SQLException
 	 */
 	public int deleteByID(Integer id) throws InternalError, SQLException {
-		return getConnection().command()
+		return getConnection().createCommand()
 			.delete(getTableName())
 			.where("id = ?")
 			.execute(new Object[] { id })
@@ -269,7 +324,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			}
 		}
 		objects.add(id);
-		return getConnection().command()
+		return getConnection().createCommand()
 			.update(getTableName())
 			.set(set)
 			.where("id = ?")
@@ -423,7 +478,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 */
     public ResultSet fetchByID(Integer id) throws InternalError, SQLException {
-		ResultSet resultSet = getConnection().command()
+		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from(tableName)
 			.where("id = ?")
@@ -481,7 +536,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 */
     public void erase(int id) throws InternalError, SQLException {
-		getConnection().command()
+		getConnection().createCommand()
 			.delete(getTableName())
 			.where("id = ?")
 			.execute(new Object[] { id })

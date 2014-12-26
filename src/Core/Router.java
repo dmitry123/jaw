@@ -25,6 +25,11 @@ public class Router extends Extension {
 	 */
 	public void redirect(String path, String action) throws InternalError {
 
+		if (path.length() == 0) {
+			path = action;
+			action = "view";
+		}
+
 		// Find main controller
 		controller = getEnvironment().getControllerManager()
 				.get(path);
