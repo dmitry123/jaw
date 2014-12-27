@@ -1,6 +1,7 @@
 package models;
 
 import Core.*;
+
 import Sql.CortegeKey;
 import Sql.CortegeProtocol;
 
@@ -39,10 +40,10 @@ public class Privilege extends Model<Privilege.Row> {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return new Row(result.getString("id"), result.getString("name"), result.getString("description"));
 	}
 }

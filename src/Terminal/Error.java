@@ -3,7 +3,7 @@ package Terminal;
 /**
  * Created by Savonin on 2014-11-15
  */
-public class Error extends Core.InternalError {
+public class Error extends Exception {
 
 	/**
 	 * Constructs a new exception with the specified detail message.  The cause is not initialized, and may subsequently be

@@ -1,7 +1,7 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CortegeProtocol;
 
 import java.sql.ResultSet;
@@ -25,7 +25,7 @@ public class Index extends Model {
 	 * @param userID
 	 * @return
 	 */
-	public ResultSet fetchUserEmployee(Integer userID) throws InternalError, SQLException {
+	public ResultSet fetchUserEmployee(Integer userID) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("users as u")
@@ -39,10 +39,10 @@ public class Index extends Model {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return null;
 	}
 }

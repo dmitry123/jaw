@@ -2,6 +2,7 @@ package views;
 
 import Core.*;
 
+
 import java.util.Map;
 
 public class Admin extends View {
@@ -11,14 +12,14 @@ public class Admin extends View {
 	}
 
 	@Override
-	public void renderView(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderView(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/view");
 		template("common/footer");
 	}
 
-	public void renderUser(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderUser(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/user");
@@ -26,7 +27,7 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
-	public void renderEmployee(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderEmployee(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/employee");
@@ -34,7 +35,7 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
-	public void renderCompany(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderCompany(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/company");
@@ -42,7 +43,7 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
-	public void renderGroup(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderGroup(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/group");
@@ -50,7 +51,7 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
-	public void renderPrivilege(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderPrivilege(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/privilege");
@@ -58,7 +59,7 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
-	public void renderReference(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderReference(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
 		template("admin/reference");

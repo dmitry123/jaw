@@ -1,7 +1,6 @@
 package Server;
 
-import Core.Config;
-import Core.InternalError;
+
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,29 +21,29 @@ public class MimeLoader {
 	/**
 	 * @param filePath - Path to file to load
 	 * @return - Just loaded file's data
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public InputStream load(String filePath) throws InternalError {
+	public InputStream load(String filePath) throws Exception {
 		File fileHandle = new File(filePath);
 		if (!fileHandle.exists()) {
-			throw new Core.InternalError("MimeLoader/load : \"Unable to load file (" + filePath + ")\"");
+			throw new Exception("MimeLoader/load : \"Unable to load file (" + filePath + ")\"");
 		}
 		try {
 			return new FileInputStream(
 				fileHandle
 			);
 		} catch (FileNotFoundException e) {
-			throw new InternalError("InputStream/load() : \"" + e.getMessage() + "\"");
+			throw new Exception("InputStream/load() : \"" + e.getMessage() + "\"");
 		}
 	}
 
 	/**
 	 * @param handle - File handle
 	 * @return - Just loaded file's data
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 * @throws IOException
 	 */
-	private String loadText(File handle) throws Core.InternalError, IOException {
+	private String loadText(File handle) throws Exception, IOException {
 		BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(
 						new FileInputStream(handle)

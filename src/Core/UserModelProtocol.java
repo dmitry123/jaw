@@ -11,9 +11,9 @@ public interface UserModelProtocol {
 	 *
 	 * @param id - User's unique identifier
 	 * @return - Found user adapted to UserProtocol
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public UserProtocol fetchUserByPk(int id) throws InternalError;
+	public UserProtocol fetchUserByPk(int id) throws Exception;
 
 	/**
 	 * Also you must implement method to fetch user by it's
@@ -21,14 +21,14 @@ public interface UserModelProtocol {
 	 *
 	 * @param login - User's unique login
 	 * @return - Found user adapted to UserProtocol
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public UserProtocol fetchUserByLogin(String login) throws InternalError;
+	public UserProtocol fetchUserByLogin(String login) throws Exception;
 
 	/**
 	 *
 	 * @param userProtocol - Protocol with basic user information
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void registerUser(UserProtocol userProtocol) throws InternalError;
+	public void registerUser(UserProtocol userProtocol) throws Exception;
 }

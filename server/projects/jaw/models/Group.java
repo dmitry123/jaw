@@ -1,7 +1,7 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
 
@@ -21,7 +21,7 @@ public class Group extends Model<Group.Row> {
 		super(environment, "groups");
 	}
 
-	public ResultSet fetchByName(String name) throws InternalError, SQLException {
+	public ResultSet fetchByName(String name) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("groups")
@@ -30,7 +30,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	public ResultSet fetchGroupsByUser(Integer userID) throws InternalError, SQLException {
+	public ResultSet fetchGroupsByUser(Integer userID) throws Exception {
 		return getConnection().createCommand()
 			.distinct("g.*")
 			.from("users as u")
@@ -42,7 +42,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	public ResultSet fetchGroupsByEmployee(Integer employeeID) throws InternalError, SQLException {
+	public ResultSet fetchGroupsByEmployee(Integer employeeID) throws Exception {
 		return getConnection().createCommand()
 			.distinct("g.*")
 			.from("employee as e")
@@ -53,7 +53,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	public Row bind(Integer groupID, Integer employeeID) throws InternalError, SQLException {
+	public Row bind(Integer groupID, Integer employeeID) throws Exception {
 		getConnection().createCommand()
 			.insert("employee_group", "employee_id, group_id")
 			.values("?, ?")
@@ -62,7 +62,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	public Row bindWithGroupName(String groupName, Integer employeeID) throws InternalError, SQLException {
+	public Row bindWithGroupName(String groupName, Integer employeeID) throws Exception {
 		ResultSet groupRow = fetchByName(groupName);
 		if (groupRow.next()) {
 			bind(groupRow.getInt("id"), employeeID);
@@ -70,17 +70,17 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	public Row unbind(Integer groupID, Integer employeeID) throws InternalError, SQLException {
+	public Row unbind(Integer groupID, Integer employeeID) throws Exception {
 		getConnection().createCommand()
 			.delete("employee_group")
 			.where("group_id = ?")
-			.and("employee_id = ?")
+			.andWhere("employee_id = ?")
 			.execute(new Object[] { groupID, employeeID })
 			.delete();
 		return null;
 	}
 
-	public Row unbindWithGroupName(String groupName, Integer employeeID) throws InternalError, SQLException {
+	public Row unbindWithGroupName(String groupName, Integer employeeID) throws Exception {
 		ResultSet groupRow = fetchByName(groupName);
 		if (groupRow.next()) {
 			unbind(groupRow.getInt("id"), employeeID);
@@ -124,10 +124,10 @@ public class Group extends Model<Group.Row> {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return new Row(result.getInt("id"), result.getString("name"));
 	}
 }

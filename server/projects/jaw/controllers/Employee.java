@@ -1,7 +1,7 @@
 package controllers;
 
 import Core.*;
-import Core.InternalError;
+
 
 import java.sql.SQLException;
 
@@ -16,12 +16,12 @@ public class Employee extends Controller {
 	}
 
 	@Override
-	public void actionGetTable() throws InternalError, SQLException {
+	public void actionGetTable() throws Exception {
 		super.actionGetTable();
 	}
 
 	@Override
-	public void actionView() throws Core.InternalError, SQLException {
+	public void actionView() throws Exception {
 
 	}
 }

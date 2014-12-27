@@ -1,8 +1,5 @@
 package Core;
 
-import Core.InternalError;
-import Core.User;
-
 /**
  * Created by Savonin on 2014-11-08
  */
@@ -21,9 +18,9 @@ public class UserValidator extends Extension {
 	 * @param login - User's login
 	 * @param password - User's password (not crypted)
 	 * @return - Just declared user in database
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public User register(String login, String password) throws InternalError {
+	public User register(String login, String password) throws Exception {
 
 //		Jaw.models.User userModel = ((Jaw.models.User) getEnvironment().getModelManager().get("users"));
 
@@ -56,9 +53,9 @@ public class UserValidator extends Extension {
 	 * @param password - User's password
 	 * @return - Found user in system with cortege
 	 * 		bind to it's model
-	 * @throws Exception
+	 * @throws java.lang.Exception
 	 */
-	public User validate(String login, String password) throws Exception {
+	public User validate(String login, String password) throws java.lang.Exception {
 
 //		Jaw.models.User userModel = ((Jaw.models.User) getEnvironment().getModelManager().get("users"));
 

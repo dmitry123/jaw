@@ -10,19 +10,18 @@
                     name: "#",
                     style: "width: 10px; text-align: center;"
                 }, {
-                    id: "company.director_id",
-                    show: "company.name",
-                    name: "Компания",
-                    type: "number",
+                    id: "company.name",
+                    name: "Название",
                     style: "width: 10px; text-align: center;"
                 }, {
-                    id: "company.id",
+                    id: "company.director_id",
                     show: [
                         "employee.surname",
                         "employee.name",
                         "employee.patronymic"
                     ],
                     name: "Директор",
+                    type: "number",
                     separator: " ",
                     href: "/jaw/admin/employee?id=employee.id"
                 }

@@ -1,7 +1,7 @@
 package controllers;
 
 import Core.*;
-import Core.InternalError;
+
 
 import java.sql.SQLException;
 
@@ -16,12 +16,12 @@ public class Group extends Controller {
 	}
 
 	@Override
-	public boolean checkAccess(String... privileges) throws InternalError, SQLException {
+	public boolean checkAccess(String... privileges) throws Exception {
 		return super.checkAccess(privileges);
 	}
 
 	@Override
-	public void actionView() throws Core.InternalError, SQLException {
+	public void actionView() throws Exception {
 		redirect("Index", "View");
 	}
 }

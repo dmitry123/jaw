@@ -25,12 +25,14 @@ var Jaw = Jaw || {
         this._clicked = undefined;
         this._limit = undefined;
         this.property("limit", this.property("limit") || [
-            10, 25, 50, 100, 200
+            10, 25, 50, 100
         ]);
         var me = this;
         var head = this.property("header");
         var editModal = $("#modal-jaw-table-edit");
         var deleteModal = $("#modal-jaw-table-delete");
+        var addModal = $("#modal-jaw-table-add");
+        var referenceModal = $("#modal-jaw-table-reference");
         editModal
             .find("#jaw-table-save").click(function() {
                 var attributes = {};
@@ -47,6 +49,7 @@ var Jaw = Jaw || {
                 $.get(me.property("url") + "?action=update", attributes, function(data) {
                     var json = $.parseJSON(data);
                     if (!json.status) {
+                        button.button("reset");
                         return ErrorMessage.post(json.message);
                     }
                     button.button("reset");
@@ -62,6 +65,7 @@ var Jaw = Jaw || {
                 }, function(data) {
                     var json = $.parseJSON(data);
                     if (!json.status) {
+                        button.button("reset");
                         return ErrorMessage.post(json.message);
                     }
                     button.button("reset");
@@ -69,6 +73,37 @@ var Jaw = Jaw || {
                     me.update();
                 });
             });
+        addModal
+            .find("#jaw-table-add").click(function() {
+                var attributes = {};
+                var form = addModal.find(".jaw-table-form");
+                for (var h in head) {
+                    var s = form.find("#" + head[h].id.replace(".", "_"));
+                    if (!s.length) {
+                        continue;
+                    }
+                    if (!s.val().length) {
+                        s.parents(".form-group").addClass("has-error");
+                        return true;
+                    }
+                    attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
+                }
+                attributes["id"] = undefined;
+                var button = $(this).button("loading");
+                $.get(me.property("url") + "?action=add", attributes, function(data) {
+                    var json = $.parseJSON(data);
+                    if (!json.status) {
+                        button.button("reset");
+                        return ErrorMessage.post(json.message);
+                    }
+                    button.button("reset");
+                    addModal.modal("hide");
+                    me.update();
+                });
+            });
+        referenceModal.find("#jaw-table-reference").click(function() {
+            console.log("Wo-Hoo");
+        });
     };
 
     Table.prototype.active = function(active) {
@@ -145,7 +180,7 @@ var Jaw = Jaw || {
         return this._selector;
     };
 
-    Table.prototype.build = function(modal, row, readonly) {
+    Table.prototype.build = function(modal, row, readonly, id) {
         var header = this.property("header");
         var head = function(id) {
             for (var i in header) {
@@ -159,7 +194,7 @@ var Jaw = Jaw || {
         form.empty();
         var stack = [];
         for (var k in row) {
-            if (!head(k)) {
+            if (!head(k) || id === true && head(k).id.endsWith(".id")) {
                 continue;
             }
             var name = head(k).name == "#" ? "Идентификатор" : head(k).name;
@@ -206,12 +241,55 @@ var Jaw = Jaw || {
         this.active(row);
     };
 
+    Table.prototype.buildReference = function(modal, row) {
+        var id = null;
+        var k;
+        for (k in row) {
+            if (k.endsWith(".id")) {
+                id = row[k];
+                break;
+            }
+        }
+        if (!id) {
+            return ErrorMessage.post("Table/buildReference() : \"Can't find key for row\"");
+        }
+        modal.find(".jaw-table-form").empty().append(
+            $("<div></div>", {
+                style: "width: 100%; text-align: center;"
+            }).append(
+                $("<img>", {
+                    src: "/jaw/images/ajax-loader.gif"
+                })
+            )
+        );
+        $.get(this.property("url"), {
+            action: "reference",
+            id: id,
+            alias: k
+        }, function (data) {
+            var json = $.parseJSON(data);
+            if (!json.status) {
+                return ErrorMessage.post(json.message);
+            }
+            console.log(json);
+        });
+        modal.modal();
+    };
+
     Table.prototype.action = function(row) {
         var me = this;
         var container = $("<div></div>", {
             style: "text-align: center"
         });
         var style = "cursor: pointer; padding-right: 5px; padding-left: 5px;";
+        container.append(
+            $("<span></span>", {
+                class: "glyphicon glyphicon-link",
+                style: style
+            }).click(function() {
+                me.buildReference($("#modal-jaw-table-reference"), row);
+            })
+        );
         container.append(
             $("<span></span>", {
                 class: "glyphicon glyphicon-pencil",
@@ -251,11 +329,9 @@ var Jaw = Jaw || {
         }, function(data) {
             var json = $.parseJSON(data);
             if (!json.status) {
-                me.where(null);
-                me.order(null);
-                if (!strict) {
-                    me.update(true);
-                }
+                me.widget().empty().append(
+                    me.selector(me.render())
+                );
                 return ErrorMessage.post(json.message);
             }
             me.property("length", json["length"]);
@@ -365,6 +441,10 @@ var Jaw = Jaw || {
             id: "query",
             style: "width: 350px; float: left;",
             value: this.where()
+        }).keydown(function(e) {
+            if (e.keyCode == 13) {
+                button.trigger("click");
+            }
         });
         var button = $("<button></button>", {
             text: "Отправить",
@@ -374,6 +454,8 @@ var Jaw = Jaw || {
             var value = footer.find("#query").val();
             if (value) {
                 me.where(value);
+            } else {
+                me.where(null);
             }
             me.update();
         });
@@ -453,13 +535,14 @@ var Jaw = Jaw || {
                     style: "text-align: center; width: 30px;"
                 }).append(
                     $("<span></span>", {
-                        class: "glyphicon glyphicon-cloud",
-                        style: "font-size: 20px; line-height: 30px; cursor: pointer;"
+                        class: "glyphicon glyphicon-plus",
+                        style: "font-size: 20px; line-height: 25px; cursor: pointer;"
                     }).click(function() {
-                        me.where(null);
-                        me.page(1);
-                        me.limit(me.property("limit")[0]);
-                        me.update(me.where())
+                        var row = {};
+                        for (var k in head) {
+                            row[head[k].id] = "";
+                        }
+                        me.build($("#modal-jaw-table-add"), row, false, true);
                     })
                 )
             ).append(
@@ -468,7 +551,7 @@ var Jaw = Jaw || {
                 }).append(
                     $("<span></span>", {
                         class: "glyphicon glyphicon-refresh",
-                        style: "font-size: 20px; line-height: 30px; cursor: pointer;"
+                        style: "font-size: 20px; line-height: 25px; cursor: pointer;"
                     }).click(function() {
                         me.update();
                     })
@@ -485,40 +568,6 @@ var Jaw = Jaw || {
     };
 
     /*
-      ___ ___  ___  ___ ___ ___ _______   __        __  __   _   _  _   _   ___ ___ ___
-     | _ \ _ \/ _ \| _ \ __| _ \_   _\ \ / /  ___  |  \/  | /_\ | \| | /_\ / __| __| _ \
-     |  _/   / (_) |  _/ _||   / | |  \ V /  |___| | |\/| |/ _ \| .` |/ _ \ (_ | _||   /
-     |_| |_|_\\___/|_| |___|_|_\ |_|   |_|         |_|  |_/_/ \_\_|\_/_/ \_\___|___|_|_\
-
-     */
-
-    var PropertyManager = function() {
-        this._properties = [];
-    };
-
-    PropertyManager.prototype.put = function(field, value) {
-        this._properties[field] = value;
-    };
-
-    PropertyManager.prototype.has = function(field) {
-        return this._properties[field] != undefined;
-    };
-
-    PropertyManager.prototype.get = function(field) {
-        return this._properties[field];
-    };
-
-    /*
-      ___ ___ _  _  ___ _    ___ _____ ___  _  _
-     / __|_ _| \| |/ __| |  | __|_   _/ _ \| \| |
-     \__ \| || .` | (_ | |__| _|  | || (_) | .` |
-     |___/___|_|\_|\___|____|___| |_| \___/|_|\_|
-
-     */
-
-    var propertyManager = new PropertyManager();
-
-    /*
          _  ___      __
       _ | |/_\ \    / /
      | || / _ \ \/\/ /
@@ -533,44 +582,6 @@ var Jaw = Jaw || {
             table.selector()
         );
         table.update();
-    };
-
-    Jaw.getPropertyManager = function() {
-        return propertyManager;
-    };
-
-    Jaw.setProperty = function(properties) {
-        for (var k in properties) {
-            propertyManager.put(k, properties[k]);
-        }
-    };
-
-    Jaw.getProperty = function(path) {
-        var _get = function(path, object) {
-            if (path.indexOf(".") < 0) {
-                return object ? object[path] || null : null;
-            }
-            if (typeof object != "object") {
-                return object;
-            }
-            var i = path.indexOf(".");
-            return object ? _get(path.substr(i + 1),
-                object[path.substr(0, i)]
-            ) || null : null;
-        };
-        return _get(path, propertyManager._properties);
-    };
-
-    Jaw.getBaseUrl = function() {
-        return propertyManager.get("project-name");
-    };
-
-    Jaw.getController = function() {
-        return propertyManager.get("controller");
-    };
-
-    Jaw.getAction = function() {
-        return propertyManager.get("action");
     };
 
     Jaw.extend = function(child, parent) {

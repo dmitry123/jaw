@@ -4,12 +4,10 @@ import Server.HtmlBuilder;
 import Server.NanoHttpd;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import sun.security.util.Password;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,24 +30,24 @@ public abstract class Controller extends Component {
 	/**
 	 * Default index action
 	 */
-	public abstract void actionView() throws InternalError, SQLException;
+	public abstract void actionView() throws Exception;
 
 	/**
 	 * Override that method to check privileges for action
 	 * @param privileges - List with privileges or rules
 	 * @return - True if access accepted else false
-	 * @throws InternalError
+	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public boolean checkAccess(String... privileges) throws InternalError, SQLException {
+	public boolean checkAccess(String... privileges) throws Exception {
 		return true;
 	}
 
 	/**
 	 * Action error 404
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void action404() throws InternalError {
+	public void action404() throws Exception {
 		getHtmlBuilder().getHtml()
 			.h1().text("404");
 	}
@@ -57,47 +55,85 @@ public abstract class Controller extends Component {
 	/**
 	 * Default action to get information from database, to allow access
 	 * to table from controller override that method and invoke super method
-	 * @throws InternalError
+	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public void actionGetTable() throws InternalError, SQLException {
+	public void actionGetTable() throws Exception {
+
 		final String action = GET("action");
+
 		if (checkAccess()) {
+
 			JSONObject jsonResponse = new JSONObject();
 			jsonResponse.put("action", action);
+
 			if (action.equals("fetch")) {
+
 				String page = getSession().getParms().get("page");
 				String limit = getSession().getParms().get("limit");
+
 				Collection<LinkedHashMap<String, String>> wrapper = getModel().fetchTable(
 					page != null ? Integer.parseInt(page) : 0,
 					limit != null ? Integer.parseInt(limit) : 0,
 					getSession().getParms().get("where"),
 					getSession().getParms().get("order")
 				);
+
 				jsonResponse.put("table", new JSONArray(wrapper.toArray()));
 				jsonResponse.put("length", jsonResponse.getJSONArray("table").length());
 				jsonResponse.put("page", page != null ? Integer.parseInt(page) : 0);
 				jsonResponse.put("limit", limit != null ? Integer.parseInt(limit) : 0);
 				jsonResponse.put("pages", ((Model.Wrapper)wrapper).getPages());
+
 			} else if (action.equals("add")) {
-				// ignored
+
+				getSession().getParms().remove("action");
+
+				if (getSession().getParms().containsKey("hash")) {
+					String password = getSession().getParms().remove("hash");
+					getSession().getParms().put("hash",
+							PasswordEncryptor.crypt(GET("login"), password)
+					);
+				}
+
+				getModel().insert(
+					getSession().getParms()
+				);
+
 			} else if (action.equals("update")) {
+
 				int id = Integer.parseInt(GET("id"));
+
 				getSession().getParms().remove("id");
 				getSession().getParms().remove("action");
+
 				if (getSession().getParms().containsKey("hash")) {
 					String password = getSession().getParms().remove("hash");
 					getSession().getParms().put("hash",
 						PasswordEncryptor.crypt(GET("login"), password)
 					);
 				}
+
 				getModel().updateByID(
 					id, getSession().getParms()
 				);
+
 			} else if (action.equals("delete")) {
+
 				getModel().deleteByID(
 					Integer.parseInt(GET("id"))
 				);
+
+			} else if (action.equals("reference")) {
+
+				String id = GET("id");
+				String alias = GET("alias");
+
+				getSession().getParms().remove("id");
+				getSession().getParms().remove("action");
+
+				jsonResponse.put("reference", getModel().fetchReferences(alias, id));
+
 			} else {
 				postErrorMessage("Unknown action");
 			}
@@ -112,14 +148,14 @@ public abstract class Controller extends Component {
 	 * Test post parameter and get it
 	 * @param key - Key
 	 * @return - Value
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public String POST(String key) throws InternalError {
+	public String POST(String key) throws Exception {
 		if (!getSession().getMethod().name().toUpperCase().equals("POST")) {
-			throw new InternalError("post." + key);
+			throw new Exception("post." + key);
 		}
 		if (!getSession().getParms().containsKey(key) || getSession().getParms().get(key).length() == 0) {
-			throw new InternalError("post." + key);
+			throw new Exception("post." + key);
 		}
 		return getSession().getParms().get(key);
 	}
@@ -128,14 +164,14 @@ public abstract class Controller extends Component {
 	 * Test post parameter and get it
 	 * @param key - Key
 	 * @return - Value
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public String GET(String key) throws InternalError {
+	public String GET(String key) throws Exception {
 		if (!getSession().getMethod().name().toUpperCase().equals("GET")) {
-			throw new InternalError("get." + key);
+			throw new Exception("get." + key);
 		}
 		if (!getSession().getParms().containsKey(key) || getSession().getParms().get(key).length() == 0) {
-			throw new InternalError("get." + key);
+			throw new Exception("get." + key);
 		}
 		return getSession().getParms().get(key);
 	}
@@ -145,23 +181,23 @@ public abstract class Controller extends Component {
 	 * @param path - Path to controller
 	 * @param action - Controller's action
 	 */
-	public void redirect(String path, String action) throws InternalError {
+	public void redirect(String path, String action) throws Exception {
 		getEnvironment().getRouter().redirect(path, action);
 	}
 
 	/**
 	 * Run view to render page with empty data map
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void render(String action) throws InternalError {
+	public void render(String action) throws Exception {
 		render(action, new HashMap<String, Object>());
 	}
 
 	/**
 	 * Run view to render page
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public void render(String action, Map<String, Object> hashData) throws InternalError {
+	public void render(String action, Map<String, Object> hashData) throws Exception {
 
 		// Return if view is null
 		if (getView() == null) {
@@ -185,12 +221,12 @@ public abstract class Controller extends Component {
 			try {
 				renderMethod.invoke(getView(), hashData);
 			} catch (IllegalAccessException e) {
-				throw new InternalError(e.getCause().getMessage());
+				throw new Exception(e.getCause().getMessage());
 			} catch (InvocationTargetException e) {
-				throw new InternalError(e.getCause().getMessage());
+				throw new Exception(e.getCause().getMessage());
 			}
 		} else {
-			throw new InternalError(
+			throw new Exception(
 				"Controller/render() : \"Unresolved render method (" + action + ")\""
 			);
 		}
@@ -199,7 +235,7 @@ public abstract class Controller extends Component {
 	/**
 	 * @return - Current controller's model
 	 */
-	public Model getModel() throws InternalError {
+	public Model getModel() throws Exception {
 		return getModel(null);
 	}
 
@@ -207,7 +243,7 @@ public abstract class Controller extends Component {
 	 * @return - Current controller's model if
 	 * 		path is null, else model by path
 	 */
-	public Model getModel(String path) throws InternalError {
+	public Model getModel(String path) throws Exception {
 		if (path != null) {
 			return getEnvironment().getModelManager().get(path);
 		} else {
@@ -218,9 +254,9 @@ public abstract class Controller extends Component {
 	/**
 	 * @param model - Model to set
 	 */
-	public void setModel(Model model) throws InternalError {
+	public void setModel(Model model) throws Exception {
 		if (this.model != null) {
-			throw new InternalError("Controller/setModel() : \"Controller already has model\"");
+			throw new Exception("Controller/setModel() : \"Controller already has model\"");
 		}
 		this.model = model;
 	}
@@ -228,7 +264,7 @@ public abstract class Controller extends Component {
 	/**
 	 * @return - Current controller's view
 	 */
-	public View getView() throws InternalError {
+	public View getView() throws Exception {
 		return getView(null);
 	}
 
@@ -238,7 +274,7 @@ public abstract class Controller extends Component {
 	 * can use that method to find another view
  	 * @return - Current controller's view
  	 */
-	public View getView(String path) throws InternalError {
+	public View getView(String path) throws Exception {
 		if (path != null) {
 			return getEnvironment().getViewManager().get(path);
 		} else {
@@ -249,9 +285,9 @@ public abstract class Controller extends Component {
 	/**
 	 * @param view - View to set
 	 */
-	public void setView(View view) throws InternalError {
+	public void setView(View view) throws Exception {
 		if (this.view != null) {
-			throw new InternalError("Controller/setModel() : \"Controller already has view\"");
+			throw new Exception("Controller/setModel() : \"Controller already has view\"");
 		}
 		this.view = view;
 	}
@@ -276,9 +312,9 @@ public abstract class Controller extends Component {
 	/**
 	 * Set http session, you can set it only once
 	 * @param session - Http session
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void setSession(NanoHttpd.IHTTPSession session) throws InternalError {
+	public void setSession(NanoHttpd.IHTTPSession session) throws Exception {
 		this.session = session;
 	}
 

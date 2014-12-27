@@ -1,7 +1,7 @@
 package controllers;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CortegeProtocol;
 import org.json.JSONObject;
 import java.sql.ResultSet;
@@ -19,11 +19,11 @@ public class Project extends Controller {
 	}
 
 	@Override
-	public void actionGetTable() throws InternalError, SQLException {
+	public void actionGetTable() throws Exception {
 		super.actionGetTable();
 	}
 
-	public void actionRegister() throws InternalError, SQLException {
+	public void actionRegister() throws Exception {
 
 		// Get post data fields
 		final int leaderID = Integer.parseInt(POST("leader_id"));
@@ -75,7 +75,7 @@ public class Project extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	public void actionDelete() throws InternalError, SQLException {
+	public void actionDelete() throws Exception {
 
 		// Get post data fields
 		final int projectID = Integer.parseInt(POST("id"));
@@ -108,7 +108,7 @@ public class Project extends Controller {
 			projectSet = projectModel.fetchSet("fetchByID", projectID);
 			// Fetch project's product row
 			productSet = productModel.fetchSet("fetchByID", projectSet.getInt("product_id"));
-		} catch (InternalError ignored) {
+		} catch (Exception ignored) {
 			jsonResponse.put("message", "Проект с таким именем не существует");
 			jsonResponse.put("status", false);
 			setAjaxResponse(jsonResponse.toString());
@@ -153,8 +153,8 @@ public class Project extends Controller {
 		} catch (SQLException ignored) {
 			jsonResponse.put("message", "Нарушение целостности, имеются внешние связи");
 			jsonResponse.put("status", false);
-		} catch (Exception e) {
-			throw new InternalError(e.getMessage());
+		} catch (java.lang.Exception e) {
+			throw new Exception(e.getMessage());
 		} finally {
 			jsonResponse.put("message", "Проект был успешно удален");
 			jsonResponse.put("status", true);
@@ -167,7 +167,7 @@ public class Project extends Controller {
 	 * Default index action
 	 */
 	@Override
-	public void actionView() throws Core.InternalError {
+	public void actionView() throws Exception {
 		redirect("Index", "Denied");
 	}
 }

@@ -1,7 +1,7 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
 
@@ -23,16 +23,16 @@ public class Product extends Model<Product.Row> {
 		super(environment, "product");
 	}
 
-	public Row register(String name, Integer companyID, Integer creatorID, Integer parentID) throws InternalError, SQLException{
+	public Row register(String name, Integer companyID, Integer creatorID, Integer parentID) throws Exception{
 		getConnection().createCommand()
 			.insert("product", "name, company_id, creator_id, parent_id")
 			.values("?, ?, ?, ?")
 			.execute(new Object[] { name, companyID, creatorID, parentID })
 			.insert();
-		return last();
+		return null;
 	}
 
-	public Row delete(Integer productID) throws InternalError, SQLException {
+	public Row delete(Integer productID) throws Exception {
 		getConnection().createCommand()
 			.delete("product")
 			.where("id = ?")
@@ -41,20 +41,20 @@ public class Product extends Model<Product.Row> {
 		return null;
 	}
 
-	public Row bind(Integer productID, Integer employeeID) throws InternalError, SQLException {
+	public Row bind(Integer productID, Integer employeeID) throws Exception {
 		getConnection().createCommand()
 			.insert("product_employee", "product_id, employee_id")
 			.values("?, ?")
 			.execute(new Object[] { productID, employeeID })
 			.insert();
-		return last();
+		return null;
 	}
 
-	public Row unbind(Integer productID, Integer employeeID) throws InternalError, SQLException {
+	public Row unbind(Integer productID, Integer employeeID) throws Exception {
 		getConnection().createCommand()
 			.delete("product_employee")
 			.where("product_id = ?")
-			.and("employee_id = ?")
+			.andWhere("employee_id = ?")
 			.execute(new Object[] { productID, employeeID })
 			.delete();
 		return null;
@@ -142,10 +142,10 @@ public class Product extends Model<Product.Row> {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return new Row(
 			result.getInt("id"),
 			result.getString("name"),

@@ -1,7 +1,7 @@
 package controllers;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CortegeProtocol;
 import org.json.JSONObject;
 import java.sql.SQLException;
@@ -19,11 +19,11 @@ public class User extends Controller {
 	}
 
 	@Override
-	public void actionGetTable() throws InternalError, SQLException {
+	public void actionGetTable() throws Exception {
 		super.actionGetTable();
 	}
 
-	public void actionLogin() throws InternalError, SQLException {
+	public void actionLogin() throws Exception {
 
 		final String login = POST("login");
 		final String password = POST("password");
@@ -49,7 +49,7 @@ public class User extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	public void actionRegister() throws InternalError, SQLException {
+	public void actionRegister() throws Exception {
 
 		final String login = POST("login");
 		final String password = POST("password");
@@ -73,7 +73,7 @@ public class User extends Controller {
 		setAjaxResponse(jsonResponse.toString());
 	}
 
-	public void actionLogout() throws InternalError {
+	public void actionLogout() throws Exception {
 
 		getSession().getCookies().delete("JAW_SESSION_ID");
 
@@ -91,7 +91,7 @@ public class User extends Controller {
 	 * Default index action
 	 */
 	@Override
-	public void actionView() throws InternalError {
+	public void actionView() throws Exception {
 		redirect("index", "view");
 	}
 }

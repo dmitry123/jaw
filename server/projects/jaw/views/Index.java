@@ -1,7 +1,7 @@
 package views;
 
 import Core.*;
-import Core.InternalError;
+
 
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class Index extends View {
 	 * @param hashData
 	 */
 	@Override
-	public void renderView(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderView(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("index/view");
 		template("modal/register");
@@ -35,9 +35,9 @@ public class Index extends View {
 	/**
 	 *
 	 * @param hashData
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void renderDenied(Map<String, Object> hashData) throws InternalError {
+	public void renderDenied(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("index/denied");
 		template("common/footer");
@@ -46,9 +46,9 @@ public class Index extends View {
 	/**
 	 *
 	 * @param hashData
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void renderProject(Map<String, Object> hashData) throws InternalError {
+	public void renderProject(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("index/project");
 		template("modal/choose-project");

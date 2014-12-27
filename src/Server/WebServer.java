@@ -1,7 +1,7 @@
 package Server;
 
 import Core.*;
-import Core.InternalError;
+
 import Terminal.Machine;
 import org.json.JSONObject;
 
@@ -30,7 +30,7 @@ public class WebServer extends NanoHttpd {
 	 * @return HTTP response, see class Response for details
 	 */
 	@Override
-	public Response serve(IHTTPSession session) throws Exception {
+	public Response serve(IHTTPSession session) throws java.lang.Exception {
 
 		Method sessionMethod = session.getMethod();
 		String uri = session.getUri();
@@ -58,7 +58,7 @@ public class WebServer extends NanoHttpd {
 				uri = uri.substring(1);
 				try {
 					return new Response(Response.Status.OK, mime.getName(), mime.getLoader().load(Config.PROJECT_PATH + uri));
-				} catch (InternalError ignored) {
+				} catch (Exception ignored) {
 					return new Response(Response.Status.NOT_FOUND, mime.getName(), "");
 				}
 			}
@@ -175,7 +175,7 @@ public class WebServer extends NanoHttpd {
 
 			return response;
 
-		} catch (InternalError e) {
+		} catch (Exception e) {
 
 			StringWriter stringWriter = new StringWriter();
 
@@ -201,9 +201,9 @@ public class WebServer extends NanoHttpd {
 	}
 
 	/**
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public static void run() throws Core.InternalError {
+	public static void run() throws Exception {
 
 		WebServer server = new WebServer();
 		Machine terminal = new Machine(

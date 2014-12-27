@@ -1,8 +1,5 @@
 package Core;
 
-import Core.*;
-import Core.InternalError;
-
 import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +23,9 @@ public class ProjectCompiler {
 
 	/**
 	 * Compile
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void compile() throws InternalError {
+	public void compile() throws Exception {
 
 		cleanup();
 
@@ -45,7 +42,7 @@ public class ProjectCompiler {
 		Vector<String> files = new Vector<String>();
 
 		if (!projectHandle.exists()) {
-			throw new InternalError("ProjectCompiler/compile() : \"Unable to open project dir\"");
+			throw new Exception("ProjectCompiler/compile() : \"Unable to open project dir\"");
 		}
 
 		findFiles(files, projectHandle.getPath());
@@ -77,7 +74,7 @@ public class ProjectCompiler {
 		}
 	}
 
-	public void cleanup() throws InternalError {
+	public void cleanup() throws Exception {
 
 		String projectName = getProjectManager().getEnvironment()
 				.getProjectName();
@@ -102,13 +99,13 @@ public class ProjectCompiler {
 	 * Find files at path with depth and store it in collection
 	 * @param collection - Collection to store elements
 	 * @param path - Path to directory with files
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	private void findAllFiles(Collection<String> collection, String path) throws InternalError {
+	private void findAllFiles(Collection<String> collection, String path) throws Exception {
 		File handle = new File(path);
 		if (!handle.exists()) {
 			if (!handle.mkdirs()) {
-				throw new InternalError(
+				throw new Exception(
 					"ProjectCompiler/findAllFiles() : \"Unable to create directory (" + handle.getPath() + ")\""
 				);
 			}
@@ -131,13 +128,13 @@ public class ProjectCompiler {
 	 * Find files at path with depth and store it in collection
 	 * @param collection - Collection to store elements
 	 * @param path - Path to directory with files
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	private void findFiles(Collection<String> collection, String path) throws InternalError {
+	private void findFiles(Collection<String> collection, String path) throws Exception {
 		File handle = new File(path);
 		if (!handle.exists()) {
 			if (!handle.mkdir()) {
-				throw new InternalError(
+				throw new Exception(
 					"ClassSeeker/findFiles() : \"Unable to create directory (" + handle.getPath() + ")\""
 				);
 			}
@@ -163,9 +160,9 @@ public class ProjectCompiler {
 	 * Compile file and move to binary folder
 	 * @param path - Path to "*.java" file
 	 * @param folder - Folder to store file (in binary)
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	private void compile(String path, String folder) throws InternalError {
+	private void compile(String path, String folder) throws Exception {
 
 		Vector<File> handles = new Vector<File>();
 		Vector <String> options = new Vector<String>();
@@ -186,14 +183,14 @@ public class ProjectCompiler {
 			Diagnostic<? extends JavaFileObject> d = diagnosticCollector
 				.getDiagnostics().get(0);
 
-			throw new Core.InternalError("ProjectCompiler/compile() : Syntax error on line [" + d.getLineNumber()
+			throw new Exception("ProjectCompiler/compile() : Syntax error on line [" + d.getLineNumber()
 				+ "] in " + d.getSource().toUri() + " : \"" + d.getMessage(Locale.getDefault()) + "\"");
 		}
 
 		try {
 			fileManager.close();
 		} catch (IOException e) {
-			throw new InternalError("ProjectCompiler/compile() : \"Unable to close file manager\"");
+			throw new Exception("ProjectCompiler/compile() : \"Unable to close file manager\"");
 		}
 	}
 

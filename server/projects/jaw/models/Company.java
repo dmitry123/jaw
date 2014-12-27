@@ -1,13 +1,11 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CommandProtocol;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Vector;
+
 import java.lang.Integer;
 import java.lang.Object;
 import java.sql.ResultSet;
@@ -26,7 +24,7 @@ public class Company extends Model<Company.Row> {
 		super(environment, "company");
 	}
 
-	public boolean exists(String name) throws InternalError, SQLException {
+	public boolean exists(String name) throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from("company")
@@ -36,7 +34,7 @@ public class Company extends Model<Company.Row> {
 		return resultSet.next();
 	}
 
-	public ResultSet fetchByName(String name) throws InternalError, SQLException {
+	public ResultSet fetchByName(String name) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("company")
@@ -45,7 +43,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	public ResultSet fetchByUserID(Integer userID) throws InternalError, SQLException {
+	public ResultSet fetchByUserID(Integer userID) throws Exception {
 		return getConnection().createCommand()
 			.select("c.*")
 			.from("company as c")
@@ -56,7 +54,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	public ResultSet fetchEmployees(Integer companyID) throws InternalError, SQLException {
+	public ResultSet fetchEmployees(Integer companyID) throws Exception {
 		return getConnection().createCommand()
 			.select("e.*")
 			.from("employee as e")
@@ -65,7 +63,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	public CortegeRow updateDirector(String name, Integer director) throws InternalError, SQLException {
+	public CortegeRow updateDirector(String name, Integer director) throws Exception {
 		getConnection().createCommand()
 			.update("company")
 			.set("director_id = ?")
@@ -75,9 +73,9 @@ public class Company extends Model<Company.Row> {
 		return null;
 	}
 
-	public CortegeRow register(String name) throws InternalError, SQLException {
+	public CortegeRow register(String name) throws Exception {
 		if (exists(name)) {
-			throw new InternalError(
+			throw new Exception(
 				"Company/register() : \"Company with that name already registered\""
 			);
 		}
@@ -89,7 +87,7 @@ public class Company extends Model<Company.Row> {
 		return last();
 	}
 
-	public Row delete(Integer projectID) throws InternalError, SQLException {
+	public Row delete(Integer projectID) throws Exception {
 		getConnection().createCommand()
 			.delete("project")
 			.where("id = ?")
@@ -99,7 +97,7 @@ public class Company extends Model<Company.Row> {
 	}
 
 	@Override
-	public CommandProtocol getResultSetForTable() throws InternalError, SQLException {
+	public CommandProtocol getResultSetForTable() throws Exception {
 		return getConnection().createCommand()
 			.distinct("*")
 			.from("company")
@@ -147,10 +145,10 @@ public class Company extends Model<Company.Row> {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return new Row(result.getInt("id"), result.getString("name"), result.getInt("director_id"));
 	}
 }

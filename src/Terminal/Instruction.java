@@ -1,7 +1,6 @@
 package Terminal;
 
-import Core.*;
-import Core.InternalError;
+
 
 /**
  * Created by Savonin on 2014-11-15
@@ -58,7 +57,7 @@ public abstract class Instruction implements Protocol {
 	/**
 	 * @param i - Instruction
 	 */
-	public void getAbout(Protocol i) throws Core.InternalError {
+	public void getAbout(Protocol i) throws Exception {
 		System.out.format(
 			" - \"%s\" <%s>\n" +
 			"   description : %s\n" +

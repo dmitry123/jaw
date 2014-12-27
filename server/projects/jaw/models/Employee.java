@@ -1,13 +1,11 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CommandProtocol;
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Vector;
+
 import java.lang.Object;
 import java.lang.Override;
 import java.sql.ResultSet;
@@ -26,7 +24,7 @@ public class Employee extends Model<Employee.Row> {
 		super(environment, "employee");
 	}
 
-	public Row register(String name, String surname, String patronymic, Integer userID, Integer managerID, Integer directorID, Integer companyID) throws InternalError, SQLException {
+	public Row register(String name, String surname, String patronymic, Integer userID, Integer managerID, Integer directorID, Integer companyID) throws Exception {
 		getConnection().createCommand()
 			.insert("employee", "name, surname, user_id, manager_id, director_id, company_id, patronymic")
 			.values("?, ?, ?, ?, ?, ?, ?")
@@ -35,7 +33,7 @@ public class Employee extends Model<Employee.Row> {
 		return last();
 	}
 
-	public ResultSet fetchByCompanyID(Integer companyID) throws InternalError, SQLException {
+	public ResultSet fetchByCompanyID(Integer companyID) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("employee")
@@ -44,7 +42,7 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	public ResultSet fetchByUserID(Integer userID) throws InternalError, SQLException {
+	public ResultSet fetchByUserID(Integer userID) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("employee")
@@ -53,29 +51,42 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	public ResultSet fetchPrivilege(Integer employeeID, String privilegeKey) throws InternalError, SQLException {
+	public ResultSet fetchPrivilegeByUserID(Integer userID, String privilegeID) throws Exception {
+		return getConnection().createCommand()
+			.select("p.*")
+			.from("users as u")
+			.join("employee as e", "e.user_id = u.id")
+			.join("employee_group as eg", "eg.employee_id = e.id")
+			.join("group_privilege as gp", "gp.group_id = eg.group_id")
+			.join("privilege as p", "gp.privilege_id = p.id")
+			.where("u.id = ? and p.id = ?")
+			.execute(new Object[]{ userID, privilegeID })
+			.select();
+	}
+
+	public ResultSet fetchPrivilege(Integer employeeID, String privilegeID) throws Exception {
 		return getConnection().createCommand()
 			.select("p.*")
 			.from("privilege as p")
 			.join("group_privilege as gp", "gp.privilege_id = p.id")
 			.join("employee_group as eg", "eg.group_id = gp.group_id")
 			.where("p.id = ?")
-			.and("eg.employee_id = ?")
-			.execute(new Object[] { privilegeKey, employeeID })
+			.andWhere("eg.employee_id = ?")
+			.execute(new Object[] { privilegeID, employeeID })
 			.select();
 	}
 
-	public ResultSet fetchByUserAndCompanyID(Integer userID, Integer companyID) throws InternalError, SQLException {
+	public ResultSet fetchByUserAndCompanyID(Integer userID, Integer companyID) throws Exception {
 		return getConnection().createCommand()
 			.distinct("*")
 			.from("employee")
 			.where("user_id = ?")
-			.and("company_id = ?")
+			.andWhere("company_id = ?")
 			.execute(new Object[] { userID, companyID })
 			.select();
 	}
 
-	public ResultSet fetchGroups(Integer employeeID) throws InternalError, SQLException {
+	public ResultSet fetchGroups(Integer employeeID) throws Exception {
 		return getConnection().createCommand()
 			.select("g.*")
 			.from("employee as e")
@@ -86,7 +97,7 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	public ResultSet fetchCompaniesByUserID(Integer userID) throws InternalError, SQLException {
+	public ResultSet fetchCompaniesByUserID(Integer userID) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("users as u")
@@ -97,7 +108,7 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
-	public ResultSet fetchProjectsByUserID(Integer userID) throws InternalError, SQLException {
+	public ResultSet fetchProjectsByUserID(Integer userID) throws Exception {
 		return getConnection().createCommand()
 			.select("e.*, p.*, r.*")
 			.from("project as p")
@@ -111,7 +122,7 @@ public class Employee extends Model<Employee.Row> {
 	}
 
 	@Override
-	public CommandProtocol getResultSetForTable() throws InternalError, SQLException {
+	public CommandProtocol getResultSetForTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("employee")
@@ -171,10 +182,10 @@ public class Employee extends Model<Employee.Row> {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return new Row(
 			result.getInt("id"),
 			result.getString("name"),

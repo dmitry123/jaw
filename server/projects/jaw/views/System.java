@@ -1,7 +1,7 @@
 package views;
 
 import Core.*;
-import Core.InternalError;
+
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public class System extends View {
 	 * @param hashData
 	 */
 	@Override
-	public void renderView(Map<String, Object> hashData) throws Core.InternalError {
+	public void renderView(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("system/menu");
 		template("system/view");

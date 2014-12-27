@@ -23,7 +23,7 @@ public class Binder <T extends CortegeProtocol> implements CortegeProtocol {
 	 * @return - Row's identifier
 	 */
 	@Override
-	public int getID() throws InternalError {
+	public int getID() throws Exception {
 		return cortege != null ? cortege.getID() : 0;
 	}
 

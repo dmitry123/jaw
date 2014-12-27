@@ -23,8 +23,7 @@ public class Logger {
 		if (logVector.add(strTime + " [" + log + "]\n") && logVector.size() >= FLUSH_LIMIT) {
 			try {
 				flush();
-			} catch (InternalError e) {
-			} catch (IOException e) {
+			} catch (Exception e) {
 			}
 		}
 	}
@@ -80,10 +79,10 @@ public class Logger {
 	/**
 	 * Flush all logs
 	 */
-	private synchronized void flush() throws InternalError, IOException {
+	private synchronized void flush() throws Exception, IOException {
 		File logHandle = new File(Config.LOG_PATH + todayFileName() + ".txt");
 		if (!logHandle.exists() && !logHandle.createNewFile()) {
-			throw new InternalError("Unable to create log file");
+			throw new Exception("Unable to create log file");
 		}
 		FileWriter fileWriter = new FileWriter(
 			logHandle, true
@@ -93,8 +92,8 @@ public class Logger {
 				fileWriter.write(s);
 			}
 			fileWriter.flush();
-		} catch (Exception e) {
-			throw new InternalError(e.getMessage());
+		} catch (java.lang.Exception e) {
+			throw new Exception(e.getMessage());
 		}
 		logVector.clear();
 	}

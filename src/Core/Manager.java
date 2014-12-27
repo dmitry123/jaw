@@ -2,7 +2,6 @@ package Core;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.IllegalCharsetNameException;
 import java.util.HashMap;
 
 /**
@@ -21,7 +20,7 @@ public abstract class Manager<C extends Component> extends Extension {
 	 * @param path - Path to component
 	 * @return - Found component
 	 */
-	public C get(String path) throws Core.InternalError {
+	public C get(String path) throws Exception {
 
 		C component = getCached(path);
 

@@ -13,9 +13,9 @@ public class Environment {
 	 * Construct environment
 	 * @param connection - Database connection
 	 * @param projectName - Project's folder name
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public Environment(Connection connection, String projectName) throws InternalError {
+	public Environment(Connection connection, String projectName) throws Exception {
 
 		if (connection == null || connection.isClosed()) {
 			connection = new Connection();

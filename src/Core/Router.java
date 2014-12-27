@@ -23,7 +23,7 @@ public class Router extends Extension {
 	 * @param path - Path to controller
 	 * @param action - Controller's action
 	 */
-	public void redirect(String path, String action) throws InternalError {
+	public void redirect(String path, String action) throws Exception {
 
 		if (path.length() == 0) {
 			path = action;
@@ -62,9 +62,9 @@ public class Router extends Extension {
 				try {
 					actionMethod.invoke(controller);
 				} catch (IllegalAccessException e) {
-					throw new InternalError(e.getCause().getMessage());
+					throw new Exception(e.getCause().getMessage());
 				} catch (InvocationTargetException e) {
-					throw new InternalError(e.getCause().getMessage());
+					throw new Exception(e.getCause().getMessage());
 				}
 			} else {
 				controller = null;
@@ -81,9 +81,9 @@ public class Router extends Extension {
 	 * @param componentFolder - Name of component type's folder
 	 * @see Core.Config
 	 * @return - Absolute path to file (about project path)
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public static String getAbsolutePath(String projectPath, String componentPath, String componentFolder) throws Core.InternalError {
+	public static String getAbsolutePath(String projectPath, String componentPath, String componentFolder) throws Exception {
 		return getPath(projectPath, componentPath, componentFolder, false, false) + ".java";
 	}
 
@@ -96,9 +96,9 @@ public class Router extends Extension {
 	 * @param componentFolder - Name of component type's folder
 	 * @see Core.Config
 	 * @return - Absolute path to file (about project path)
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public static String getBinaryPath(String projectPath, String componentPath, String componentFolder) throws Core.InternalError {
+	public static String getBinaryPath(String projectPath, String componentPath, String componentFolder) throws Exception {
 		return getPath(projectPath, componentPath, componentFolder, true, false);
 	}
 
@@ -111,9 +111,9 @@ public class Router extends Extension {
 	 * @param componentFolder - Name of component type's folder
 	 * @see Core.Config
 	 * @return - Absolute path to file (about project path)
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public static String getStaticPath(String projectPath, String componentPath, String componentFolder) throws Core.InternalError {
+	public static String getStaticPath(String projectPath, String componentPath, String componentFolder) throws Exception {
 		return getPath(projectPath, componentPath, componentFolder, false, true);
 	}
 
@@ -124,9 +124,9 @@ public class Router extends Extension {
 	 * @param componentFolder - Name of component type's folder
 	 * @see Core.Config
 	 * @return - Path to file (about project path)
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	private static String getPath(String projectPath, String componentPath, String componentFolder, boolean seekBinary, boolean withDot) throws InternalError {
+	private static String getPath(String projectPath, String componentPath, String componentFolder, boolean seekBinary, boolean withDot) throws Exception {
 		File handle = new File(projectPath);
 		if (!handle.exists()) {
 			return null;

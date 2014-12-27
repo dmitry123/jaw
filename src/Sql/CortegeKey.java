@@ -1,6 +1,6 @@
 package Sql;
 
-import Core.InternalError;
+
 
 /**
  * Created by dmitry on 18.11.14
@@ -21,8 +21,8 @@ public class CortegeKey implements CortegeProtocol {
 	 * @return row's key
 	 */
 	@Override
-	public int getID() throws Core.InternalError {
-		throw new InternalError("CortegeKey/getID() : \"Table hasn't primary integer identifier\"");
+	public int getID() throws Exception {
+		throw new Exception("CortegeKey/getID() : \"Table hasn't primary integer identifier\"");
 	}
 
 	/**

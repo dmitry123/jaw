@@ -30,9 +30,9 @@ public enum ComponentType {
 	 * @param environment - Reference to environment
 	 * @param path - Path to component
 	 * @return - Absolute path to component
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public String getAbsolutePath(Environment environment, String path) throws Core.InternalError {
+	public String getAbsolutePath(Environment environment, String path) throws Exception {
 		return Router.getAbsolutePath(environment.getProjectPath(), path, getPath());
 	}
 
@@ -41,9 +41,9 @@ public enum ComponentType {
 	 * @param environment - Reference to environment
 	 * @param path - Path to component
 	 * @return - Absolute path to component
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public String getBinaryPath(Environment environment, String path) throws Core.InternalError {
+	public String getBinaryPath(Environment environment, String path) throws Exception {
 		return Router.getBinaryPath(environment.getProjectPath(), path, getPath());
 	}
 

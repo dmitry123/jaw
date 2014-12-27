@@ -2,12 +2,7 @@ package controllers;
 
 import Core.*;
 import Core.Controller;
-import Core.InternalError;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.lang.Override;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Admin extends Controller {
@@ -17,7 +12,7 @@ public class Admin extends Controller {
 	}
 
 	@Override
-	public void actionView() throws InternalError, SQLException {
+	public void actionView() throws Exception {
 		if (checkAccess()) {
 			render("View");
 		} else {
@@ -25,7 +20,7 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionUser() throws InternalError, SQLException {
+	public void actionUser() throws Exception {
 		if (checkAccess()) {
 			render("User");
 		} else {
@@ -33,7 +28,7 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionEmployee() throws InternalError, SQLException {
+	public void actionEmployee() throws Exception {
 		if (checkAccess()) {
 			render("Employee");
 		} else {
@@ -41,7 +36,7 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionCompany() throws InternalError, SQLException {
+	public void actionCompany() throws Exception {
 		if (checkAccess()) {
 			render("Company");
 		} else {
@@ -49,7 +44,7 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionGroup() throws InternalError, SQLException {
+	public void actionGroup() throws Exception {
 		if (checkAccess()) {
 			render("Group");
 		} else {
@@ -57,7 +52,7 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionPrivilege() throws InternalError, SQLException {
+	public void actionPrivilege() throws Exception {
 		if (checkAccess()) {
 			render("Privilege");
 		} else {
@@ -65,7 +60,7 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionReference() throws InternalError, SQLException {
+	public void actionReference() throws Exception {
 		if (checkAccess()) {
 			render("Reference");
 		} else {
@@ -73,15 +68,19 @@ public class Admin extends Controller {
 		}
 	}
 
+	public boolean checkAccess() throws Exception {
+		return checkAccess("jaw-admin");
+	}
+
 	/**
 	 * Check user's access
 	 * @param privileges - List with privileges
 	 * @return - True if user has that privileges
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 * @throws SQLException
 	 */
 	@Override
-	public boolean checkAccess(String... privileges) throws InternalError, SQLException {
+	public boolean checkAccess(String... privileges) throws Exception {
 
 		Core.User user = getEnvironment().getUserSessionManager().get();
 
@@ -89,24 +88,15 @@ public class Admin extends Controller {
 			return false;
 		}
 
-		Model employeeModel = getEnvironment().getModelManager().get("Employee");
-		ResultSet employeeSet = employeeModel.fetchSet("fetchByUserID", user.getID());
+		Model employeeModel = getEnvironment().getModelManager()
+			.get("Employee");
 
-		int total = 0;
-
-		// If one of user's employees has 'god' privilege
-		while (employeeSet.next()) {
-			for (String privilege : privileges) {
-				if (employeeModel.fetchSet("fetchPrivilege", employeeSet.getInt("id"), privilege).next()) {
-					++total;
-				}
+		for (String privilege : privileges) {
+			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", user.getID(), privilege).next()) {
+				return false;
 			}
-			if (total == privileges.length) {
-				return true;
-			}
-			total = 0;
 		}
 
-		return false;
+		return true;
 	}
 }

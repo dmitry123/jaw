@@ -21,9 +21,9 @@ public class ClassSeeker extends Extension {
 	 * Find files at some path with annotation
 	 * @param annotation - Annotation's class
 	 * @return - Collection with found classes
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public Collection<Class> findByAnnotation(Class annotation) throws InternalError {
+	public Collection<Class> findByAnnotation(Class annotation) throws Exception {
 
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
@@ -37,7 +37,7 @@ public class ClassSeeker extends Extension {
 			try {
 				c = loader.loadClass(s);
 			} catch (ClassNotFoundException e) {
-				throw new InternalError("ClassSeeker/findByAnnotation() : \"" + e.getMessage() + "\"");
+				throw new Exception("ClassSeeker/findByAnnotation() : \"" + e.getMessage() + "\"");
 			}
 			System.out.println(c.getAnnotation(annotation));
 		}
@@ -49,15 +49,15 @@ public class ClassSeeker extends Extension {
 	 * Find files at path with depth and store it in collection
 	 * @param collection - Collection to store elements
 	 * @param path - Path to directory with files
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	private void findFiles(Collection<String> collection, String path) throws InternalError {
+	private void findFiles(Collection<String> collection, String path) throws Exception {
 
 		File handle = new File(path);
 
 		if (!handle.exists()) {
 			if (!handle.mkdir()) {
-				throw new InternalError(
+				throw new Exception(
 					"ClassSeeker/findFiles() : \"Unable to create directory (" + handle.getPath() + ")\""
 				);
 			}

@@ -21,7 +21,7 @@ public class EnvironmentManager {
 				for (Map.Entry<String, Environment> i : EnvironmentManager.getInstance().getHashMap().entrySet()) {
 					try {
 						i.getValue().getUserSessionManager().save();
-					} catch (InternalError ignored) {
+					} catch (Exception ignored) {
 					}
 				}
 			}
@@ -32,9 +32,9 @@ public class EnvironmentManager {
 	 *
 	 * @param name
 	 * @return
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public Environment get(String name) throws InternalError {
+	public Environment get(String name) throws Exception {
 		// Find cashed environment
 		if (hashMap.containsKey(name)) {
 			return hashMap.get(name);

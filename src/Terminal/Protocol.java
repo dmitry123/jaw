@@ -1,7 +1,6 @@
 package Terminal;
 
-import Core.*;
-import Core.InternalError;
+
 
 /**
  * Created by Savonin on 2014-11-23
@@ -42,5 +41,5 @@ public interface Protocol {
 	 * Execute instruction or station
 	 * @param arguments - Instruction arguments
 	 */
-	public void run(String[] arguments) throws InternalError, InterruptedException;
+	public void run(String[] arguments) throws Exception, InterruptedException;
 }

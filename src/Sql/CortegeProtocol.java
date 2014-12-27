@@ -10,5 +10,5 @@ public interface CortegeProtocol extends Serializable {
      *
      * @return row's id
      */
-    public int getID() throws Core.InternalError;
+    public int getID() throws Exception;
 }

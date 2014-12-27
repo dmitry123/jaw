@@ -1,8 +1,10 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
 
+import Sql.CommandProtocol;
+
+import java.lang.Override;
 import java.sql.*;
 import java.sql.SQLException;
 
@@ -17,35 +19,35 @@ public class User extends Model<User.Row> {
 	 * @param environment
 	 * 		MySql's helper object
 	 */
-    public User(Environment environment) throws Exception {
+    public User(Environment environment) throws java.lang.Exception {
         super(environment, "users");
     }
 
-	public boolean exists(String login) throws InternalError, SQLException {
+	public boolean exists(String login) throws Exception {
 		try {
 			return execute("SELECT * FROM users WHERE login=?", login)
 					.next();
 		} catch (SQLException e) {
-			throw new InternalError("User/exists() : \"Unresolved user's login (" + login + ")\"");
+			throw new Exception("User/exists() : \"Unresolved user's login (" + login + ")\"");
 		}
 	}
 
 	@Override
-	public Row createFromSet(ResultSet result) throws InternalError, SQLException {
+	public Row createFromSet(ResultSet result) throws Exception {
 		return new Row(result.getInt("id"), result.getString("login"),
 			result.getString("hash"), result.getString("email"));
 	}
 
-	public Row register(String login, String hash, String email) throws InternalError, SQLException {
+	public Row register(String login, String hash, String email) throws Exception {
 		getConnection().createCommand()
 			.insert("users", "login, hash, email")
 			.values("?, ?, ?")
 			.execute(new Object[] { login, hash, email })
 			.insert();
-		return last();
+		return null;
 	}
 
-	public ResultSet fetchByLogin(String login) throws InternalError, SQLException {
+	public ResultSet fetchByLogin(String login) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("users")
@@ -54,23 +56,31 @@ public class User extends Model<User.Row> {
 			.select();
 	}
 
-	public ResultSet fetchByLoginAndHash(String login, String hash) throws InternalError, SQLException {
+	public ResultSet fetchByLoginAndHash(String login, String hash) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("users")
 			.where("LOWER(login) = LOWER(?)")
-			.and("hash = ?")
+			.andWhere("hash = ?")
 			.execute(new Object[] { login, hash })
 			.select();
 	}
 
-	public ResultSet fetchByMail(String email) throws InternalError, SQLException {
+	public ResultSet fetchByMail(String email) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("users")
 			.where("email = ?")
 			.execute(new Object[] { email })
 			.select();
+	}
+
+	@Override
+	public CommandProtocol getReferences() throws Exception {
+		return getConnection().createCommand()
+			.select("*")
+			.from("users")
+			.join("employee", "employee.user_id = users.id");
 	}
 
 	/**

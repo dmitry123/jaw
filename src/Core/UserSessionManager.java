@@ -72,14 +72,14 @@ public class UserSessionManager extends Extension {
 	/**
 	 *
 	 */
-	public void save() throws InternalError {
+	public void save() throws Exception {
 		File handle = new File(Config.SESSION_PATH + getEnvironment().getProjectName() + ".session");
 		if (!handle.exists()) {
 			try {
 				new File(Config.SESSION_PATH).mkdirs();
 				handle.createNewFile();
 			} catch (IOException e) {
-				throw new InternalError(e.getMessage());
+				throw new Exception(e.getMessage());
 			}
 		}
 		FileOutputStream fileOutputStream;
@@ -88,7 +88,7 @@ public class UserSessionManager extends Extension {
 			fileOutputStream = new FileOutputStream(handle);
 			objectOutputStream = new ObjectOutputStream(fileOutputStream);
 		} catch (IOException e) {
-			throw new InternalError(e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 		try {
 			objectOutputStream.writeInt(userHashMap.size());
@@ -99,14 +99,14 @@ public class UserSessionManager extends Extension {
 			fileOutputStream.flush();
 			fileOutputStream.close();
 		} catch (IOException e) {
-			throw new InternalError(e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 	}
 
 	/**
 	 *
 	 */
-	public void load() throws InternalError {
+	public void load() throws Exception {
 		File handle = new File(Config.SESSION_PATH + getEnvironment().getProjectName() + ".session");
 		if (!handle.exists()) {
 			return;
@@ -117,7 +117,7 @@ public class UserSessionManager extends Extension {
 			fileInputStream = new FileInputStream(handle);
 			objectInputStream = new ObjectInputStream(fileInputStream);
 		} catch (IOException e) {
-			throw new InternalError(e.getMessage());
+			throw new Exception(e.getMessage());
 		}
 		userHashMap.clear();
 		try {
@@ -131,7 +131,7 @@ public class UserSessionManager extends Extension {
 			}
 			fileInputStream.close();
 		} catch (ClassNotFoundException e) {
-			throw new InternalError(e.getMessage());
+			throw new Exception(e.getMessage());
 		} catch (IOException ignored) {
 		}
 	}

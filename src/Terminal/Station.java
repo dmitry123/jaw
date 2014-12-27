@@ -1,6 +1,6 @@
 package Terminal;
 
-import Core.InternalError;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public abstract class Station extends Instruction implements Protocol {
 	 * Construct controller with instructions
 	 * @param machine - Station's machine
 	 */
-	protected Station(Machine machine) throws Core.InternalError {
+	protected Station(Machine machine) throws Exception {
 		this(machine, null, null, null);
 	}
 
@@ -25,7 +25,7 @@ public abstract class Station extends Instruction implements Protocol {
 	 * Construct controller with instructions
 	 * @param machine - Station's machine
 	 */
-	protected Station(Machine machine, Station parent) throws Core.InternalError {
+	protected Station(Machine machine, Station parent) throws Exception {
 		this(machine, parent, null, null);
 	}
 
@@ -33,7 +33,7 @@ public abstract class Station extends Instruction implements Protocol {
 	 * Construct controller with instructions
 	 * @param machine - Station's machine
 	 */
-	protected Station(Machine machine, Station parent, String name, String tag) throws Core.InternalError {
+	protected Station(Machine machine, Station parent, String name, String tag) throws Exception {
 
 		super(null, name, tag);
 
@@ -42,14 +42,14 @@ public abstract class Station extends Instruction implements Protocol {
 
 		register(new Instruction(this, "exit", "-e") {
 			@Override
-			public void run(String[] arguments) throws InternalError, InterruptedException {
+			public void run(String[] arguments) throws Exception, InterruptedException {
 				throw new InterruptedException();
 			}
 		});
 
 		register(new Instruction(this, "help", "-h") {
 			@Override
-			public void run(String[] arguments) throws InternalError, InterruptedException {
+			public void run(String[] arguments) throws Exception, InterruptedException {
 				if (arguments.length != 0) {
 					if (arguments.length != 1) {
 						throw new Error(this,
@@ -58,7 +58,7 @@ public abstract class Station extends Instruction implements Protocol {
 					}
 					try {
 						getAbout(getStation().find(arguments[0]));
-					} catch (InternalError e) {
+					} catch (Exception e) {
 						throw new Error(this, e.getMessage());
 					}
 				} else {
@@ -75,7 +75,7 @@ public abstract class Station extends Instruction implements Protocol {
 	 * @param arguments - Instruction arguments
 	 */
 	@Override
-	public void run(String[] arguments) throws InternalError, InterruptedException {
+	public void run(String[] arguments) throws Exception, InterruptedException {
 		if (arguments.length > 0) {
 			Protocol p = this.find(arguments[0]);
 			String[] args = new String[arguments.length - 1];
@@ -89,7 +89,7 @@ public abstract class Station extends Instruction implements Protocol {
 	/**
 	 *
 	 */
-	public void work() throws InternalError {
+	public void work() throws Exception {
 		String line;
 		BufferedReader bufferedReader = new BufferedReader(
 			new InputStreamReader(System.in)
@@ -100,7 +100,7 @@ public abstract class Station extends Instruction implements Protocol {
 				String[] list = line.split(" ");
 				try {
 					if (list.length == 0) {
-						throw new Exception("Empty instruction");
+						throw new java.lang.Exception("Empty instruction");
 					}
 					Protocol protocol = getMachine().getActive().find(list[0]);
 					String[] argumentList = new String[
@@ -117,13 +117,13 @@ public abstract class Station extends Instruction implements Protocol {
 				} catch (Error e) {
 					System.out.format("Instruction Error [%s] : \"%s\"\n", e.getInstruction().getName(),
 							e.getMessage());
-				} catch (Exception e) {
+				} catch (java.lang.Exception e) {
 					System.out.format("Internal Error: \"%s\"\n", e.getMessage());
 				}
 				printEntry();
 			}
 		} catch (IOException e) {
-			throw new InternalError(
+			throw new Exception(
 				"Station/work() : \"" + e.getMessage() + "\""
 			);
 		}
@@ -151,11 +151,11 @@ public abstract class Station extends Instruction implements Protocol {
 	 * Register new instruction in current controller
 	 *
 	 * @param instruction - Instruction's instance
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void register(Protocol instruction) throws InternalError {
+	public void register(Protocol instruction) throws Exception {
 		if (hashMap.containsKey(instruction.getName())) {
-			throw new Core.InternalError("Instruction with that name already exists");
+			throw new Exception("Instruction with that name already exists");
 		}
 		hashMap.put(instruction.getName(), instruction);
 	}
@@ -164,9 +164,9 @@ public abstract class Station extends Instruction implements Protocol {
 	 * Find instruction by it's name (key)
 	 * @param name - Instruction's name
 	 * @return - Found instruction in hash map
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public Protocol find(String name) throws InternalError {
+	public Protocol find(String name) throws Exception {
 		if (!hashMap.containsKey(name)) {
 			for (Protocol i : getInstructions()) {
 				if (!(i instanceof Instruction)) {
@@ -176,7 +176,7 @@ public abstract class Station extends Instruction implements Protocol {
 					return i;
 				}
 			}
-			throw new Core.InternalError("Unknown instruction");
+			throw new Exception("Unknown instruction");
 		}
 		return hashMap.get(name);
 	}

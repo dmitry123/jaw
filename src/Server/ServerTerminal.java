@@ -1,7 +1,7 @@
 package Server;
 
 import Core.*;
-import Core.InternalError;
+
 import Terminal.*;
 import Terminal.Error;
 
@@ -16,16 +16,16 @@ public class ServerTerminal extends Station {
 	/**
 	 * Construct terminal without parent
 	 * @param machine - Station's machine
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public ServerTerminal(Machine machine) throws InternalError {
+	public ServerTerminal(Machine machine) throws Exception {
 		this(machine, null);
 	}
 
 	/**
 	 * Construct controller with instructions
 	 */
-	public ServerTerminal(Machine machine, Station parent) throws InternalError {
+	public ServerTerminal(Machine machine, Station parent) throws Exception {
 
 		super(machine, parent);
 
@@ -53,7 +53,7 @@ public class ServerTerminal extends Station {
 
 		register(new Instruction(this, "compile", "-c") {
 			@Override
-			public void run(String[] arguments) throws InternalError, InterruptedException {
+			public void run(String[] arguments) throws Exception, InterruptedException {
 				if (arguments.length != 1) {
 					throw new Error(this,
 							"That instruction can assume only one argument"
@@ -75,7 +75,7 @@ public class ServerTerminal extends Station {
 
 		register(new Instruction(this, "cleanup", "-r") {
 			@Override
-			public void run(String[] arguments) throws InternalError, InterruptedException {
+			public void run(String[] arguments) throws Exception, InterruptedException {
 				if (arguments.length != 1) {
 					throw new Error(this,
 							"That instruction can assume only one argument"
@@ -97,7 +97,7 @@ public class ServerTerminal extends Station {
 			{
 				register(new Instruction(this, "show", "-s") {
 					@Override
-					public void run(String[] arguments) throws InternalError, InterruptedException {
+					public void run(String[] arguments) throws Exception, InterruptedException {
 						if (arguments.length != 1) {
 							throw new Error(this,
 									"That instruction can assume only one argument"
@@ -115,7 +115,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "clear", "-c") {
 					@Override
-					public void run(String[] arguments) throws InternalError, InterruptedException {
+					public void run(String[] arguments) throws Exception, InterruptedException {
 						if (arguments.length != 1) {
 							throw new Error(this,
 									"That instruction can assume only one argument"
@@ -128,7 +128,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "drop", "-d") {
 					@Override
-					public void run(String[] arguments) throws InternalError, InterruptedException {
+					public void run(String[] arguments) throws Exception, InterruptedException {
 						if (arguments.length != 2) {
 							throw new Error(this,
 								"That instruction can assume only two arguments"
@@ -147,7 +147,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "save", "-sf") {
 					@Override
-					public void run(String[] arguments) throws InternalError, InterruptedException {
+					public void run(String[] arguments) throws Exception, InterruptedException {
 						if (arguments.length != 1) {
 							throw new Error(this,
 								"That instruction can assume only two arguments"
@@ -159,7 +159,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "load", "-lf") {
 					@Override
-					public void run(String[] arguments) throws InternalError, InterruptedException {
+					public void run(String[] arguments) throws Exception, InterruptedException {
 						if (arguments.length != 1) {
 							throw new Error(this,
 								"That instruction can assume only two arguments"

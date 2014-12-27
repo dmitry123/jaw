@@ -24,20 +24,20 @@ public abstract class View extends Component {
 	 * method to display basic information about
 	 * page or widget
 	 */
-	public abstract void renderView(Map<String, Object> hashData) throws InternalError;
+	public abstract void renderView(Map<String, Object> hashData) throws Exception;
 
 	/**
 	 * Every view must implements default 404
 	 * render method to display basic error
 	 */
-	public void render404(Map<String, Object> hashData) throws InternalError {
+	public void render404(Map<String, Object> hashData) throws Exception {
 	}
 
 	/**
 	 * Render template with specific path
 	 * @param path - Path to template to render
 	 */
-	public void template(String path) throws InternalError {
+	public void template(String path) throws Exception {
 
 		String absolutePath = Router.getStaticPath(
 			getEnvironment().getProjectPath(), path, "templates" + File.separator
@@ -59,7 +59,7 @@ public abstract class View extends Component {
 				}
 			}
 		} catch (IOException e) {
-			throw new InternalError(
+			throw new Exception(
 				"View/template() : \"" + e.getMessage() + "\""
 			);
 		}

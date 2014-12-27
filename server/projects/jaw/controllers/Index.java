@@ -1,13 +1,11 @@
 package controllers;
 
 import Core.*;
-import Core.InternalError;
+
 import Html.Html;
-import Sql.CortegeProtocol;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.InterruptedException;
 import java.util.HashMap;
 import java.io.StringWriter;
 import java.sql.ResultSet;
@@ -30,7 +28,7 @@ public class Index extends Controller {
 	 * Default index action
 	 */
 	@Override
-	public void actionView() throws InternalError {
+	public void actionView() throws Exception {
 
 		// If we have user's session then redirect to system view else render current
 		if (getEnvironment().getUserSessionManager().has()) {
@@ -42,9 +40,9 @@ public class Index extends Controller {
 
 	/**
 	 *
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void actionProject() throws InternalError, SQLException {
+	public void actionProject() throws Exception {
 
 		Model companyModel = getModel("Company");
 
@@ -75,9 +73,9 @@ public class Index extends Controller {
 
 	/**
 	 *
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void actionGetEmployeeProjects() throws InternalError, SQLException {
+	public void actionGetEmployeeProjects() throws Exception {
 
 		// Load models
 		Model employeeModel = getModel("Employee");
@@ -140,9 +138,9 @@ public class Index extends Controller {
 
 	/**
 	 *
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public void actionDenied() throws InternalError {
+	public void actionDenied() throws Exception {
 
 		// Render denied page
 		render("Denied");
@@ -150,10 +148,10 @@ public class Index extends Controller {
 
 	/**
 	 *
-	 * @throws InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public void action404() throws InternalError {
+	public void action404() throws Exception {
 
 		// Render 404 error
 		if (getView() != null) {

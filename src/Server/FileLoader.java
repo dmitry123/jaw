@@ -1,6 +1,8 @@
 package Server;
 
 import Core.*;
+
+
 import java.io.*;
 
 /**
@@ -18,7 +20,7 @@ public class FileLoader {
 		File fileHandle = new File(fileName);
 
 		if (!fileHandle.exists()) {
-			throw new Core.InternalError("HtmlReader/load : 'Unable to load file (" + fileName + ")'");
+			throw new Exception("HtmlReader/load : 'Unable to load file (" + fileName + ")'");
 		}
 
 		FileInputStream fileInputStream =

@@ -2,6 +2,7 @@ package controllers;
 
 import Core.*;
 
+
 /**
  * Created by Savonin on 2014-12-04
  */
@@ -18,7 +19,7 @@ public class System extends Controller {
 	 * Default index action
 	 */
 	@Override
-	public void actionView() throws Core.InternalError {
+	public void actionView() throws Exception {
 		if (!getEnvironment().getUserSessionManager().has()) {
 			redirect("Index", "View");
 		} else {

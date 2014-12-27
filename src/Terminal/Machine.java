@@ -1,11 +1,8 @@
 package Terminal;
 
 import Core.*;
-import Core.InternalError;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -28,11 +25,11 @@ public class Machine extends Extension implements Runnable {
 	 * @param key - Station's unique identifier
 	 * @param station - Station instance
 	 * @return - Registered station instance
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public synchronized Station register(String key, Station station) throws InternalError {
+	public synchronized Station register(String key, Station station) throws Exception {
 		if (hashMap.containsKey(key)) {
-			throw new Core.InternalError(
+			throw new Exception(
 				"Machine/register() : \"Station with that name already exists\""
 			);
 		}
@@ -47,11 +44,11 @@ public class Machine extends Extension implements Runnable {
 	 * Find station in machine
 	 * @param key - Station's unique key
 	 * @return - Found station
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public synchronized Station find(String key) throws InternalError {
+	public synchronized Station find(String key) throws Exception {
 		if (!hashMap.containsKey(key)) {
-			throw new Core.InternalError(
+			throw new Exception(
 				"Machine/register() : \"Unresolved station name (" + key + ")\""
 			);
 		}
@@ -62,15 +59,15 @@ public class Machine extends Extension implements Runnable {
 	 * Find station's key (if hasn't been set)
 	 * @param station - Station's instance
 	 * @return - Found key
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public synchronized String getKeyByInstance(Station station) throws InternalError {
+	public synchronized String getKeyByInstance(Station station) throws Exception {
 		for (Map.Entry<String, Station> entry : hashMap.entrySet()) {
 			if (station == entry.getValue()) {
 				return entry.getKey();
 			}
 		}
-		throw new Core.InternalError(
+		throw new Exception(
 			"Machine/getKeyByInstance() : \"Unresolved station instance\""
 		);
 	}
@@ -78,7 +75,7 @@ public class Machine extends Extension implements Runnable {
 	/**
 	 * Launch machine
 	 */
-	public synchronized void start() throws InternalError {
+	public synchronized void start() throws Exception {
 		if (active == null) {
 			return;
 		}
@@ -87,7 +84,7 @@ public class Machine extends Extension implements Runnable {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
-				throw new InternalError(
+				throw new Exception(
 					"Machine/start() : \"Thread has been interrupted\""
 				);
 			}
@@ -99,7 +96,7 @@ public class Machine extends Extension implements Runnable {
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
-			throw new InternalError(
+			throw new Exception(
 					"Machine/start() : \"Thread has been interrupted\""
 			);
 		}
@@ -175,7 +172,7 @@ public class Machine extends Extension implements Runnable {
 	public void run() {
 		try {
 			getActive().work();
-		} catch (InternalError e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -1,6 +1,6 @@
 package Sql;
 
-import Core.InternalError;
+
 
 import java.sql.Blob;
 import java.sql.PreparedStatement;
@@ -30,9 +30,9 @@ public class SqlTypeBinder {
 	/**
 	 * Bind array to sql statement
 	 * @param array - Array with items
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public SqlTypeBinder bind(Object[] array) throws InternalError {
+	public SqlTypeBinder bind(Object[] array) throws Exception {
 		for (Object item : array) {
 			bind(item);
 		}
@@ -42,9 +42,9 @@ public class SqlTypeBinder {
 	/**
 	 * Bind any parameter to prepared sql statement
 	 * @param item - Object which can be converted to sql
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
-	public void bind(Object item) throws InternalError {
+	public void bind(Object item) throws Exception {
 		try {
 			if (item instanceof String) {
 				statement.setString(index, item.toString());
@@ -59,10 +59,10 @@ public class SqlTypeBinder {
 			} else if (item instanceof Blob) {
 				statement.setBlob(index, (Blob) item);
 			} else {
-				throw new InternalError("SqlTypeBinder/bind() : \"Invalid type\"");
+				throw new Exception("SqlTypeBinder/bind() : \"Invalid type\"");
 			}
 		} catch (SQLException e) {
-			throw new InternalError("SqlTypeBinder/bind() : \"" + e.getMessage() + "\"");
+			throw new Exception("SqlTypeBinder/bind() : \"" + e.getMessage() + "\"");
 		}
 		++index;
 	}

@@ -1,7 +1,7 @@
 package models;
 
 import Core.*;
-import Core.InternalError;
+
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
 
@@ -22,7 +22,7 @@ public class Project extends Model<Project.Row> {
 		super(environment, "project");
 	}
 
-	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws InternalError, SQLException {
+	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws Exception {
 		Model productModel = getEnvironment().getModelManager().get("Product");
 		CortegeProtocol productProtocol = productModel.fetchRow("register", name, companyID, creatorID, 0);
 		getConnection().createCommand()
@@ -30,10 +30,10 @@ public class Project extends Model<Project.Row> {
 			.values("?, ?")
 			.execute(new Object[] { leaderID, productProtocol.getID() })
 			.insert();
-		return last();
+		return null;
 	}
 
-	public Row delete(Integer projectID) throws InternalError, SQLException {
+	public Row delete(Integer projectID) throws Exception {
 		Model productModel = getEnvironment().getModelManager().get("Product");
 		ResultSet projectSet = getConnection().createCommand()
 			.select("*")
@@ -89,10 +89,10 @@ public class Project extends Model<Project.Row> {
 	/**
 	 * @param result - Current cortege from query
 	 * @return - Created row from bind
-	 * @throws Core.InternalError
+	 * @throws Exception
 	 */
 	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Core.InternalError, SQLException {
+	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
 		return null;
 	}
 }

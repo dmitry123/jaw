@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.NoSuchFileException;
 
 /**
  * Created by Savonin on 2014-11-24
@@ -26,9 +25,9 @@ public class ComponentFactory extends Extension {
 	 * @param className - Component's class name
 	 * @param <T> - Component's type (Abstract)
 	 * @return - New component's instance
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	public <T> T create(String className) throws InternalError, ClassNotFoundException {
+	public <T> T create(String className) throws Exception, ClassNotFoundException {
 
 		Class<T> modelClass = loadClass(className);
 		Constructor<T> constructor;
@@ -38,7 +37,7 @@ public class ComponentFactory extends Extension {
 				Environment.class
 			);
 		} catch (NoSuchMethodException e) {
-			throw new InternalError("ComponentFactory/createModel() : \"" + e.getMessage() + "\"");
+			throw new Exception("ComponentFactory/createModel() : \"" + e.getMessage() + "\"");
 		}
 
 		return constructClass(constructor, getEnvironment());
@@ -50,23 +49,23 @@ public class ComponentFactory extends Extension {
 	 * @param arguments - List with arguments
 	 * @param <I> - Instance type
 	 * @return - New type instance
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	private <I> I constructClass(Constructor<I> constructor, Object... arguments) throws InternalError {
+	private <I> I constructClass(Constructor<I> constructor, Object... arguments) throws Exception {
 		try {
 			return constructor.newInstance(
 				arguments
 			);
 		} catch (InstantiationException e) {
-			throw new InternalError(
+			throw new Exception(
 				"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
 			);
 		} catch (IllegalAccessException e) {
-			throw new InternalError(
+			throw new Exception(
 				"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
 			);
 		} catch (InvocationTargetException e) {
-			throw new InternalError(
+			throw new Exception(
 				"ComponentFactory/createModel() : \"" + e.getMessage() + "\""
 			);
 		}
@@ -77,9 +76,9 @@ public class ComponentFactory extends Extension {
 	 * @param className - Class's name with package
 	 * @param <C> - Class's type
 	 * @return - Loaded class
-	 * @throws InternalError
+	 * @throws Exception
 	 */
-	private <C> Class<C> loadClass(String className) throws InternalError, ClassNotFoundException {
+	private <C> Class<C> loadClass(String className) throws Exception, ClassNotFoundException {
 
 		String binaryPath = getEnvironment().getProjectPath() + Config.BINARY_PATH;
 
@@ -90,7 +89,7 @@ public class ComponentFactory extends Extension {
 		File binaryDir = new File(binaryPath);
 
 		if (!binaryDir.exists()) {
-			throw new InternalError(
+			throw new Exception(
 				"ClassSeeker() : \"Unable to open binary directory\""
 			);
 		}
@@ -100,7 +99,7 @@ public class ComponentFactory extends Extension {
 		try {
 			url = binaryDir.toURI().toURL();
 		} catch (MalformedURLException e) {
-			throw new InternalError("ComponentFactory/loadClass() : \"" + e.getMessage() + "\"");
+			throw new Exception("ComponentFactory/loadClass() : \"" + e.getMessage() + "\"");
 		}
 
 		ClassLoader classLoader = new URLClassLoader(new URL[] {
