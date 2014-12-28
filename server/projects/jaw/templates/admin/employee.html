@@ -21,13 +21,46 @@
                 }, {
                     id: "employee.user_id",
                     name: "Пользователь",
-                    show: "users.login",
+                    display: "users.login",
                     type: "number"
                 }, {
                     id: "employee.company_id",
                     name: "Компания",
-                    show: "company.name",
+                    display: "company.name",
                     type: "number"
+                }
+            ],
+            reference: [
+                {
+                    id: "users",
+                    name: "Пользователь",
+                    display: [
+                        "login",
+                        "email"
+                    ],
+                    separator: ", "
+                }, {
+                    id: "product",
+                    name: "Продукты сотрудника",
+                    display: [
+                        "name",
+                        "created"
+                    ],
+                    separator: ", "
+                }, {
+                    id: "groups",
+                    name: "Группы сотрудника",
+                    display: [
+                        "name"
+                    ],
+                    separator: ", "
+                }, {
+                    id: "privilege",
+                    name: "Привилегии сотрудника",
+                    display: [
+                        "description"
+                    ],
+                    separator: ", "
                 }
             ],
             table: "employee",

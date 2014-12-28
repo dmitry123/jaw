@@ -104,6 +104,15 @@ public class Company extends Model<Company.Row> {
 			.join("employee", "company.director_id = employee.id");
 	}
 
+	@Override
+	public CommandProtocol getReferences() throws Exception {
+		return getConnection().createCommand()
+			.distinct("*")
+			.from("company")
+			.join("employee", "employee.company_id = company.id")
+			.join("product", "product.company_id = company.id");
+	}
+
 	public static class Row extends CortegeRow {
 
 		/**

@@ -59,6 +59,14 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
+	public void renderProject(Map<String, Object> hashData) throws Exception {
+		template("common/header");
+		template("admin/menu");
+		template("admin/project");
+		template("modal/jaw-table");
+		template("common/footer");
+	}
+
 	public void renderReference(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");

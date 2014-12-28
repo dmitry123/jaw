@@ -1,13 +1,12 @@
 package Core;
 
-import Sql.CortegeRow;
-
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Created by Savonin on 2014-11-08
  */
-public abstract class User extends CortegeRow implements UserProtocol, Serializable {
+public abstract class User extends HashMap<String, String> implements UserProtocol, Serializable {
 
 	/**
 	 * User's constructor, which will store basic information
@@ -20,14 +19,15 @@ public abstract class User extends CortegeRow implements UserProtocol, Serializa
 	 * @param hash - Hash of user's password (crypted by PasswordEncryptor)
 	 */
 	public User(int id, String login, String hash) {
-		super(id); this.login = login; this.hash = hash;
+		this.id = id;
+		this.login = login;
+		this.hash = hash;
 	}
 
 	/**
 	 * You can't store user without login (string type)
 	 * @return - User's unique name
 	 */
-	@Override
 	public String getLogin() {
 		return login;
 	}
@@ -36,11 +36,18 @@ public abstract class User extends CortegeRow implements UserProtocol, Serializa
 	 * You must encrypt user password with PasswordEncryptor
 	 * @return - User's encrypted password
 	 */
-	@Override
 	public String getHash() {
 		return hash;
 	}
 
+	/**
+	 * @return User's identifier
+	 */
+	public int getID() {
+		return id;
+	}
+
 	private String login;
 	private String hash;
+	private int id;
 }

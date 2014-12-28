@@ -16,17 +16,17 @@ public class UserSessionManager extends Extension {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Check for user's session opened
+	 * @return - True is user has been logged in
 	 */
 	public boolean has() {
 		return get() != null;
 	}
 
 	/**
-	 *
-	 * @param user
-	 * @return
+	 * Put user in session manager
+	 * @param user - Reference to user
+	 * @return - Just added user's instance
 	 */
 	public User put(User user) {
 		String session = getEnvironment().getSessionID();
@@ -45,8 +45,8 @@ public class UserSessionManager extends Extension {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Get user from current session
+	 * @return - User's instance or null
 	 */
 	public User get() {
 		String session = getEnvironment().getSessionID();
@@ -60,7 +60,7 @@ public class UserSessionManager extends Extension {
 	}
 
 	/**
-	 *
+	 * Remove user from current session
 	 */
 	public void remove() {
 		String session = getEnvironment().getSessionID();
@@ -70,7 +70,8 @@ public class UserSessionManager extends Extension {
 	}
 
 	/**
-	 *
+	 * Serialize all sessions and save on local drive before
+	 * session close
 	 */
 	public void save() throws Exception {
 		File handle = new File(Config.SESSION_PATH + getEnvironment().getProjectName() + ".session");
@@ -104,7 +105,7 @@ public class UserSessionManager extends Extension {
 	}
 
 	/**
-	 *
+	 * Load sessions from local driver after boot
 	 */
 	public void load() throws Exception {
 		File handle = new File(Config.SESSION_PATH + getEnvironment().getProjectName() + ".session");
@@ -137,10 +138,10 @@ public class UserSessionManager extends Extension {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Get hash map with all authorized users
+	 * @return - Map with users
 	 */
-	public HashMap<String, User> getUserHashMap() {
+	public HashMap<String, User> getEmployeeHashMap() {
 		return userHashMap;
 	}
 

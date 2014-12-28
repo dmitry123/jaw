@@ -4,10 +4,10 @@ import Core.*;
 
 import Sql.CortegeProtocol;
 import Sql.CortegeRow;
+import Sql.CommandProtocol;
 
 import java.lang.Object;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by Savonin on 2014-12-05
@@ -30,28 +30,27 @@ public class Project extends Model<Project.Row> {
 			.values("?, ?")
 			.execute(new Object[] { leaderID, productProtocol.getID() })
 			.insert();
-		return null;
+		return last();
 	}
 
-	public Row delete(Integer projectID) throws Exception {
-		Model productModel = getEnvironment().getModelManager().get("Product");
-		ResultSet projectSet = getConnection().createCommand()
+	@Override
+	public CommandProtocol getResultSetForTable() throws Exception {
+		return getConnection().createCommand()
 			.select("*")
 			.from("project")
-			.where("id = ?")
-			.execute(new Object[] { projectID })
-			.select();
-		if (!projectSet.next()) {
-			return null;
-		}
-		int productID = projectSet.getInt("product_id");
-		getConnection().createCommand()
-			.delete("project")
-			.where("id = ?")
-			.execute(new Object[] { projectID })
-			.delete();
-		productModel.fetchRow("delete", productID);
-		return null;
+			.join("employee", "project.leader_id = employee.id")
+			.join("product", "project.product_id = product.id");
+	}
+
+	@Override
+	public CommandProtocol getReferences() throws Exception {
+		return getConnection().createCommand()
+			.select("employee.*, product.*")
+			.from("project")
+			.join("product", "project.product_id = product.id")
+			.join("product_employee", "product.id = product_employee.product_id")
+			.join("employee", "employee.id = product_employee.employee_id")
+			.leftJoin("product as p", "p.parent_id = product.id");
 	}
 
 	/**

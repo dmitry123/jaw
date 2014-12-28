@@ -60,6 +60,14 @@ public class Admin extends Controller {
 		}
 	}
 
+	public void actionProject() throws Exception {
+		if (checkAccess()) {
+			render("Project");
+		} else {
+			redirect("Index", "View");
+		}
+	}
+
 	public void actionReference() throws Exception {
 		if (checkAccess()) {
 			render("Reference");

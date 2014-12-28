@@ -116,7 +116,6 @@ public class Environment {
 			= new Router(this);
 
 	/**
-	 *
 	 * @return - User session manager
 	 */
 	public UserSessionManager getUserSessionManager() {

@@ -29,7 +29,7 @@ public class Product extends Model<Product.Row> {
 			.values("?, ?, ?, ?")
 			.execute(new Object[] { name, companyID, creatorID, parentID })
 			.insert();
-		return null;
+		return last();
 	}
 
 	public Row delete(Integer productID) throws Exception {

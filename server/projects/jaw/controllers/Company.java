@@ -53,22 +53,6 @@ public class Company extends Controller {
 
 		// Check for opened user's session
 		if (user == null) {
-			postErrorMessage("Доступ запрещен, обновите страницу");
-			return;
-		}
-
-		// Fetch current user's employee
-		CortegeProtocol employee = employeeModel.fetchRow("fetchByUserID", user.getID());
-
-		// If employee isn't null, then check it's privilege to create companies
-		if (employee != null) {
-			isAllowed = employeeModel.fetchSet("fetchPrivilege",
-				employee.getID(), "company-create"
-			).next();
-		}
-
-		// Don't allow to apply changes to employee without necessary privilege
-		if (!isAllowed) {
 			postErrorMessage("Недостаточно прав для совершения действий");
 			return;
 		}

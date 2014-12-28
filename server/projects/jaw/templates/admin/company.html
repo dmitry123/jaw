@@ -15,7 +15,7 @@
                     style: "width: 10px; text-align: center;"
                 }, {
                     id: "company.director_id",
-                    show: [
+                    display: [
                         "employee.surname",
                         "employee.name",
                         "employee.patronymic"
@@ -24,6 +24,26 @@
                     type: "number",
                     separator: " ",
                     href: "/jaw/admin/employee?id=employee.id"
+                }
+            ],
+            reference: [
+                {
+                    id: "employee",
+                    name: "Сотрудники",
+                    display: [
+                        "surname",
+                        "name",
+                        "patronymic"
+                    ],
+                    separator: " "
+                }, {
+                    id: "product",
+                    name: "Продукты компании",
+                    display: [
+                        "name",
+                        "created"
+                    ],
+                    separator: ", "
                 }
             ],
             table: "company",

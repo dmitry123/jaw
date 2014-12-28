@@ -102,7 +102,12 @@ public abstract class Controller extends Component {
 
 			} else if (action.equals("update")) {
 
-				int id = Integer.parseInt(GET("id"));
+				Object id = GET("id");
+
+				try {
+					id = Integer.parseInt(id.toString());
+				} catch (NumberFormatException ignored) {
+				}
 
 				getSession().getParms().remove("id");
 				getSession().getParms().remove("action");

@@ -279,6 +279,18 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		return wrapper;
 	}
 
+	private boolean compareMaps(Map<String, String> left, Map<String, String> right) {
+		for (String key : left.keySet()) {
+			if (!right.containsKey(key)) {
+				return false;
+			}
+			if (!left.get(key).equals(right.get(key))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Fetch all references for current table, override getReferences method to
 	 * return current table with connected all foreign tables
@@ -294,14 +306,43 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			return result;
 		}
 		Object value = isInteger(id) ? Integer.parseInt(id) : id;
-		ResultSet resultSet = command.where(alias + " = ?")
+		ResultSet resultSet = command
 			.where(alias + " = ?")
 			.execute(value)
 			.select();
+		String skip = alias.substring(0, alias.indexOf("."));
 		while (resultSet.next()) {
 			LinkedHashMap<String, String> map = buildMap(resultSet);
-			for (Map.Entry<String, String> entry : map.entrySet()) {
-
+			HashMap<String, HashMap<String, String>> temporary
+				= new HashMap<String, HashMap<String, String>>();
+			for (String key : map.keySet()) {
+				int index = key.indexOf(".");
+				String field = key.substring(0, index);
+				String name = key.substring(index + 1);
+				if (!temporary.containsKey(field)) {
+					temporary.put(field, new HashMap<String, String>());
+				}
+				temporary.get(field).put(name, map.get(key));
+			}
+			for (Map.Entry<String, HashMap<String, String>> entry : temporary.entrySet()) {
+				if (entry.getKey().equals(skip)) {
+					continue;
+				}
+				if (!result.containsKey(entry.getKey())) {
+					result.put(entry.getKey(), new Vector<HashMap<String, String>>());
+				}
+				Vector<HashMap<String, String>> vector
+					= (Vector<HashMap<String, String>>) result.get(entry.getKey());
+				boolean found = false;
+				for (HashMap<String, String> m : vector) {
+					if (compareMaps(m, entry.getValue())) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					result.get(entry.getKey()).add(entry.getValue());
+				}
 			}
 		}
 		return result;
@@ -347,7 +388,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public int updateByID(Integer id, Map<String, String> values) throws Exception {
+	public int updateByID(Object id, Map<String, String> values) throws Exception {
 		String set = "";
 		Vector<Object> objects = new Vector<Object>();
 		int size = values.size();
@@ -414,13 +455,17 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws SQLException
 	 */
 	public T last() throws Exception {
+		ResultSet resultSet = getConnection().createCommand()
+			.select("*")
+			.from(getTableName())
+			.order("id desc")
+			.execute()
+			.select();
+		if (!resultSet.next()) {
+			return null;
+		}
 		return (T) createFromSet(
-			getConnection().createCommand()
-				.select("*")
-				.from(getTableName())
-				.order("id desc")
-				.execute()
-				.select()
+			resultSet
 		);
 	}
 

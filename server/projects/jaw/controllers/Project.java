@@ -39,7 +39,7 @@ public class Project extends Controller {
 		final Core.User user = getEnvironment().getUserSessionManager().get();
 
 		if (user == null) {
-			postErrorMessage("Доступ закрыт, обновите страницу");
+			postErrorMessage("Недостаточно прав для совершения действий");
 			return;
 		}
 
@@ -57,7 +57,7 @@ public class Project extends Controller {
 		}
 
 		boolean isAllowed = employeeModel.fetchSet("fetchPrivilege",
-			employeeProtocol.getID(), "create-project"
+			employeeProtocol.getID(), "project-create"
 		).next();
 
 		if (!isAllowed) {
@@ -94,9 +94,7 @@ public class Project extends Controller {
 		final Core.User user = getEnvironment().getUserSessionManager().get();
 
 		if (user == null) {
-			jsonResponse.put("message", "Доступ закрыт, обновите страницу");
-			jsonResponse.put("status", false);
-			setAjaxResponse(jsonResponse.toString());
+			postErrorMessage("Доступ закрыт, обновите страницу");
 			return;
 		}
 
@@ -130,6 +128,11 @@ public class Project extends Controller {
 			return;
 		}
 
+		if (!employeeModel.fetchSet("fetchPrivilege", employeeProtocol.getID(), "project-delete").next()) {
+			postErrorMessage("Недостаточно прав для совершения действия");
+			return;
+		}
+
 		// Find current employee's groups with titles
 		ResultSet employeeGroups = groupModel.fetchSet("fetchGroupsByEmployee", employeeProtocol.getID());
 
@@ -149,7 +152,7 @@ public class Project extends Controller {
 
 		// Try to delete project from database
 		try {
-			projectModel.fetchRow("delete", projectID);
+			projectModel.deleteByID(projectID);
 		} catch (SQLException ignored) {
 			jsonResponse.put("message", "Нарушение целостности, имеются внешние связи");
 			jsonResponse.put("status", false);

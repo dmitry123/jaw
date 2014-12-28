@@ -110,7 +110,7 @@ public class Employee extends Model<Employee.Row> {
 
 	public ResultSet fetchProjectsByUserID(Integer userID) throws Exception {
 		return getConnection().createCommand()
-			.select("e.*, p.*, r.*")
+			.distinct("e.*, p.*, r.*")
 			.from("project as p")
 			.join("product as r", "r.id = p.product_id")
 			.join("product_employee as pe", "pe.product_id = r.id")
@@ -128,6 +128,20 @@ public class Employee extends Model<Employee.Row> {
 			.from("employee")
 			.join("users", "employee.user_id = users.id")
 			.join("company", "employee.company_id = company.id");
+	}
+
+	@Override
+	public CommandProtocol getReferences() throws Exception {
+		return getConnection().createCommand()
+			.select("users.*, product.*, groups.*, privilege.*")
+			.from("employee")
+			.join("users", "employee.user_id = users.id")
+			.join("product_employee", "product_employee.employee_id = employee.id")
+			.join("product", "product_employee.product_id = product.id")
+			.join("employee_group", "employee_group.employee_id = employee.id")
+			.join("groups", "employee_group.group_id = groups.id")
+			.join("group_privilege", "group_privilege.group_id = groups.id")
+			.join("privilege", "privilege.id = group_privilege.privilege_id");
 	}
 
 	public static class Row extends CortegeRow {

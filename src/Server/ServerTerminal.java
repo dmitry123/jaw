@@ -104,10 +104,10 @@ public class ServerTerminal extends Station {
 							);
 						}
 						Environment e = EnvironmentManager.getInstance().get(arguments[0]);
-						for (Map.Entry<String, User> i : e.getUserSessionManager().getUserHashMap().entrySet()) {
+						for (Map.Entry<String, User> i : e.getUserSessionManager().getEmployeeHashMap().entrySet()) {
 							System.out.format(" + [%s] -> (%s)\n", i.getKey(), i.getValue().getLogin());
 						}
-						if (e.getUserSessionManager().getUserHashMap().size() == 0) {
+						if (e.getUserSessionManager().getEmployeeHashMap().size() == 0) {
 							System.out.println(" + No sessions open");
 						}
 					}
@@ -122,7 +122,7 @@ public class ServerTerminal extends Station {
 							);
 						}
 						EnvironmentManager.getInstance().get(arguments[0])
-								.getUserSessionManager().getUserHashMap().clear();
+								.getUserSessionManager().getEmployeeHashMap().clear();
 					}
 				});
 
@@ -135,7 +135,7 @@ public class ServerTerminal extends Station {
 							);
 						}
 						Map<String, User> stringUserMap = EnvironmentManager.getInstance().get(arguments[0])
-								.getUserSessionManager().getUserHashMap();
+								.getUserSessionManager().getEmployeeHashMap();
 						for (Map.Entry<String, User> i : stringUserMap.entrySet()) {
 							if (i.getValue().getLogin().equals(arguments[1])) {
 								stringUserMap.remove(i.getKey());
