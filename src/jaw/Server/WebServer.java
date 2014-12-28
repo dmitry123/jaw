@@ -195,13 +195,13 @@ public class WebServer extends NanoHttpd {
 			errorResponse.put("status", false);
 			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
 
-			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
-				errorResponse.toString()
-			);
-
 //			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
-//				"<body style=\"width:100%; height:100%;background-color:lightgray;\"><pre style=\"color: #7b1010;\">" + stringWriter.toString() + "</pre></body>"
+//				errorResponse.toString()
 //			);
+
+			return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
+				"<body style=\"width:100%; height:100%;background-color:lightgray;\"><pre style=\"color: #7b1010;\">" + stringWriter.toString() + "</pre></body>"
+			);
 		}
 	}
 
