@@ -1,6 +1,6 @@
 package views;
 
-import Core.*;
+import jaw.Core.*;
 
 
 import java.util.Map;

@@ -1,13 +1,14 @@
 package models;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CortegeProtocol;
-import Sql.CortegeRow;
+import jaw.Sql.CortegeProtocol;
+import jaw.Sql.CortegeRow;
+import jaw.Sql.CommandProtocol;
 
 import java.lang.Object;
+import java.lang.Override;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by Savonin on 2014-12-05
@@ -86,6 +87,17 @@ public class Group extends Model<Group.Row> {
 			unbind(groupRow.getInt("id"), employeeID);
 		}
 		return null;
+	}
+
+	@Override
+	public CommandProtocol getReferences() throws Exception {
+		return getConnection().createCommand()
+			.select("privilege.*, employee.*")
+			.from("groups")
+			.join("group_privilege", "group_privilege.group_id = groups.id")
+			.join("privilege", "group_privilege.privilege_id = privilege.id")
+			.join("employee_group", "employee_group.group_id = groups.id")
+			.join("employee", "employee_group.employee_id = employee.id");
 	}
 
 	/**

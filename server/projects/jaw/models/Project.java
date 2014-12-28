@@ -1,10 +1,10 @@
 package models;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CortegeProtocol;
-import Sql.CortegeRow;
-import Sql.CommandProtocol;
+import jaw.Sql.CortegeProtocol;
+import jaw.Sql.CortegeRow;
+import jaw.Sql.CommandProtocol;
 
 import java.lang.Object;
 import java.sql.ResultSet;

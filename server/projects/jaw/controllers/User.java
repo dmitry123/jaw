@@ -1,10 +1,9 @@
 package controllers;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CortegeProtocol;
+import jaw.Sql.CortegeProtocol;
 import org.json.JSONObject;
-import java.sql.SQLException;
 
 /**
  * Created by Savonin on 2014-12-04
@@ -36,7 +35,7 @@ public class User extends Controller {
 		);
 
 		if (cortegeProtocol != null) {
-			Core.User user = (Core.User) cortegeProtocol;
+			jaw.Core.User user = (jaw.Core.User) cortegeProtocol;
 			getEnvironment().getUserSessionManager().put(user);
 			jsonResponse.put("status", true);
 			getEnvironment().getMustacheDefiner().put("User.Login", user.getLogin());

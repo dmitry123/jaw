@@ -1,12 +1,11 @@
 package controllers;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CortegeProtocol;
+import jaw.Sql.CortegeProtocol;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.sql.ResultSet;
 
@@ -49,7 +48,7 @@ public class Company extends Controller {
 		final Model groupModel = getModel("Group");
 
 		// Get current user by it's session
-		final Core.User user = getEnvironment().getUserSessionManager().get();
+		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
 
 		// Check for opened user's session
 		if (user == null) {
@@ -103,7 +102,7 @@ public class Company extends Controller {
 		final int companyID = Integer.parseInt(GET("id"));
 
 		// Get current user by it's session
-		final Core.User user = getEnvironment().getUserSessionManager().get();
+		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
 
 		// Check for opened user's session
 		if (user == null) {

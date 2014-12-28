@@ -19,6 +19,25 @@
                     name: "Описание"
                 }
             ],
+            reference: [
+                {
+                    id: "groups",
+                    name: "Группы",
+                    display: [
+                        "description"
+                    ],
+                    separator: ", "
+                }, {
+                    id: "employee",
+                    name: "Сотрудники",
+                    display: [
+                        "surname",
+                        "name",
+                        "patronymic"
+                    ],
+                    separator: " "
+                }
+            ],
             table: "privilege",
             url: "/jaw/privilege/getTable"
         });

@@ -1,7 +1,7 @@
 package controllers;
 
-import Core.*;
-import Core.Controller;
+import jaw.Core.*;
+import jaw.Core.Controller;
 
 import java.sql.SQLException;
 
@@ -68,9 +68,25 @@ public class Admin extends Controller {
 		}
 	}
 
-	public void actionReference() throws Exception {
+	public void actionGroupPrivilege() throws Exception {
 		if (checkAccess()) {
-			render("Reference");
+			render("GroupPrivilege");
+		} else {
+			redirect("Index", "View");
+		}
+	}
+
+	public void actionEmployeeGroup() throws Exception {
+		if (checkAccess()) {
+			render("EmployeeGroup");
+		} else {
+			redirect("Index", "View");
+		}
+	}
+
+	public void actionProductEmployee() throws Exception {
+		if (checkAccess()) {
+			render("ProductEmployee");
 		} else {
 			redirect("Index", "View");
 		}
@@ -90,7 +106,7 @@ public class Admin extends Controller {
 	@Override
 	public boolean checkAccess(String... privileges) throws Exception {
 
-		Core.User user = getEnvironment().getUserSessionManager().get();
+		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
 
 		if (user == null) {
 			return false;

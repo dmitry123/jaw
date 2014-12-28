@@ -1,6 +1,6 @@
 package views;
 
-import Core.*;
+import jaw.Core.*;
 
 
 import java.util.Map;
@@ -67,10 +67,26 @@ public class Admin extends View {
 		template("common/footer");
 	}
 
-	public void renderReference(Map<String, Object> hashData) throws Exception {
+	public void renderGroupPrivilege(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("admin/menu");
-		template("admin/reference");
+		template("admin/group-privilege");
+		template("modal/jaw-table");
+		template("common/footer");
+	}
+
+	public void renderEmployeeGroup(Map<String, Object> hashData) throws Exception {
+		template("common/header");
+		template("admin/menu");
+		template("admin/employee-group");
+		template("modal/jaw-table");
+		template("common/footer");
+	}
+
+	public void renderProductEmployee(Map<String, Object> hashData) throws Exception {
+		template("common/header");
+		template("admin/menu");
+		template("admin/product-employee");
 		template("modal/jaw-table");
 		template("common/footer");
 	}

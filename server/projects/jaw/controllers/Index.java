@@ -1,15 +1,14 @@
 package controllers;
 
-import Core.*;
+import jaw.Core.*;
 
-import Html.Html;
+import jaw.Html.Html;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.io.StringWriter;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.ResultSetMetaData;
 
 /**
@@ -86,7 +85,7 @@ public class Index extends Controller {
 		JSONArray jsonEmployees = new JSONArray();
 
 		// Get user's identifier
-		Core.User user = getEnvironment().getUserSessionManager().get();
+		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
 
 		if (user != null) {
 

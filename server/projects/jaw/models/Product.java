@@ -1,14 +1,13 @@
 package models;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CortegeProtocol;
-import Sql.CortegeRow;
+import jaw.Sql.CortegeProtocol;
+import jaw.Sql.CortegeRow;
 
 import java.lang.Object;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by Savonin on 2014-12-05

@@ -1,8 +1,8 @@
 package models;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CommandProtocol;
+import jaw.Sql.CommandProtocol;
 
 import java.lang.Override;
 import java.sql.*;
@@ -86,7 +86,7 @@ public class User extends Model<User.Row> {
 	/**
 	 * UserRow
 	 */
-	public static class Row extends Core.User {
+	public static class Row extends jaw.Core.User {
 
 		/**
 		 * @param login User's Name

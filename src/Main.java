@@ -1,5 +1,5 @@
-import Core.*;
-import Server.WebServer;
+import jaw.Core.*;
+import jaw.Server.WebServer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 /**
  * Entry point
  */
-public class Main extends Application {
+public class Main {
 
 	/**
 	 * @param args - List with application arguments
@@ -31,7 +31,6 @@ public class Main extends Application {
 	 * primary stage will be embedded in the browser if the application was launched as an applet. Applications may
 	 * create other stages, if needed, but they will not be primary stages and will not be embedded in the browser.
 	 */
-	@Override
 	public void start(Stage stage) throws Exception {
 		Circle circle = new Circle(40, 40, 30);
 		Group root = new Group(circle);

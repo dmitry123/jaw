@@ -1,8 +1,8 @@
 package controllers;
 
-import Core.*;
+import jaw.Core.*;
 
-import Sql.CortegeProtocol;
+import jaw.Sql.CortegeProtocol;
 import org.json.JSONObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ public class Project extends Controller {
 		final Model projectModel = getModel("Project");
 
 		// Find user for current session
-		final Core.User user = getEnvironment().getUserSessionManager().get();
+		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
 
 		if (user == null) {
 			postErrorMessage("Недостаточно прав для совершения действий");
@@ -91,7 +91,7 @@ public class Project extends Controller {
 		JSONObject jsonResponse = new JSONObject();
 
 		// Find user for current session
-		final Core.User user = getEnvironment().getUserSessionManager().get();
+		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
 
 		if (user == null) {
 			postErrorMessage("Доступ закрыт, обновите страницу");

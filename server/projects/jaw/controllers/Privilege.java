@@ -1,9 +1,6 @@
 package controllers;
 
-import Core.*;
-
-
-import java.sql.SQLException;
+import jaw.Core.*;
 
 public class Privilege extends Controller {
 
