@@ -4,6 +4,7 @@ html, body {
 }
 
 .background {
+	/*background-color: #ffffff;*/
 	background: lightgray url("/jaw/images/pattern.png");
 	background-attachment: fixed;
 	background-position: 0 0;

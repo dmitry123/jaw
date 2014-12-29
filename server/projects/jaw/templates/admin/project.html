@@ -1,0 +1,56 @@
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-company"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-company", {
+            header: [
+                {
+                    id: "project.id",
+                    name: "#",
+                    style: "width: 10px; text-align: center;"
+                }, {
+                    id: "project.product_id",
+                    display: [
+                        "product.name",
+                        "product.created"
+                    ],
+                    name: "Продукт",
+                    separator: " / "
+                }, {
+                    id: "project.leader_id",
+                    display: [
+                        "employee.surname",
+                        "employee.name",
+                        "employee.patronymic"
+                    ],
+                    name: "Лидер проекта",
+                    separator: " ",
+                    type: "number"
+                }
+            ],
+            reference: [
+                {
+                    id: "employee",
+                    name: "Участники проекта",
+                    display: [
+                        "surname",
+                        "name",
+                        "patronymic"
+                    ],
+                    separator: " "
+                }, {
+                    id: "product",
+                    name: "Продукты проекта",
+                    display: [
+                        "name",
+                        "created"
+                    ],
+                    separator: ", "
+                }
+            ],
+            table: "project",
+            url: "/jaw/project/getTable"
+        });
+    });
+</script>

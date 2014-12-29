@@ -15,5 +15,5 @@ public interface ModelProtocol {
 	 *
 	 * @return - Adapted to CortegeProtocol row
 	 */
-	public CortegeProtocol createFromSet(ResultSet resultSet) throws Exception, Exception;
+	public CortegeProtocol createFromSet(ResultSet resultSet) throws Exception;
 }

@@ -1,0 +1,35 @@
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-product-employee"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-product-employee", {
+            header: [
+                {
+                    id: "product_employee.id",
+                    name: "Идентификатор",
+                    style: "width: 10px; text-align: center;"
+                },  {
+                    id: "product_employee.product_id",
+                    name: "Продукт",
+                    display: "product.name",
+                    type: "number",
+                    url: "/jaw/product/getTable"
+                },  {
+                    id: "product_employee.employee_id",
+                    name: "Сотрудник",
+                    display: [
+                        "employee.surname",
+                        "employee.name",
+                        "employee.patronymic"
+                    ],
+                    type: "number",
+                    separator: " ",
+                    url: "/jaw/employee/getTable"
+                }
+            ],
+            table: "product_employee",
+            url: "/jaw/productemployee/getTable"
+        });
+    });
+</script>

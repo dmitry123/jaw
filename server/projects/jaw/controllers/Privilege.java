@@ -13,8 +13,8 @@ public class Privilege extends Controller {
 	}
 
 	@Override
-	public boolean checkAccess(String... privileges) throws Exception {
-		return super.checkAccess(privileges);
+	public void actionGetTable() throws Exception {
+		super.actionGetTable();
 	}
 
 	@Override

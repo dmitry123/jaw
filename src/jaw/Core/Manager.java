@@ -54,7 +54,7 @@ public abstract class Manager<C extends Component> extends Extension {
 			} catch (NoClassDefFoundError ignore) {
 				if ((indexOf = binaryPath.lastIndexOf(File.separator)) != -1) {
 					binaryPath = binaryPath.substring(0, indexOf) + "."
-							+ binaryPath.substring(indexOf + 1);
+						+ binaryPath.substring(indexOf + 1);
 				} else {
 					return null;
 				}

@@ -211,7 +211,6 @@ var Jaw = Jaw || {};
         var editModal = $("#modal-jaw-table-edit");
         var deleteModal = $("#modal-jaw-table-delete");
         var addModal = $("#modal-jaw-table-add");
-        var referenceModal = $("#modal-jaw-table-reference");
         editModal
             .find("#jaw-table-save").click(function() {
                 var attributes = {};
@@ -881,5 +880,17 @@ var Jaw = Jaw || {};
         );
         table.update();
     };
+
+    $(document).ready(function() {
+        var parameters = window.location.href.substr(
+            window.location.href.lastIndexOf("?") + 1
+        ).split("&");
+        for (var p in parameters) {
+            var center = parameters[p].indexOf("=");
+            if (parameters[p].substr(0, center) == "id") {
+                console.log(+parameters[p].substr(center + 1));
+            }
+        }
+    });
 
 })(Jaw);
