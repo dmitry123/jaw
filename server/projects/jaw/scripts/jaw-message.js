@@ -117,41 +117,4 @@ var Jaw = Jaw || {};
         Collection.create(properties);
     };
 
-    $(document).ready(function() {
-        Jaw.createMessage({
-            message: "Hello, World 1",
-            type: "info"
-        });
-        setTimeout(function() {
-            Jaw.createMessage({
-                message: "Hello, World 2",
-                type: "danger"
-            });
-        }, 250);
-        setTimeout(function() {
-            Jaw.createMessage({
-                message: "Hello, World 3",
-                type: "success"
-            });
-        }, 500);
-        setTimeout(function() {
-            Jaw.createMessage({
-                message: "Hello, World 1",
-                type: "info"
-            });
-            setTimeout(function() {
-                Jaw.createMessage({
-                    message: "Hello, World 2",
-                    type: "danger"
-                });
-            }, 250);
-            setTimeout(function() {
-                Jaw.createMessage({
-                    message: "Hello, World 3",
-                    type: "success"
-                });
-            }, 500);
-        }, 3500);
-    });
-
 })(Jaw);
