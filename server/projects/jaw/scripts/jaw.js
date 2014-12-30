@@ -28,13 +28,17 @@ var Jaw = Jaw || {};
 
      */
 
-    var Component = function(selector, properties) {
+    var Component = function(properties, selector) {
+        this._properties = properties || {};
         this._selector = selector || this.render();
-        this._properties = properties;
     };
 
     Component.prototype.render = function() {
         throw new Error("Component/render() : Not-Implemented");
+    };
+
+    Component.prototype.activate = function() {
+        throw new Error("Component/activate() : Not-Implemented");
     };
 
     Component.prototype.selector = function(selector) {
@@ -51,12 +55,17 @@ var Jaw = Jaw || {};
         return this._properties[key];
     };
 
+    Component.prototype.destroy = function() {
+        this.selector().remove();
+    };
+
     Component.prototype.update = function() {
         var parent = this.selector().parent();
         this.selector().remove();
-        this.selector(this.render()).appendTo(
-            parent
-        );
+        this.selector(
+            this.render()
+        ).appendTo(parent);
+        this.activate();
     };
 
     Jaw.Component = Component;
@@ -90,13 +99,18 @@ var Jaw = Jaw || {};
 
     Jaw.Widget = Widget;
 
-    /*
-         _  ___      __
-      _ | |/_\ \    / /
-     | || / _ \ \/\/ /
-     \__/_/ \_\_/\_/
-
+    /**
+     * Create new component's instance and render to DOM
+     * @param component - Component's instance
+     * @param selector - Parent's selector
      */
+
+    Jaw.create = function(component, selector) {
+        $(selector).data("jaw", component).append(
+            component.selector()
+        );
+        component.update();
+    };
 
     String.prototype.endsWith = function(suffix) {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;

@@ -3,10 +3,17 @@ body > .jaw-table-wrapper {
     width: calc(100% - 20px);
 }
 
+.jaw-message-wrapper {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    z-index: 2000;
+}
+
 .jaw-table .glyphicon-refresh:hover, .glyphicon-repeat:hover {
-    -webkit-animation:spin 1s linear infinite;
-       -moz-animation:spin 1s linear infinite;
-            animation:spin 1s linear infinite;
+    -webkit-animation: spin 1s linear infinite;
+       -moz-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
 }
 
 @-moz-keyframes spin {
@@ -29,9 +36,9 @@ body > .jaw-table-wrapper {
 }
 
 *.unselectable {
+    -webkit-user-select:      none;
+     -khtml-user-select:      none;
        -moz-user-select: -moz-none;
-     -khtml-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+        -ms-user-select:      none;
+            user-select:      none;
 }
