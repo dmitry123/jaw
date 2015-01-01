@@ -54,7 +54,9 @@ var ModalRegister = {
             }).done(function(data) {
                 var json = $.parseJSON(data);
                 if (!json.status && json.message) {
-                    return ErrorMessage.post(json.message);
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
                 }
                 $("#modal-register").modal("hide");
                 $.post("/jaw/user/login", {
@@ -63,7 +65,9 @@ var ModalRegister = {
                 }).done(function(data) {
                     var json = $.parseJSON(data);
                     if (!json.status) {
-                        return ErrorMessage.post(json.message);
+                        return Jaw.createMessage({
+                            message: json.message
+                        });
                     }
                     window.location.href = "/jaw/index/project";
                 });
@@ -98,7 +102,9 @@ var FormLogin = {
             }).done(function(data) {
                 var json = $.parseJSON(data);
                 if (!json.status) {
-                    return ErrorMessage.post(json.message);
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
                 }
                 window.location.href = "/jaw/index/project";
             });
@@ -296,7 +302,9 @@ var ModalCreateCompany = {
             }, function(data) {
                 var json = $.parseJSON(data);
                 if (!json.status) {
-                    return ErrorMessage.post(json.message);
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
                 }
                 window.location.href = "/jaw/index/project";
             });
@@ -325,7 +333,9 @@ var ModalCreateProject = {
             }, function(data) {
                 var json = $.parseJSON(data);
                 if (!json.status) {
-                    return ErrorMessage.post(json.message);
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
                 }
                 var employees = $.parseJSON(json["employees"]);
                 for (var i in employees) {
@@ -355,7 +365,9 @@ var ModalCreateProject = {
             }, function(data) {
                 var json = $.parseJSON(data);
                 if (!json.status) {
-                    return ErrorMessage.post(json.message);
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
                 }
                 //window.location.href = "/jaw/index/project";
                 modal.modal("hide");

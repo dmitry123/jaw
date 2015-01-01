@@ -4,361 +4,183 @@ var Jaw = Jaw || {};
 
     "use strict";
 
-    var Widget = function(selector, properties) {
-        Jaw.Widget.call(this, selector, properties);
-        this._table = new Table(selector, properties);
+    /**
+     * Construct table header with table's properties
+     * @param table {Table} - Parent table component
+     * @constructor
+     */
+    var Header = function(table) {
+        this.table = function() {
+            return table;
+        };
+        Jaw.Component.call(this);
     };
 
-    Jaw.extend(Widget, Jaw.Widget);
+    Jaw.extend(Header, Jaw.Component);
 
-    Widget.prototype.table = function(table) {
-        if (arguments.length > 0) {
-            this._table = table;
-        }
-        return this._table;
+    /**
+     * That method will invoke table's property method, cuz
+     * header doesn't have property object
+     * @param key {string} - Key
+     * @param [value] {*|null|undefined} - Value
+     * @returns {*} - New or old value
+     */
+    Header.prototype.property = function(key, value) {
+        return this.table().property.apply(this.table(), arguments);
     };
 
-    Widget.prototype.construct = function() {
+    /**
+     * Render table's header
+     * @returns {jQuery} - jQuery selector with header
+     */
+    Header.prototype.render = function() {
         var me = this;
-        var i;
-        if (!this.has("header") || !this.has("url")) {
-            return $("<div></div>", {
-                html: "<b>Error: Table hasn't been initialized</b>",
-                style: "font-size: 20px"
-            });
-        }
-        var header = $("<tr></tr>", {
+        var header = this.property("header");
+        var tr = $("<tr></tr>", {
             style: "background-color: #ddd;"
         });
-        var head = this.property("header");
-        for (i in head) {
+        for (var i in header) {
+            var style = header[i].name == "#" ?
+                "width: 30px;" +
+                "text-align: center;" +
+                "cursor: pointer;" : "cursor: pointer;";
             $("<td></td>", {
-                html: "<b>" + head[i].name + "</b>",
-                style: head[i].name == "#" ? "width: 30px; text-align: center; cursor: pointer;"
-                    : "cursor: pointer;"
+                html: "<b>" + header[i].name + "</b>",
+                style: style
             }).click(function() {
-                me.order($(this).data("id"));
-                me.update();
-            }).data("id", head[i].id)
-                .appendTo(header);
+                me.table().order($(this).data("id"));
+                me.table().update();
+            }).data("id", header[i].id)
+                .appendTo(tr)
         }
-        header.append($("<td><b>Действия<b></td>"));
-        var table = $("<table></table>", {
-            class: "table table-striped table-bordered"
-        }).append(header);
-        if (!this.has("data")) {
-            return table;
-        }
-        var query = $("<input>", {
-            type: "text",
-            placeholder: "Условие поиска",
-            class: "form-control",
-            id: "query",
-            style: "width: 350px; float: left;",
-            value: this.where()
-        }).keydown(function(e) {
-            if (e.keyCode == 13) {
-                button.trigger("click");
-            }
-        });
-        var button = $("<button></button>", {
-            text: "Отправить",
-            class: "btn btn-primary",
-            style: "margin-left: 10px;"
-        }).click(function() {
-            var value = footer.find("#query").val();
-            if (value) {
-                me.where(value);
-            } else {
-                me.where(null);
-            }
-            me.update();
-        });
-        var select = $("<select></select>", {
-            class: "form-control",
-            style: "width: auto"
-        }).change(function() {
-            me.limit(+$(this).val());
-            me.update();
-        });
-        for (i in this.property("limit")) {
-            select.append($("<option></option>", {
-                text: this.property("limit")[i],
-                value: this.property("limit")[i]
-            }));
-        }
-        select.val(me.limit());
-        var footer = $("<table></table>", {
-            style: "width: 100%"
-        }).append(
-            $("<tr></tr>", {
-                colspan: head.length + 1
-            }).append(
-                $("<td></td>", {
-                    style: "width: 550px"
-                }).append(query).append(button)
-            ).append(
-                $("<td></td>", {
-                    style: "width: 200px; vertical-align: middle",
-                    valign: "middle"
-                }).append(
-                    $("<span></span>", {
-                        style: "float: left; line-height: 30px; margin-right: 5px; cursor: pointer",
-                        class: "glyphicon glyphicon-chevron-left"
-                    }).click(function() {
-                        var value = +$(this).parent().children("#page").val().split("/")[0];
-                        if (value <= 1) {
-                            return true;
-                        }
-                        $(this).parent().children("#page").val(
-                            (value - 1) + "/" + me.property("pages")
-                        );
-                        me.page(value - 1);
-                        me.update();
-                    })
-                ).append(
-                    $("<input>", {
-                        style: "width: 60px; float: left; text-align: center",
-                        type: "text",
-                        class: "form-control",
-                        disabled: "disabled",
-                        value: "1/0",
-                        id: "page"
-                    })
-                ).append(
-                    $("<span></span>", {
-                        style: "float: left; line-height: 30px; margin-left: 5px; cursor: pointer",
-                        class: "glyphicon glyphicon-chevron-right"
-                    }).click(function() {
-                        var value = +$(this).parent().children("#page").val().split("/")[0];
-                        if (me.property("pages") && value >= +me.property("pages")) {
-                            return true;
-                        }
-                        $(this).parent().children("#page").val(
-                            (value + 1) + "/" + me.property("pages")
-                        );
-                        me.page(value + 1);
-                        me.update();
-                    })
-                )
-            ).append(
-                $("<td></td>", {
-                    style: "width: auto"
-                }).append(select)
-            ).append(
-                $("<td></td>", {
-                    style: "text-align: center; width: 30px;"
-                }).append(
-                    $("<span></span>", {
-                        class: "glyphicon glyphicon-plus",
-                        style: "font-size: 20px; line-height: 25px; cursor: pointer;"
-                    }).click(function() {
-                        var row = {};
-                        for (var k in head) {
-                            row[head[k].id] = "";
-                        }
-                        me.build($("#modal-jaw-table-add"), row, false, true);
-                    })
-                )
-            ).append(
-                $("<td></td>", {
-                    style: "text-align: right; width: 30px;"
-                }).append(
-                    $("<span></span>", {
-                        class: "glyphicon glyphicon-refresh",
-                        style: "font-size: 20px; line-height: 25px; cursor: pointer;"
-                    }).click(function() {
-                        me.update();
-                    })
-                )
-            )
-        );
-        return $("<div></div>", {
-            class: "panel panel-default"
-        }).append(table).append(
-            $("<div></div>", {
-                class: "panel-footer"
-            }).append(footer)
+        return tr.append(
+            $("<td><b>Действия<b></td>")
         );
     };
 
-    Widget.prototype.render = function() {
-    };
-
-    /*
-      _____ _   ___ _    ___
-     |_   _/_\ | _ ) |  | __|
-       | |/ _ \| _ \ |__| _|
-       |_/_/ \_\___/____|___|
-
+    /**
+     * Construct modal component for table
+     * @param table {Table} - Table instance
+     * @param modal {jQuery} - Modal selector
+     * @constructor
      */
+    var Modal = function(table, modal) {
+        this.table = function() {
+            return table;
+        };
+        Jaw.Component.call(this, {}, {}, modal);
+    };
 
-    var Table = function(selector, properties) {
-        this._widget = selector;
-        this._properties = properties;
-        this._selector = this.render();
-        this._active = undefined;
-        this._order = undefined;
-        this._page = undefined;
-        this._where = undefined;
-        this._clicked = undefined;
-        this._limit = undefined;
-        this.property("limit", this.property("limit") || [
-            10, 25, 50, 100
-        ]);
-        var me = this;
-        var head = this.property("header");
-        var editModal = $("#modal-jaw-table-edit");
-        var deleteModal = $("#modal-jaw-table-delete");
-        var addModal = $("#modal-jaw-table-add");
-        editModal
-            .find("#jaw-table-save").click(function() {
-                var attributes = {};
-                var form = editModal.find(".jaw-table-form");
-                for (var h in head) {
-                    var s = form.find("#" + head[h].id.replace(".", "_"));
-                    if (!s.val().length) {
-                        s.parents(".form-group").addClass("has-error");
-                        return true;
-                    }
-                    attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
-                }
-                var button = $(this).button("loading");
-                $.get(me.property("url") + "?action=update", attributes, function(data) {
-                    var json = $.parseJSON(data);
-                    if (!json.status) {
-                        button.button("reset");
-                        return ErrorMessage.post(json.message);
-                    }
-                    button.button("reset");
-                    editModal.modal("hide");
-                    me.update();
+    Jaw.extend(Modal, Jaw.Component);
+
+    /**
+     * That method will invoke table's property method, cuz
+     * header doesn't have property object
+     * @param key {string} - Key
+     * @param [value] {*|null|undefined} - Value
+     * @returns {*} - New or old value
+     */
+    Modal.prototype.property = function(key, value) {
+        return this.table().property.apply(this.table(), arguments);
+    };
+
+    /**
+     * Render input button for modal row
+     * @param heading {{}} - Current heading from header
+     * @param row {{}} - Current row object
+     * @param name {string} - Row's name
+     * @param key {string} - Row's key
+     * @returns {jQuery} - Rendered selector
+     */
+    Modal.prototype.renderInput = function(heading, row, name, key) {
+        var temporary = {}, input, k;
+        var success = function(json) {
+            if (!json.status) {
+                return Jaw.createMessage({
+                    message: json.message
                 });
-            });
-        deleteModal
-            .find("#jaw-table-delete").click(function() {
-                var button = $(this).button("loading");
-                $.get(me.property("url") + "?action=delete", {
-                    id: me.active()[me.property("table") + ".id"]
-                }, function(data) {
-                    var json = $.parseJSON(data);
-                    if (!json.status) {
-                        button.button("reset");
-                        return ErrorMessage.post(json.message);
-                    }
-                    button.button("reset");
-                    deleteModal.modal("hide");
-                    me.update();
-                });
-            });
-        addModal
-            .find("#jaw-table-add").click(function() {
-                var attributes = {};
-                var form = addModal.find(".jaw-table-form");
-                var errors = false;
-                for (var h in head) {
-                    var s = form.find("#" + head[h].id.replace(".", "_"));
-                    if (!s.length) {
+            }
+            for (var j in json.rows) {
+                var display = json.display.split(
+                    json.separator
+                );
+                var text = "";
+                for (k in display) {
+                    if (!display[k]) {
                         continue;
                     }
-                    if (!s.val().length) {
-                        s.parents(".form-group").addClass("has-error");
-                        errors = true;
+                    text += json.rows[j][display[k]];
+                    if (k != display.length - 1) {
+                        text += json.separator;
                     }
-                    attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
                 }
-                if (errors) {
-                    return true;
-                }
-                var button = $(this).button("loading");
-                $.get(me.property("url") + "?action=add", attributes, function(data) {
-                    var json = $.parseJSON(data);
-                    if (!json.status) {
-                        button.button("reset");
-                        return ErrorMessage.post(json.message);
+                var value = -1;
+                for (k in json.rows[j]) {
+                    if (k.endsWith(".id")) {
+                        value = json.rows[j][k];
+                        break;
                     }
-                    button.button("reset");
-                    addModal.modal("hide");
-                    me.update();
-                });
-            });
-    };
-
-    Table.prototype.active = function(active) {
-        if (arguments.length > 0) {
-            this._active = active;
-        }
-        return this._active;
-    };
-
-    Table.prototype.clicked = function(clicked) {
-        if (arguments.length > 0) {
-            this._clicked = clicked;
-        }
-        return this._clicked;
-    };
-
-    Table.prototype.property = function(field, value) {
-        if (arguments.length > 1) {
-            this._properties[field] = value;
-        }
-        if (this._properties === undefined) {
-            throw new Error("Table/property() : \"Undeclared field (" + field + ")\"");
-        }
-        return this._properties[field];
-    };
-
-    Table.prototype.widget = function(widget) {
-        if (arguments.length > 0) {
-            this._widget = widget;
-        }
-        return this._widget;
-    };
-
-    Table.prototype.has = function(field) {
-        return this._properties[field] !== undefined;
-    };
-
-    Table.prototype.order = function(order) {
-        if (arguments.length > 0) {
-            if (this._order && this._order == order) {
-                this._order += " desc";
-            } else {
-                this._order = order;
+                }
+                temporary[json.key].append(
+                    $("<option></option>", {
+                        text: text,
+                        value: value
+                    })
+                ).val(
+                    temporary[json.key].data("value") || -1
+                );
             }
+        };
+        if (key != "id" && key.endsWith("_id")) {
+            input = $("<select></select>", {
+                class: "form-control",
+                value: row,
+                id: heading.id.replace(".", "_")
+            }).append(
+                $("<option></option>", {
+                    text: "Нет",
+                    value: -1
+                })
+            );
+            input.data("value", row);
+            temporary[key] = input;
+            var serialized = "";
+            var display = heading.display;
+            var separator = heading.separator || ",";
+            if ($.isArray(display)) {
+                for (var j in display) {
+                    serialized += display[j] + separator;
+                }
+            } else {
+                serialized = display;
+            }
+            $.get(heading.url, {
+                action: "all",
+                key: key,
+                display: serialized || key,
+                separator: separator
+            }, function(data) {
+                success($.parseJSON(data));
+            });
+        } else {
+            input = $("<input>", {
+                type: heading.type || "text",
+                placeholder: name,
+                class: "form-control",
+                id: heading.id.replace(".", "_"),
+                value: heading.type != "password" ? row : ""
+            });
         }
-        return this._order;
+        return input;
     };
 
-    Table.prototype.limit = function(limit) {
-        if (arguments.length > 0) {
-            this._limit = limit;
-        }
-        return this._limit;
-    };
-
-    Table.prototype.page = function(page) {
-        if (arguments.length > 0) {
-            this._page = page;
-        }
-        return this._page;
-    };
-
-    Table.prototype.where = function(where) {
-        if (arguments.length > 0) {
-            this._where = where;
-        }
-        return this._where;
-    };
-
-    Table.prototype.selector = function(selector) {
-        if (arguments.length > 0) {
-            this._selector = selector;
-        }
-        return this._selector;
-    };
-
-    Table.prototype.build = function(modal, row, readonly) {
+    /**
+     * Render modal window form and display it
+     * @param row {{}} - Current row
+     * @param [identifiable] {bool} - Don't allow data change
+     * @param [editable] {bool} - Can user edit fields
+     */
+    Modal.prototype.render = function(row, identifiable, editable) {
         var header = this.property("header");
         var head = function(id) {
             for (var i in header) {
@@ -368,95 +190,25 @@ var Jaw = Jaw || {};
             }
             return null;
         };
-        var me = this;
-        var form = modal.find(".jaw-table-form");
+        var form = this.selector().find(".jaw-table-form");
         form.empty();
         var stack = [];
-        var temporary = {};
         for (var k in row) {
-            if (!head(k) || head(k).id.endsWith(".id") && !head(k).type) {
+            var h = head(k);
+            if (!h) {
                 continue;
             }
-            var name = head(k).name == "#" ? "Идентификатор" : head(k).name;
-            if (readonly && head(k).type == "password") {
+            if (h.id.endsWith(".id") && !identifiable) {
                 continue;
             }
-            var key = k.substr(k.indexOf(".") + 1);
-            var input;
-            if (key != "id" && key.endsWith("_id")) {
-                input = $("<select></select>", {
-                    class: "form-control",
-                    value: row[k],
-                    id: head(k).id.replace(".", "_")
-                }).append(
-                    $("<option></option>", {
-                        text: "Нет",
-                        value: -1
-                    })
-                );
-                input.data("value", row[k]);
-                temporary[key] = input;
-                var serialized = "";
-                var display = head(k).display;
-                var separator = head(k).separator || ",";
-                if ($.isArray(display)) {
-                    for (var j in display) {
-                        serialized += display[j] + separator;
-                    }
-                } else {
-                    serialized = display;
-                }
-                $.get(head(k).url, {
-                    action: "all",
-                    key: key,
-                    display: serialized || key,
-                    separator: separator
-                }, function(data) {
-                    var json = $.parseJSON(data);
-                    if (!json.status) {
-                        return ErrorMessage.post(json.message);
-                    }
-                    for (var j in json.rows) {
-                        var display = json.display.split(
-                            json.separator
-                        );
-                        var text = "";
-                        for (var k in display) {
-                            if (!display[k]) {
-                                continue;
-                            }
-                            text += json.rows[j][display[k]];
-                            if (k != display.length - 1) {
-                                text += json.separator;
-                            }
-                        }
-                        var value = -1;
-                        for (var k in json.rows[j]) {
-                            if (k.endsWith(".id")) {
-                                value = json.rows[j][k];
-                                break;
-                            }
-                        }
-                        temporary[json.key].append(
-                            $("<option></option>", {
-                                text: text,
-                                value: value
-                            })
-                        ).val(
-                            temporary[json.key].data("value") || -1
-                        );
-                    }
-                });
-            } else {
-                input = $("<input>", {
-                    type: head(k).type || "text",
-                    placeholder: name,
-                    class: "form-control",
-                    id: head(k).id.replace(".", "_"),
-                    value: head(k).type != "password" ? row[k] : ""
-                });
+            var name = h.name == "#" ? "Идентификатор" : h.name;
+            if (h.type == "password") {
+                continue;
             }
-            if (readonly || head(k).id.endsWith(".id") && !head(k).type) {
+            var input = this.renderInput(h, row[k], name,
+                k.substr(k.indexOf(".") + 1)
+            );
+            if (!editable || h.id.endsWith(".id")) {
                 input.attr("disabled", "disabled");
             }
             var group = $("<div></div>", {
@@ -478,11 +230,43 @@ var Jaw = Jaw || {};
         for (var i in stack) {
             form.append(stack[stack.length - i - 1]).append($("<br>"));
         }
-        modal.modal();
-        this.active(row);
+        this.selector().modal();
     };
 
-    Table.prototype.renderReferences = function(id, data) {
+    /**
+     * Construct reference modal window with information
+     * about current row
+     * @param table {Table} - Component's table
+     * @param modal {jQuery} - Modal selector
+     * @constructor
+     */
+    var Reference = function(table, modal) {
+        this.table = function() {
+            return table;
+        };
+        Jaw.Component.call(this, {}, {}, modal);
+    };
+
+    Jaw.extend(Reference, Jaw.Component);
+
+    /**
+     * That method will invoke table's property method, cuz
+     * header doesn't have property object
+     * @param key {string} - Key
+     * @param [value] {*|null|undefined} - Value
+     * @returns {*} - New or old value
+     */
+    Reference.prototype.property = function(key, value) {
+        return this.table().property.apply(this.table(), arguments);
+    };
+
+    /**
+     * Render references for reference modal window
+     * @param id {String} - Row's identifier
+     * @param data {{}} - Row's data
+     * @returns {jQuery} - Rendered selector
+     */
+    Reference.prototype.renderReferences = function(id, data) {
         var name = id;
         var property;
         for (var k in this.property("reference")) {
@@ -517,13 +301,16 @@ var Jaw = Jaw || {};
         return selector.append(block);
     };
 
-    Table.prototype.buildReference = function(modal, row) {
+    /**
+     * Render elements references modal window
+     */
+    Reference.prototype.render = function(row) {
         var k = this.property("table") + ".id";
         var id = row[k];
         if (!id) {
-            return ErrorMessage.post("Table/buildReference() : \"Can't find key for row\"");
+            throw new Error("Table/buildReference() : \"Can't find key for row\"");
         }
-        modal.find(".jaw-table-form").empty().append(
+        this.selector().find(".jaw-table-form").empty().append(
             $("<div></div>", {
                 style: "width: 100%; text-align: center;"
             }).append(
@@ -532,7 +319,7 @@ var Jaw = Jaw || {};
                 })
             )
         );
-        modal.modal();
+        this.selector().modal();
         var me = this;
         $.get(this.property("url"), {
             action: "reference",
@@ -541,21 +328,25 @@ var Jaw = Jaw || {};
         }, function (data) {
             var json = $.parseJSON(data);
             if (!json.status) {
-                return ErrorMessage.post(json.message);
+                return Jaw.createMessage({
+                    message: json.message
+                });
             }
             var references = json["reference"];
             var has = false;
-            var s = modal.find(".jaw-table-form").empty();
+            var s = me.selector().find(".jaw-table-form").empty();
             for (var k in references) {
                 if (references[k].length) {
                     has = true;
                 }
                 s.append(
-                    me.renderReferences(k, references[k])
+                    me.renderReferences(
+                        k, references[k]
+                    )
                 );
             }
             if (!has) {
-                modal.find(".jaw-table-form").empty().append(
+                me.selector().find(".jaw-table-form").empty().append(
                     $("<div></div>", {
                         style: "text-align: center; font-size: 20px",
                         html: "<b>Данный элемент не имеет зависимостей</b>"
@@ -565,7 +356,93 @@ var Jaw = Jaw || {};
         });
     };
 
-    Table.prototype.action = function(row) {
+    /**
+     * construct table body with table's properties
+     * @param table {Table} - Parent table component
+     * @constructor
+     */
+    var Body = function(table) {
+        var me = this;
+        this.table = function() {
+            return table;
+        };
+        Jaw.Component.call(this);
+        // Create component for edit modal window
+        this._modalEdit = new Modal(this.table(),
+            $("#modal-jaw-table-edit")
+        );
+        this._modalEdit.selector().find("#jaw-table-save").click(function() {
+            var attributes = {};
+            var form = me._modalEdit.selector().find(".jaw-table-form");
+            for (var h in me.property("header")) {
+                var heading = me.property("header")[h];
+                var s = form.find("#" + heading.id.replace(".", "_"));
+                if (!s.val().length) {
+                    s.parents(".form-group").addClass("has-error");
+                    return true;
+                }
+                attributes[heading.id.substr(heading.id.indexOf(".") + 1)] = s.val();
+            }
+            var button = $(this).button("loading");
+            $.get(me.property("url") + "?action=update", attributes, function(data) {
+                var json = $.parseJSON(data);
+                if (!json.status) {
+                    button.button("reset");
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
+                }
+                button.button("reset");
+                me._modalEdit.selector().modal("hide");
+                me.table().update();
+            });
+        });
+        // Create component for delete modal window
+        this._modalDelete = new Modal(this.table(),
+            $("#modal-jaw-table-delete")
+        );
+        this._modalDelete.selector().find("#jaw-table-delete").click(function() {
+            var button = $(this).button("loading");
+            $.get(me.property("url") + "?action=delete", {
+                id: me.property("active").data("row")[me.property("table") + ".id"]
+            }, function(data) {
+                var json = $.parseJSON(data);
+                if (!json.status) {
+                    button.button("reset");
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
+                }
+                button.button("reset");
+                me._modalDelete.selector().modal("hide");
+                me.table().update();
+            });
+        });
+        // Create component for references modal window
+        this._modalReference = new Reference(this.table(),
+            $("#modal-jaw-table-reference")
+        );
+    };
+
+    Jaw.extend(Body, Jaw.Component);
+
+    /**
+     * That method will invoke table's property method, cuz
+     * header doesn't have property object
+     * @param key {string} - Key
+     * @param [value] {*|null|undefined} - Value
+     * @returns {*} - New or old value
+     */
+    Body.prototype.property = function(key, value) {
+        return this.table().property.apply(this.table(), arguments);
+    };
+
+    /**
+     * Render actions for each row
+     * @param row {{}} - Current row
+     * @returns {jQuery}
+     */
+    Body.prototype.renderAction = function(row) {
         var me = this;
         var container = $("<div></div>", {
             style: "text-align: center"
@@ -576,7 +453,7 @@ var Jaw = Jaw || {};
                 class: "glyphicon glyphicon-link",
                 style: style
             }).click(function() {
-                me.buildReference($("#modal-jaw-table-reference"), row);
+                me._modalReference.render(row);
             })
         );
         container.append(
@@ -584,7 +461,7 @@ var Jaw = Jaw || {};
                 class: "glyphicon glyphicon-pencil",
                 style: style
             }).click(function() {
-                me.build($("#modal-jaw-table-edit"), row);
+                me._modalEdit.render(row, true, true);
             })
         );
         container.append(
@@ -592,96 +469,36 @@ var Jaw = Jaw || {};
                 class: "glyphicon glyphicon-remove",
                 style: style
             }).click(function() {
-                me.build($("#modal-jaw-table-delete"), row, true);
+                me._modalDelete.render(row, true, false);
             })
         );
         return container;
     };
 
-    Table.prototype.update = function(strict) {
+    /**
+     * Render table's body
+     * @returns {jQuery|Array}
+     */
+    Body.prototype.render = function() {
         var me = this;
-        if (!this.has("url")) {
-            return false;
-        }
-        this.widget().empty().append(
-            $("<img>", {
-                class: "col-md-offset-6",
-                src: "/jaw/images/ajax-loader.gif"
-            })
-        );
-        $.get(this.property("url"), {
-            action: "fetch",
-            order: me.order(),
-            page: me.page() || 1,
-            limit: this.limit() || this.property("limit")[0],
-            where: me.where()
-        }, function(data) {
-            var json = $.parseJSON(data);
-            if (!json.status) {
-                me.widget().empty().append(
-                    me.selector(me.render())
-                );
-                return ErrorMessage.post(json.message);
-            }
-            me.property("length", json["length"]);
-            me.property("data", json["table"]);
-            me.property("pages", json["pages"]);
-            me.widget().empty().append(
-                me.selector(me.render())
-            );
-            me.widget().find("#page").val(
-                (+me.page() || 1) + "/" + me.property("pages")
-            );
-        });
-    };
-
-    Table.prototype.render = function() {
-        var me = this;
-        var i;
-        if (!this.has("header") || !this.has("url")) {
-            return $("<div></div>", {
-                html: "<b>Error: Table hasn't been initialized</b>",
-                style: "font-size: 20px"
-            });
-        }
-        var header = $("<tr></tr>", {
-            style: "background-color: #ddd;"
-        });
-        var head = this.property("header");
-        for (i in head) {
-            $("<td></td>", {
-                html: "<b>" + head[i].name + "</b>",
-                style: head[i].name == "#" ? "width: 30px; text-align: center; cursor: pointer;"
-                    : "cursor: pointer;"
-            }).click(function() {
-                me.order($(this).data("id"));
-                me.update();
-            }).data("id", head[i].id)
-                .appendTo(header);
-        }
-        header.append($("<td><b>Действия<b></td>"));
-        var table = $("<table></table>", {
-            class: "table table-striped table-bordered"
-        }).append(header);
-        if (!this.has("data")) {
-            return table;
-        }
+        var header = this.property("header");
+        var result = [];
         for (var k in this.property("data")) {
             var body = $("<tr></tr>", {
-                class: "default unselectable"
+                class: "default unselectable body"
             });
             var global = "id";
             var data = this.property("data")[k];
             body.data("row", data).dblclick(function() {
-                me.buildReference($("#modal-jaw-table-reference"),
+                me._modalReference.render(
                     $(this).data("row")
                 );
             });
-            for (i in head) {
-                var id = head[i].display || head[i].id;
+            for (var i in header) {
+                var id = header[i].display || header[i].id;
                 var c;
                 if ($.isArray(id)) {
-                    var separator = head[i].separator || ", ";
+                    var separator = header[i].separator || ", ";
                     var html = "";
                     for (var j in id) {
                         html += data[id[j]] + (j != id.length - 1 ? separator : "");
@@ -691,19 +508,19 @@ var Jaw = Jaw || {};
                     }
                     c = $("<td></td>", {
                         html: html,
-                        style: head[i].style
+                        style: header[i].style
                     });
                 } else {
                     c = $("<td></td>", {
                         html: data[id],
-                        style: head[i].style
+                        style: header[i].style
                     });
                     if (id.endsWith(".id")) {
                         global = id;
                     }
                 }
-                if (head[i].href) {
-                    var href = head[i].href;
+                if (header[i].href) {
+                    var href = header[i].href;
                     for (var d in data) {
                         href = href.replace(d, data[d]);
                     }
@@ -714,41 +531,114 @@ var Jaw = Jaw || {};
                 $("<td></td>", {
                     style: "width: 100px;"
                 }).append(
-                    this.action(data)
+                    this.renderAction(data)
                 )
             ).click(function() {
                     history.pushState(null, null, window.location.hash +
                         "?id=" + $(this).data("id")
                     );
-                    if (me.clicked()) {
-                        me.clicked().removeClass("info");
+                    if (me.property("active")) {
+                        me.property("active").removeClass("info");
                     }
-                    me.clicked($(this).addClass("info"));
+                    me.property("active", $(this).addClass("info"));
                 }
             ).data("id", data[global]);
-            table.append(body);
+            result.push(body);
         }
-        if (!this.property("data").length) {
-            table.append($("<tr></tr>", {
+        if (!this.property("data") || !this.property("data").length) {
+            return $("<tr></tr>", {
                 class: "default"
             }).append(
                 $("<td></td>", {
-                    colspan: head.length + 1,
+                    colspan: header.length + 1,
                     style: "font-size: 20px; text-align: center;",
                     html: "<b>Отсутсвуют данные для отображения</b>"
                 })
-            ));
+            );
         }
-        var query = $("<input>", {
+        return result;
+    };
+
+    /**
+     * Construct table footer with parent table component
+     * @param table {Table} - Parent table component
+     * @constructor
+     */
+    var Footer = function(table) {
+        var me = this;
+        this.table = function() {
+            return table;
+        };
+        Jaw.Component.call(this);
+        this._modalInsert = new Modal(this.table(),
+            $("#modal-jaw-table-add")
+        );
+        this._modalInsert.selector().find("#jaw-table-add").click(function() {
+            var head = me.property("header");
+            var attributes = {};
+            var form = me._modalInsert.selector().find(".jaw-table-form");
+            var errors = false;
+            for (var h in head) {
+                var s = form.find("#" + head[h].id.replace(".", "_"));
+                if (!s.length) {
+                    continue;
+                }
+                if (!s.val().length) {
+                    s.parents(".form-group").addClass("has-error");
+                    errors = true;
+                }
+                attributes[head[h].id.substr(head[h].id.indexOf(".") + 1)] = s.val();
+            }
+            if (errors) {
+                return true;
+            }
+            var button = $(this).button("loading");
+            $.get(me.property("url"), $.extend(attributes, {
+                action: "add"
+            }), function(data) {
+                var json = $.parseJSON(data);
+                if (!json.status) {
+                    button.button("reset");
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
+                }
+                button.button("reset");
+                me._modalInsert.selector().modal("hide");
+                me.table().update();
+            });
+        });
+    };
+
+    Jaw.extend(Footer, Jaw.Component);
+
+    /**
+     * That method will invoke table's property method, cuz
+     * header doesn't have property object
+     * @param key {string} - Key
+     * @param [value] {*|null|undefined} - Value
+     * @returns {*} - New or old value
+     */
+    Footer.prototype.property = function(key, value) {
+        return this.table().property.apply(this.table(), arguments);
+    };
+
+    /**
+     * Render container for queries based on where clause
+     * @returns {jQuery}
+     */
+    Footer.prototype.renderQuery = function() {
+        var me = this;
+        var input = $("<input>", {
             type: "text",
             placeholder: "Условие поиска",
             class: "form-control",
             id: "query",
             style: "width: 350px; float: left;",
-            value: this.where()
+            value: this.table().property("where")
         }).keydown(function(e) {
             if (e.keyCode == 13) {
-                button.trigger("click");
+                $(this).parent().find("button").trigger("click");
             }
         });
         var button = $("<button></button>", {
@@ -756,131 +646,329 @@ var Jaw = Jaw || {};
             class: "btn btn-primary",
             style: "margin-left: 10px;"
         }).click(function() {
-            var value = footer.find("#query").val();
+            var value = me.selector().find("#query").val();
             if (value) {
-                me.where(value);
+                me.property("where", value);
             } else {
-                me.where(null);
+                me.property("where", null);
             }
             me.update();
         });
+        return $("<td></td>", {
+            style: "width: 550px",
+            class: "query"
+        }).append(input).append(button)
+    };
+
+    /**
+     * Render select item for limit
+     * @returns {jQuery}
+     */
+    Footer.prototype.renderLimit = function() {
+        var me = this;
         var select = $("<select></select>", {
             class: "form-control",
             style: "width: auto"
         }).change(function() {
-            me.limit(+$(this).val());
-            me.update();
+            me.table().limit(+$(this).val());
+            me.table().update();
         });
-        for (i in this.property("limit")) {
+        for (var i in this.property("limit")) {
             select.append($("<option></option>", {
                 text: this.property("limit")[i],
                 value: this.property("limit")[i]
             }));
         }
-        select.val(me.limit());
-        var footer = $("<table></table>", {
-            style: "width: 100%"
+        select.val(me.table().limit());
+        return $("<td></td>", {
+            style: "width: auto",
+            class: "select"
+        }).append(select)
+    };
+
+    /**
+     * Render container with pager, which will show current page
+     * and will allow user to set necessary page
+     * @returns {jQuery}
+     */
+    Footer.prototype.renderPager = function() {
+        var me = this;
+        return $("<td></td>", {
+            style: "width: 200px; vertical-align: middle",
+            valign: "middle",
+            class: "pager"
         }).append(
-            $("<tr></tr>", {
-                colspan: head.length + 1
-            }).append(
-                $("<td></td>", {
-                    style: "width: 550px"
-                }).append(query).append(button)
-            ).append(
-                $("<td></td>", {
-                    style: "width: 200px; vertical-align: middle",
-                    valign: "middle"
-                }).append(
-                    $("<span></span>", {
-                        style: "float: left; line-height: 30px; margin-right: 5px; cursor: pointer",
-                        class: "glyphicon glyphicon-chevron-left"
-                    }).click(function() {
-                        var value = +$(this).parent().children("#page").val().split("/")[0];
-                        if (value <= 1) {
-                            return true;
-                        }
-                        $(this).parent().children("#page").val(
-                            (value - 1) + "/" + me.property("pages")
-                        );
-                        me.page(value - 1);
-                        me.update();
-                    })
-                ).append(
-                    $("<input>", {
-                        style: "width: 60px; float: left; text-align: center",
-                        type: "text",
-                        class: "form-control",
-                        disabled: "disabled",
-                        value: "1/0",
-                        id: "page"
-                    })
-                ).append(
-                    $("<span></span>", {
-                        style: "float: left; line-height: 30px; margin-left: 5px; cursor: pointer",
-                        class: "glyphicon glyphicon-chevron-right"
-                    }).click(function() {
-                        var value = +$(this).parent().children("#page").val().split("/")[0];
-                        if (me.property("pages") && value >= +me.property("pages")) {
-                            return true;
-                        }
-                        $(this).parent().children("#page").val(
-                            (value + 1) + "/" + me.property("pages")
-                        );
-                        me.page(value + 1);
-                        me.update();
-                    })
-                )
-            ).append(
-                $("<td></td>", {
-                    style: "width: auto"
-                }).append(select)
-            ).append(
-                $("<td></td>", {
-                    style: "text-align: center; width: 30px;"
-                }).append(
-                    $("<span></span>", {
-                        class: "glyphicon glyphicon-plus",
-                        style: "font-size: 20px; line-height: 25px; cursor: pointer;"
-                    }).click(function() {
-                        var row = {};
-                        for (var k in head) {
-                            row[head[k].id] = "";
-                        }
-                        me.build($("#modal-jaw-table-add"), row, false, true);
-                    })
-                )
-            ).append(
-                $("<td></td>", {
-                    style: "text-align: right; width: 30px;"
-                }).append(
-                    $("<span></span>", {
-                        class: "glyphicon glyphicon-refresh",
-                        style: "font-size: 20px; line-height: 25px; cursor: pointer;"
-                    }).click(function() {
-                        me.update();
-                    })
-                )
-            )
+            $("<span></span>", {
+                style: "float: left; line-height: 30px; margin-right: 5px; cursor: pointer",
+                class: "glyphicon glyphicon-chevron-left"
+            }).click(function() {
+                var value = +$(this).parent().children(".page").val().split("/")[0];
+                if (value <= 1) {
+                    return true;
+                }
+                $(this).parent().children(".page").val(
+                    (value - 1) + "/" + me.property("pages")
+                );
+                me.property("page", value - 1);
+                me.table().update();
+            })
+        ).append(
+            $("<input>", {
+                style: "width: 60px; float: left; text-align: center",
+                type: "text",
+                class: "form-control page",
+                disabled: "disabled",
+                value: "0/0"
+            })
+        ).append(
+            $("<span></span>", {
+                style: "float: left; line-height: 30px; margin-left: 5px; cursor: pointer",
+                class: "glyphicon glyphicon-chevron-right"
+            }).click(function() {
+                var value = +$(this).parent().children(".page").val().split("/")[0];
+                if (me.property("pages") && value >= +me.property("pages")) {
+                    return true;
+                }
+                $(this).parent().children(".page").val(
+                    (value + 1) + "/" + me.property("pages")
+                );
+                me.property("page", value + 1);
+                me.table().update();
+            })
+        )
+    };
+
+    /**
+     * Render adder button to insert new items in table
+     * @returns {jQuery}
+     */
+    Footer.prototype.renderAdder = function() {
+        var me = this;
+        return $("<td></td>", {
+            style: "text-align: center; width: 30px;",
+            class: "adder"
+        }).append(
+            $("<span></span>", {
+                class: "glyphicon glyphicon-plus add",
+                style: "font-size: 20px; line-height: 25px; cursor: pointer;"
+            }).click(function() {
+                var row = {};
+                for (var k in me.property("header")) {
+                    row[me.property("header")[k].id] = "";
+                }
+                me._modalInsert.render(row, false, true);
+            })
+        )
+    };
+
+    /**
+     * Render refresh button, which will resend request on
+     * server to update current data
+     * @returns {*|jQuery}
+     */
+    Footer.prototype.renderRefresher = function() {
+        var me = this;
+        return $("<td></td>", {
+            style: "text-align: right; width: 30px;",
+            class: "refresher"
+        }).append(
+            $("<span></span>", {
+                class: "glyphicon glyphicon-refresh refresh",
+                style: "font-size: 20px; line-height: 25px; cursor: pointer;"
+            }).click(function() {
+                me.update();
+            })
+        );
+    };
+
+    /**
+     * Render table's footer with all upper stuff
+     * @returns {jQuery}
+     */
+    Footer.prototype.render = function() {
+        var header = this.property("header");
+        var tr = $("<tr></tr>", {
+            colspan: header.length + 1
+        }).append(
+            this.renderQuery()
+        ).append(
+            this.renderPager()
+        ).append(
+            this.renderLimit()
+        ).append(
+            this.renderAdder()
+        ).append(
+            this.renderRefresher()
         );
         return $("<div></div>", {
+            class: "panel-footer"
+        }).append(
+            $("<table></table>", {
+                style: "width: 100%"
+            }).append(tr)
+        );
+    };
+
+    /**
+     * Construct table component with properties
+     * @param properties
+     * @constructor
+     */
+    var Table = function(properties) {
+        // Construct super component
+        Jaw.Component.call(this, properties, {
+            limit: [5, 10, 25, 50, 100],
+            page: 1
+        }, true);
+        // Construct children components
+        this._header = new Header(this);
+        this._body = new Body(this);
+        this._footer = new Footer(this);
+        // Render table component
+        this.selector(this.render());
+    };
+
+    Jaw.extend(Table, Jaw.Component);
+
+    /**
+     * Set table's order method, if key will be repeated twicly, then
+     * it will add 'desc' suffix to name
+     * @param order {string} - Order key
+     * @returns {*}
+     */
+    Table.prototype.order = function(order) {
+        if (arguments.length > 0) {
+            if (this.property("order") == order) {
+                this.property("order", order + " desc");
+            } else {
+                this.property("order", order);
+            }
+        }
+        return this.property("order");
+    };
+
+    /**
+     * Render table with header, body and footer
+     * @returns {jQuery}
+     */
+    Table.prototype.render = function() {
+        // Check for header and url existence
+        if (!this.property("header") || !this.property("url")) {
+            return $("<div></div>", {
+                html: "<b>Error: Table hasn't been initialized</b>",
+                style: "font-size: 20px"
+            });
+        }
+        // Remove old children components selectors
+        this._header.selector().remove();
+        this._body.selector().remove();
+        this._footer.selector().remove();
+        // Render table with children components
+        return $("<div></div>", {
             class: "panel panel-default"
-        }).append(table).append(
-            $("<div></div>", {
-                class: "panel-footer"
-            }).append(footer)
+        }).append(
+            $("<table></table>", {
+                class: "table table-striped table-bordered"
+            }).append(
+                this._header.selector(
+                    this._header.render()
+                )
+            ).append(
+                this._body.selector(
+                    this._body.render()
+                )
+            )
+        ).append(
+            this._footer.selector(
+                this._footer.render()
+            )
         );
     };
 
+    /**
+     * Set table's limit, if limit hasn't been set, then it will
+     * return first default
+     * @param [limit] - Limit to set
+     * @returns {Number}
+     */
+    Table.prototype.limit = function(limit) {
+        if (arguments.length > 0) {
+            this._limit = limit;
+        }
+        return this._limit || this.property("limit")[0];
+    };
+
+    /**
+     * Update current table
+     * @returns {boolean}
+     */
+    Table.prototype.update = function() {
+        var me = this;
+        // Don't update without URL
+        if (!this.property("url")) {
+            return false;
+        }
+        // If selector array (body), then change it to first element
+        if ($.isArray(this._body.selector())) {
+            this._body.selector(
+                this._body.selector()[0]
+            );
+        }
+        // Replace selector with loading image
+        this._body.selector().replaceWith(
+            $("<td></td>", {
+                colspan: this.property("header").length + 1
+            }).append(
+                $("<img>", {
+                    class: "col-md-offset-6",
+                    src: "/jaw/images/ajax-loader.gif",
+                    style: "padding: 10px"
+                })
+            )
+        );
+        // Remove old body's rows
+        this.selector().find(".body").remove();
+        // Send request to fetch new rows
+        $.get(this.property("url"), {
+            action: "fetch",
+            order: me.order(),
+            page: me.property("page") || 1,
+            limit: me.limit(),
+            where: me.property("where")
+        }, function(data) {
+            // Parse server's response
+            var json = $.parseJSON(data);
+            // If we have false status then we got an error
+            if (!json.status) {
+                // Restore table to previous state
+                me.update();
+                // Display error message
+                return Jaw.createMessage({
+                    message: json.message
+                });
+            }
+            // Initialize table
+            me.property("length", json["length"]);
+            me.property("data", json["table"]);
+            me.property("pages", json["pages"]);
+            // Update table with super method
+            Jaw.Component.prototype.update.call(me);
+            // Change pager's page
+            me._footer.selector().find(".page").val(
+                (+me.property("page") || 1) + "/" + me.property("pages")
+            );
+        });
+    };
+
+    /**
+     * Create table element with properties
+     * @param selector {string} - Node's selector, like id or class
+     * @param properties {{}} - Component's properties
+     */
     Jaw.createTable = function(selector, properties) {
-        var parent = $(selector);
-        var table = new Table(parent, properties);
-        parent.data("jaw-table", table).append(
-            table.selector()
-        );
-        table.update();
+        Jaw.create(new Table(properties), selector);
     };
-
+    
     $(document).ready(function() {
         var parameters = window.location.href.substr(
             window.location.href.lastIndexOf("?") + 1

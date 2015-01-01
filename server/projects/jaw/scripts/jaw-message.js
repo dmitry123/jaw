@@ -10,35 +10,49 @@ var Jaw = Jaw || {};
      *  delay {int} - Close timeout
      *  open {function} - Event on after open
      *  close {function} - Event on after close
-     *  type {string} - Bootstrap type (danger, warning, info, default, success, primary)
-     *  message {string} - Message to display
+     *  type {string} - Bootstrap type (danger, warning, info, success)
+     *  message {string} - Message to display,
+     *  sign {string} - Bootstrap sign (ok, question, info, exclamation, warning, plus, minus, remove)
      * }
      * @param properties {{}} - Properties
      * @constructor
      */
     var Message = function(properties) {
-        Jaw.Component.call(this, properties);
+        Jaw.Component.call(this, properties, {
+            type: "danger",
+            message: "Not-Initialized",
+            sign: "info",
+            delay: 5000
+        });
     };
 
     Jaw.extend(Message, Jaw.Component);
 
+    /**
+     * Render message component
+     * @returns {jQuery}
+     */
     Message.prototype.render = function() {
-        var type = "alert-" + (this.property("type"));
         return $("<div></div>", {
-            class: "alert " + type + " jaw-message-wrapper",
+            class: "alert " + ("alert-" + this.property("type")) + " jaw-message-wrapper",
             role: "alert"
         }).append(
             $("<span></span>", {
-                class: "glyphicon glyphicon-exclamation-sign"
+                class: "glyphicon glyphicon-" + this.property("sign") + "-sign",
+                style: "margin-right: 10px"
             })
         ).append(
             $("<span></span>", {
                 class: "jaw-message",
-                text: this.property("message") || "Message Not Initialized"
+                text: this.property("message")
             })
         );
     };
 
+    /**
+     * Activate message component, it will add click event
+     * and animate message opening from left edge
+     */
     Message.prototype.activate = function() {
         var me = this;
         this.selector().click(function() {
@@ -47,6 +61,10 @@ var Jaw = Jaw || {};
         this.open();
     };
 
+    /**
+     * Open message (animate from left edge)
+     * @param [after] {function|null|undefined} - Callback after open
+     */
     Message.prototype.open = function(after) {
         var me = this;
         if (parseInt(this.selector().css("left")) < 0) {
@@ -54,7 +72,7 @@ var Jaw = Jaw || {};
                 "left": "5px"
             }, "slow", null, function() {
                 if (me.property("open")) {
-                    me.property("open")(me);
+                    me.property("open").call(me);
                 }
                 if (after) {
                     after(me);
@@ -62,10 +80,14 @@ var Jaw = Jaw || {};
             });
             setTimeout(function() {
                 me.close();
-            }, this.property("delay") || 2000);
+            }, this.property("delay"));
         }
     };
 
+    /**
+     * Close message component, if it hasn't been opened yet
+     * @param [after] {function|null|undefined} - Callback after close
+     */
     Message.prototype.close = function(after) {
         var me = this;
         if (parseInt(this.selector().css("left")) > 0) {
@@ -73,7 +95,7 @@ var Jaw = Jaw || {};
                 "left": "-" + parseInt(this.selector().css("width")) + "px"
             }, "slow", null, function() {
                 if (me.property("close")) {
-                    me.property("close")(me);
+                    me.property("close").call(me);
                 }
                 if (after) {
                     after(me);
@@ -83,12 +105,21 @@ var Jaw = Jaw || {};
         }
     };
 
+    /**
+     * Overridden destroy method, it will close current component (move
+     * to left edge) and invoke super destroy method
+     */
     Message.prototype.destroy = function() {
         this.close(function(me) {
             Jaw.Component.prototype.destroy.call(me);
         });
     };
 
+    /**
+     * Collection is a singleton, which stores active messages and
+     * will put new message after previous (with new top offset)
+     * @type {{create: Function, destroy: Function, _components: Array}}
+     */
     var Collection = {
         create: function(properties) {
             var message = new Message(properties);
@@ -113,45 +144,12 @@ var Jaw = Jaw || {};
         _components: []
     };
 
+    /**
+     * Create new message instance with some properties
+     * @param properties {{}} - Message component's properties
+     */
     Jaw.createMessage = function(properties) {
         Collection.create(properties);
     };
-
-    $(document).ready(function() {
-        Jaw.createMessage({
-            message: "Hello, World 1",
-            type: "info"
-        });
-        setTimeout(function() {
-            Jaw.createMessage({
-                message: "Hello, World 2",
-                type: "danger"
-            });
-        }, 250);
-        setTimeout(function() {
-            Jaw.createMessage({
-                message: "Hello, World 3",
-                type: "success"
-            });
-        }, 500);
-        setTimeout(function() {
-            Jaw.createMessage({
-                message: "Hello, World 1",
-                type: "info"
-            });
-            setTimeout(function() {
-                Jaw.createMessage({
-                    message: "Hello, World 2",
-                    type: "danger"
-                });
-            }, 250);
-            setTimeout(function() {
-                Jaw.createMessage({
-                    message: "Hello, World 3",
-                    type: "success"
-                });
-            }, 500);
-        }, 3500);
-    });
 
 })(Jaw);

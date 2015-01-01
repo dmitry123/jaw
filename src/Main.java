@@ -13,7 +13,10 @@ public class Main {
 		try {
 			WebServer.run();
 		} catch (Throwable e) {
-			Logger.getLogger().log(e.getMessage()); e.printStackTrace();
+			Logger.getLogger().log(
+				e.getMessage()
+			);
+			e.printStackTrace();
 		}
 	}
 }
