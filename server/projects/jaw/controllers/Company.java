@@ -26,11 +26,6 @@ public class Company extends Controller {
 		redirect("Index", "Denied");
 	}
 
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
 	public void actionRegister() throws Exception {
 
 		JSONObject jsonResponse = new JSONObject();

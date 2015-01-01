@@ -8,6 +8,8 @@ import jaw.Sql.CortegeRow;
 
 import java.lang.Object;
 import java.sql.ResultSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Savonin on 2014-12-05
@@ -120,7 +122,7 @@ public class Employee extends Model<Employee.Row> {
 	}
 
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("employee")

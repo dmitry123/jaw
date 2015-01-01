@@ -13,11 +13,6 @@ public class Employee extends Controller {
 	}
 
 	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
-	@Override
 	public void actionView() throws Exception {
 
 	}

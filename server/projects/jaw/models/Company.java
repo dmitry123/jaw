@@ -96,7 +96,7 @@ public class Company extends Model<Company.Row> {
 	}
 
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("company")

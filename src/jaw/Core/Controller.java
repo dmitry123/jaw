@@ -57,102 +57,108 @@ public abstract class Controller extends Component {
 	 * to table from controller override that method and invoke super method
 	 * @throws Exception
 	 */
-	public void actionGetTable() throws Exception {
+	public final void actionGetTable() throws Exception {
 
 		final String action = GET("action");
 
-		if (checkAccess()) {
-
-			JSONObject jsonResponse = new JSONObject();
-			jsonResponse.put("action", action);
-
-			if (action.equals("fetch")) {
-
-				String page = getSession().getParms().get("page");
-				String limit = getSession().getParms().get("limit");
-
-				Collection<LinkedHashMap<String, String>> wrapper = getModel().fetchTable(
-					page != null ? Integer.parseInt(page) : 0,
-					limit != null ? Integer.parseInt(limit) : 0,
-					getSession().getParms().get("where"),
-					getSession().getParms().get("order")
-				);
-
-				jsonResponse.put("table", new JSONArray(wrapper.toArray()));
-				jsonResponse.put("length", jsonResponse.getJSONArray("table").length());
-				jsonResponse.put("page", page != null ? Integer.parseInt(page) : 0);
-				jsonResponse.put("limit", limit != null ? Integer.parseInt(limit) : 0);
-				jsonResponse.put("pages", ((Model.Wrapper)wrapper).getPages());
-
-			} else if (action.equals("add")) {
-
-				getSession().getParms().remove("action");
-
-				if (getSession().getParms().containsKey("hash")) {
-					String password = getSession().getParms().remove("hash");
-					getSession().getParms().put("hash",
-							PasswordEncryptor.crypt(GET("login"), password)
-					);
-				}
-
-				getModel().insert(
-					getSession().getParms()
-				);
-
-			} else if (action.equals("update")) {
-
-				Object id = GET("id");
-
-				try {
-					id = Integer.parseInt(id.toString());
-				} catch (NumberFormatException ignored) {
-				}
-
-				getSession().getParms().remove("id");
-				getSession().getParms().remove("action");
-
-				if (getSession().getParms().containsKey("hash")) {
-					String password = getSession().getParms().remove("hash");
-					getSession().getParms().put("hash",
-						PasswordEncryptor.crypt(GET("login"), password)
-					);
-				}
-
-				getModel().updateByID(
-					id, getSession().getParms()
-				);
-
-			} else if (action.equals("delete")) {
-
-				getModel().deleteByID(
-					Integer.parseInt(GET("id"))
-				);
-
-			} else if (action.equals("reference")) {
-
-				String id = GET("id");
-				String alias = GET("alias");
-
-				getSession().getParms().remove("id");
-				getSession().getParms().remove("action");
-
-				jsonResponse.put("reference", getModel().fetchReferences(alias, id));
-
-			} else if (action.equals("all")) {
-
-				jsonResponse.put("rows", getModel().getRows());
-				jsonResponse.put("key", GET("key"));
-				jsonResponse.put("display", GET("display"));
-				jsonResponse.put("separator", GET("separator"));
-
-			} else {
-				postErrorMessage("Unknown action");
-			}
-			jsonResponse.put("status", true);
-			setAjaxResponse(jsonResponse.toString());
-		} else {
+		if (!checkAccess()) {
 			postErrorMessage("Недостаточно прав");
+			return;
 		}
+
+		JSONObject jsonResponse = new JSONObject();
+		jsonResponse.put("action", action);
+
+		if (action.equals("fetch")) {
+
+			String page = getSession().getParms().get("page");
+			String limit = getSession().getParms().get("limit");
+
+			Collection<LinkedHashMap<String, String>> wrapper = getModel().fetchTable(
+				page != null ? Integer.parseInt(page) : 0,
+				limit != null ? Integer.parseInt(limit) : 0,
+				getSession().getParms().get("where"),
+				getSession().getParms().get("order")
+			);
+
+			jsonResponse.put("table", new JSONArray(wrapper.toArray()));
+			jsonResponse.put("length", jsonResponse.getJSONArray("table").length());
+			jsonResponse.put("page", page != null ? Integer.parseInt(page) : 0);
+			jsonResponse.put("limit", limit != null ? Integer.parseInt(limit) : 0);
+			jsonResponse.put("pages", ((Model.Wrapper)wrapper).getPages());
+
+		} else if (action.equals("add")) {
+
+			getSession().getParms().remove("action");
+
+			if (getSession().getParms().containsKey("hash")) {
+				String password = getSession().getParms().remove("hash");
+				getSession().getParms().put("hash",
+						PasswordEncryptor.crypt(GET("login"), password)
+				);
+			}
+
+			getModel().insert(
+				getSession().getParms()
+			);
+
+		} else if (action.equals("update")) {
+
+			Object id = GET("id");
+
+			try {
+				id = Integer.parseInt(id.toString());
+			} catch (NumberFormatException ignored) {
+			}
+
+			getSession().getParms().remove("id");
+			getSession().getParms().remove("action");
+
+			if (getSession().getParms().containsKey("hash")) {
+				String password = getSession().getParms().remove("hash");
+				getSession().getParms().put("hash",
+					PasswordEncryptor.crypt(GET("login"), password)
+				);
+			}
+
+			getModel().updateByID(
+				id, getSession().getParms()
+			);
+
+		} else if (action.equals("delete")) {
+
+			Object id = GET("id");
+
+			try {
+				id = Integer.parseInt(id.toString());
+			} catch (NumberFormatException ignored) {
+			}
+
+			getModel().deleteByID(id);
+
+		} else if (action.equals("reference")) {
+
+			String id = GET("id");
+			String alias = GET("alias");
+
+			getSession().getParms().remove("id");
+			getSession().getParms().remove("action");
+
+			jsonResponse.put("reference", getModel().fetchReferences(alias, id));
+
+		} else if (action.equals("all")) {
+
+			jsonResponse.put("rows", getModel().getRows());
+			jsonResponse.put("key", GET("key"));
+			jsonResponse.put("display", GET("display"));
+			jsonResponse.put("separator", GET("separator"));
+
+		} else {
+			postErrorMessage("Unknown action");
+		}
+
+		jsonResponse.put("status", true);
+		setAjaxResponse(jsonResponse.toString());
 	}
 
 	/**
@@ -163,10 +169,10 @@ public abstract class Controller extends Component {
 	 */
 	public String POST(String key) throws Exception {
 		if (!getSession().getMethod().name().toUpperCase().equals("POST")) {
-			throw new Exception("post." + key);
+			throw new Exception("POST." + key);
 		}
 		if (!getSession().getParms().containsKey(key) || getSession().getParms().get(key).length() == 0) {
-			throw new Exception("post." + key);
+			throw new Exception("POST." + key);
 		}
 		return getSession().getParms().get(key);
 	}
@@ -179,10 +185,10 @@ public abstract class Controller extends Component {
 	 */
 	public String GET(String key) throws Exception {
 		if (!getSession().getMethod().name().toUpperCase().equals("GET")) {
-			throw new Exception("get." + key);
+			throw new Exception("GET." + key);
 		}
 		if (!getSession().getParms().containsKey(key) || getSession().getParms().get(key).length() == 0) {
-			throw new Exception("get." + key);
+			throw new Exception("GET." + key);
 		}
 		return getSession().getParms().get(key);
 	}
@@ -294,9 +300,6 @@ public abstract class Controller extends Component {
 	 * @param view - View to set
 	 */
 	public void setView(View view) throws Exception {
-		if (this.view != null) {
-			throw new Exception("Controller/setModel() : \"Controller already has view\"");
-		}
 		this.view = view;
 	}
 
@@ -327,40 +330,23 @@ public abstract class Controller extends Component {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Get html builder
+	 * @return - Html builder
 	 */
 	public HtmlBuilder getHtmlBuilder() {
 		return htmlBuilder;
 	}
 
 	/**
-	 *
-	 * @return
-	 */
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-
-	/**
-	 *
-	 * @param inputStream
-	 */
-	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
-
-	/**
-	 *
-	 * @return
+	 * @return - Ajax response string (JSON)
 	 */
 	public String getAjaxResponse() {
 		return ajaxResponse;
 	}
 
 	/**
-	 *
-	 * @param ajaxResponse
+	 * Set action's ajax response
+	 * @param ajaxResponse - Ajax response string (JSON)
 	 */
 	public void setAjaxResponse(String ajaxResponse) {
 		this.ajaxResponse = ajaxResponse;
@@ -370,6 +356,5 @@ public abstract class Controller extends Component {
 	private HtmlBuilder htmlBuilder = new HtmlBuilder();
 	private Model model = null;
 	private View view  = null;
-	private InputStream inputStream = null;
 	private String ajaxResponse = null;
 }

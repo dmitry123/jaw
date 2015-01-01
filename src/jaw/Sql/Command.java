@@ -1,6 +1,7 @@
 package jaw.Sql;
 
 
+import java.util.Map;
 
 /**
  * Created by Savonin on 2014-11-22
@@ -312,7 +313,39 @@ public class Command implements CommandProtocol {
 		if (command == null) {
 			return this;
 		}
-		return _word("(" + ((Command) command).getQuery() + ")");
+		return _word("(" + command.getQuery() + ")");
+	}
+
+	/**
+	 * Add with clause for query
+	 * @param command - Command for with
+	 * @return - Current self instance
+	 * @throws Exception
+	 */
+	@Override
+	public CommandProtocol with(Map<String, CommandProtocol> command) throws Exception {
+		int count = command.size();
+		_word("WITH");
+		for (Map.Entry<String, CommandProtocol> entry : command.entrySet()) {
+			_word(entry.getKey())._word("AS")._word(
+				"(" + entry.getValue().getQuery() + ")"
+			);
+			if (count-- > 1) {
+				_word(",");
+			}
+		}
+		return this;
+	}
+
+	/**
+	 * Add with clause to query
+	 * @param alias - With alias
+	 * @param command - With command
+	 * @return - Current self instance
+	 * @throws Exception
+	 */
+	public CommandProtocol with(String alias, CommandProtocol command) throws Exception {
+		return _word("WITH")._word(alias)._word("AS")._word("(" + command.getQuery() + ")");
 	}
 
 	/**
@@ -330,6 +363,7 @@ public class Command implements CommandProtocol {
 	 * Build query for statement
 	 * @return - Result query
 	 */
+	@Override
 	public String getQuery() {
 		return sqlQuery + sqlWhere + sqlOrder;
 	}

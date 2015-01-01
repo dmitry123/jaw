@@ -17,11 +17,6 @@ public class User extends Controller {
 		super(environment);
 	}
 
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
 	public void actionLogin() throws Exception {
 
 		final String login = POST("login");

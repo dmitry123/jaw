@@ -24,7 +24,7 @@ public class ProductEmployee extends Model<ProductEmployee.Row> {
 	 * @throws Exception
 	 */
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("product_employee")

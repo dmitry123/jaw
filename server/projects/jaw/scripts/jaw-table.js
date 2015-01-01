@@ -968,7 +968,7 @@ var Jaw = Jaw || {};
     Jaw.createTable = function(selector, properties) {
         Jaw.create(new Table(properties), selector);
     };
-    
+
     $(document).ready(function() {
         var parameters = window.location.href.substr(
             window.location.href.lastIndexOf("?") + 1

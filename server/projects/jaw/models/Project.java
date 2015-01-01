@@ -34,7 +34,7 @@ public class Project extends Model<Project.Row> {
 	}
 
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("project")

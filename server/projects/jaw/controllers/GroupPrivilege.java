@@ -13,16 +13,6 @@ public class GroupPrivilege extends Controller {
 	}
 
 	/**
-	 * Default action to get information from database, to allow access to table from controller override that method
-	 * and invoke super method
-	 * @throws Exception
-	 */
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
-	/**
 	 * Default index action
 	 */
 	@Override

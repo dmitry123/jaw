@@ -193,7 +193,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @return - Command with your query
 	 * @throws Exception
 	 */
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from(getTableName());
@@ -227,6 +227,17 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		return null;
 	}
 
+	/**
+	 * Override that method to return dependencies for current table associated
+	 * with map's key as table name, it will increase performance and give more
+	 * suitable syntax with allowed aliases (getReferences still here for compatibility)
+	 * @return - Map with commands
+	 * @throws Exception
+	 */
+	public Map<String, CommandProtocol> getReferences2() throws Exception {
+		return null;
+	}
+
 	public static class Wrapper extends Vector<LinkedHashMap<String, String>> {
 
 		/**
@@ -257,7 +268,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws SQLException
 	 */
 	public final Collection<LinkedHashMap<String, String>> fetchTable(int page, int limit, String where, String order) throws Exception {
-		ResultSet resultSet = getResultSetForTable()
+		ResultSet resultSet = getTable()
 			.where(where)
 			.order(order)
 			.execute()
@@ -371,10 +382,10 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public int deleteByID(Integer id) throws Exception {
+	public int deleteByID(Object id) throws Exception {
 		return getConnection().createCommand()
 			.delete(getTableName())
-			.where("cast(id as text) = cast(? as text)")
+			.where("id = ?")
 			.execute(id)
 			.delete();
 	}
