@@ -6,6 +6,7 @@ import jaw.Sql.CortegeProtocol;
 import jaw.Sql.CortegeRow;
 import jaw.Sql.CommandProtocol;
 
+import java.lang.Exception;
 import java.lang.Object;
 import java.sql.ResultSet;
 
@@ -51,6 +52,26 @@ public class Project extends Model<Project.Row> {
 			.join("product_employee", "product.id = product_employee.product_id")
 			.join("employee", "employee.id = product_employee.employee_id")
 			.leftJoin("product as p", "p.parent_id = product.id");
+	}
+
+	public ResultSet fetchLeader(Integer projectID) throws Exception {
+		return getConnection().createCommand()
+			.select("e.*")
+			.from("project as p")
+			.join("employee as e", "e.id = p.leader_id")
+			.where("p.id = ?")
+			.execute(projectID)
+			.select();
+	}
+
+	public ResultSet fetchProductLeader(Integer projectID) throws Exception {
+		return getConnection().createCommand()
+			.select("e.*")
+			.from("project as p")
+			.join("employee as e", "e.id = p.leader_id")
+			.where("p.product_id = ?")
+			.execute(projectID)
+			.select();
 	}
 
 	/**

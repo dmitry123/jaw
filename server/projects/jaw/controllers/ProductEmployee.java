@@ -17,6 +17,6 @@ public class ProductEmployee extends Controller {
 	 */
 	@Override
 	public void actionView() throws Exception {
-		redirect("Index", "404");
+		redirect("Index", "Denied");
 	}
 }

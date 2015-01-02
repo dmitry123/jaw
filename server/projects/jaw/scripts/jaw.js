@@ -4,14 +4,6 @@ var Jaw = Jaw || {};
 
     "use strict";
 
-    /*
-       ___ ___  __  __ __  __  ___  _  _
-      / __/ _ \|  \/  |  \/  |/ _ \| \| |
-     | (_| (_) | |\/| | |\/| | (_) | .` |
-      \___\___/|_|  |_|_|  |_|\___/|_|\_|
-
-     */
-
     /**
      * Extend child class with parent
      * @param child {function} - Child class
@@ -26,14 +18,6 @@ var Jaw = Jaw || {};
         child.superclass = parent.prototype;
         return child;
     };
-
-    /*
-       ___ ___  __  __ ___  ___  _  _ ___ _  _ _____
-      / __/ _ \|  \/  | _ \/ _ \| \| | __| \| |_   _|
-     | (_| (_) | |\/| |  _/ (_) | .` | _|| .` | | |
-      \___\___/|_|  |_|_|  \___/|_|\_|___|_|\_| |_|
-
-     */
 
     /**
      * Construct component
@@ -107,33 +91,6 @@ var Jaw = Jaw || {};
             this.render()
         ).appendTo(parent);
         this.activate();
-    };
-
-    /*
-     __      _____ ___   ___ ___ _____
-     \ \    / /_ _|   \ / __| __|_   _|
-      \ \/\/ / | || |) | (_ | _|  | |
-       \_/\_/ |___|___/ \___|___| |_|
-
-     */
-
-    Jaw.Widget = function(selector, properties) {
-        Jaw.Component.call(this, selector.append(this.construct()), properties);
-    };
-
-    Jaw.extend(Jaw.Widget, Jaw.Component);
-
-    Jaw.Widget.prototype.construct = function() {
-        throw new Error("Widget/construct() : Not-Implemented");
-    };
-
-    Jaw.Widget.prototype.render = function() {
-        throw new Error("Widget/render() : Not-Implemented");
-    };
-
-    Jaw.Widget.prototype.update = function() {
-        this.selector().find(".jaw-component").empty()
-            .append(this.render());
     };
 
     /**

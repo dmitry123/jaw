@@ -17,6 +17,6 @@ public class Product extends Controller {
 	 */
 	@Override
 	public void actionView() throws Exception {
-
+		redirect("Index", "Denied");
 	}
 }

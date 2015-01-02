@@ -189,6 +189,46 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	}
 
 	/**
+	 * Perform insert fetch action
+	 * @param fetchAction - Fetch action name
+	 * @param argumentList - List with arguments
+	 * @return - True if row has been inserted
+	 * @throws Exception
+	 */
+	public Boolean fetchInsert(String fetchAction, Object... argumentList) throws Exception {
+		Method method;
+		Class<?>[] typeList = new Class<?>[
+				argumentList.length
+			];
+		try {
+			int i = 0;
+			for (Object a : argumentList) {
+				typeList[i++] = a.getClass();
+			}
+			method = getClass().getMethod(
+				fetchAction, typeList
+			);
+		} catch (NoSuchMethodException e) {
+			throw new Exception(
+				"Model/fetchInsert() : \"" + e.getMessage() + "\""
+			);
+		}
+		try {
+			return (Boolean) method.invoke(
+				this, argumentList
+			);
+		} catch (IllegalAccessException e) {
+			throw new Exception(
+				"Model/fetchInsert() : \"" + e.getMessage() + "\""
+			);
+		} catch (InvocationTargetException e) {
+			throw new Exception(
+				e.getCause().getMessage()
+			);
+		}
+	}
+
+	/**
 	 * Override that method to return your own columns for fetchTable method
 	 * @return - Command with your query
 	 * @throws Exception
@@ -214,6 +254,31 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			= new Vector<HashMap<String, String>>();
 		while (resultSet.next()) {
 			result.add(buildMap(resultSet));
+		}
+		return result;
+	}
+
+	/**
+	 * Get all rows from current table
+	 * @return - Result set with all rows
+	 * @throws Exception
+	 */
+	public Vector<HashMap<String, String>> getTableRows() throws Exception {
+		ResultSet resultSet = getConnection().createCommand()
+			.select("*")
+			.from(getTableName())
+			.execute()
+			.select();
+		Vector<HashMap<String, String>> result
+				= new Vector<HashMap<String, String>>();
+		while (resultSet.next()) {
+			Map<String, String> map = buildMap(resultSet);
+			HashMap<String, String> clone = new LinkedHashMap<String, String>();
+			for (Map.Entry<String, String> entry : map.entrySet()) {
+				clone.put(entry.getKey().substring(getTableName().length() + 1),
+					entry.getValue());
+			}
+			result.add(clone);
 		}
 		return result;
 	}
@@ -447,7 +512,6 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @param values - Map with values
 	 * @return - True if has been inserted successfully
 	 * @throws Exception
-	 * @throws SQLException
 	 */
 	public boolean insert(Map<String, String> values) throws Exception {
 		String columns = "";

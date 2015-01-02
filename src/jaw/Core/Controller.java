@@ -37,10 +37,46 @@ public abstract class Controller extends Component {
 	 * @param privileges - List with privileges or rules
 	 * @return - True if access accepted else false
 	 * @throws Exception
-	 * @throws SQLException
 	 */
 	public boolean checkAccess(String... privileges) throws Exception {
+
+		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+
+		if (user == null) {
+			return false;
+		}
+
+		Model employeeModel = getEnvironment().getModelManager()
+				.get("Employee");
+
+		if (employeeModel == null) {
+			return true;
+		}
+
+		for (String privilege : privileges) {
+			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", user.getID(), privilege).next()) {
+				return false;
+			}
+		}
+
 		return true;
+	}
+
+	/**
+	 * Check access and post error message if it's false
+	 * @param privileges - List with privileges or rules
+	 * @return - True if access accepted else false
+	 * @throws Exception
+	 */
+	public boolean checkAccessWithResponse(String... privileges) throws Exception {
+
+		if (checkAccess(privileges)) {
+			return true;
+		}
+
+		postErrorMessage("У Вас нет прав для совершения этого действия");
+
+		return false;
 	}
 
 	/**
@@ -57,11 +93,11 @@ public abstract class Controller extends Component {
 	 * to table from controller override that method and invoke super method
 	 * @throws Exception
 	 */
-	public final void actionGetTable() throws Exception {
+	public void actionGetTable() throws Exception {
 
 		final String action = GET("action");
 
-		if (!checkAccess()) {
+		if (!checkAccess("jaw/admin")) {
 			postErrorMessage("Недостаточно прав");
 			return;
 		}

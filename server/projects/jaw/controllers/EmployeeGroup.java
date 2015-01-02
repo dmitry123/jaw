@@ -17,6 +17,6 @@ public class EmployeeGroup extends Controller {
 	 */
 	@Override
 	public void actionView() throws Exception {
-		redirect("Index", "404");
+		redirect("Index", "Denied");
 	}
 }

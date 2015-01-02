@@ -14,6 +14,6 @@ public class Privilege extends Controller {
 
 	@Override
 	public void actionView() throws Exception {
-		redirect("Index", "View");
+		redirect("Index", "Denied");
 	}
 }

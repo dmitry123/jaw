@@ -177,10 +177,9 @@ var Jaw = Jaw || {};
     /**
      * Render modal window form and display it
      * @param row {{}} - Current row
-     * @param [identifiable] {bool} - Don't allow data change
-     * @param [editable] {bool} - Can user edit fields
+     * @param mode {string} - Editing mode (insert, update, delete)
      */
-    Modal.prototype.render = function(row, identifiable, editable) {
+    Modal.prototype.render = function(row, mode) {
         var header = this.property("header");
         var head = function(id) {
             for (var i in header) {
@@ -198,17 +197,14 @@ var Jaw = Jaw || {};
             if (!h) {
                 continue;
             }
-            if (h.id.endsWith(".id") && !identifiable) {
+            if (!h.type && mode == "insert" && h.id.endsWith(".id") || h.type == "password") {
                 continue;
             }
             var name = h.name == "#" ? "Идентификатор" : h.name;
-            if (h.type == "password") {
-                continue;
-            }
             var input = this.renderInput(h, row[k], name,
                 k.substr(k.indexOf(".") + 1)
             );
-            if (!editable || h.id.endsWith(".id")) {
+            if (mode == "delete" || mode == "update" && h.id.endsWith(".id")) {
                 input.attr("disabled", "disabled");
             }
             var group = $("<div></div>", {
@@ -461,7 +457,7 @@ var Jaw = Jaw || {};
                 class: "glyphicon glyphicon-pencil",
                 style: style
             }).click(function() {
-                me._modalEdit.render(row, true, true);
+                me._modalEdit.render(row, "update");
             })
         );
         container.append(
@@ -469,7 +465,7 @@ var Jaw = Jaw || {};
                 class: "glyphicon glyphicon-remove",
                 style: style
             }).click(function() {
-                me._modalDelete.render(row, true, false);
+                me._modalDelete.render(row, "delete");
             })
         );
         return container;
@@ -756,7 +752,7 @@ var Jaw = Jaw || {};
                 for (var k in me.property("header")) {
                     row[me.property("header")[k].id] = "";
                 }
-                me._modalInsert.render(row, false, true);
+                me._modalInsert.render(row, "insert");
             })
         )
     };
@@ -776,7 +772,7 @@ var Jaw = Jaw || {};
                 class: "glyphicon glyphicon-refresh refresh",
                 style: "font-size: 20px; line-height: 25px; cursor: pointer;"
             }).click(function() {
-                me.update();
+                me.table().update();
             })
         );
     };
@@ -817,7 +813,7 @@ var Jaw = Jaw || {};
     var Table = function(properties) {
         // Construct super component
         Jaw.Component.call(this, properties, {
-            limit: [5, 10, 25, 50, 100],
+            limit: [10, 25, 50, 75],
             page: 1
         }, true);
         // Construct children components
@@ -833,7 +829,7 @@ var Jaw = Jaw || {};
     /**
      * Set table's order method, if key will be repeated twicly, then
      * it will add 'desc' suffix to name
-     * @param order {string} - Order key
+     * @param [order] {string} - Order key
      * @returns {*}
      */
     Table.prototype.order = function(order) {
@@ -976,7 +972,7 @@ var Jaw = Jaw || {};
         for (var p in parameters) {
             var center = parameters[p].indexOf("=");
             if (parameters[p].substr(0, center) == "id") {
-                console.log(+parameters[p].substr(center + 1));
+                console.log(parameters[p].substr(center + 1));
             }
         }
     });
