@@ -14,7 +14,10 @@ public class Main {
 			// Mary's comment here
 			WebServer.run();
 		} catch (Throwable e) {
-			Logger.getLogger().log(e.getMessage()); e.printStackTrace();
+			Logger.getLogger().log(
+				e.getMessage()
+			);
+			e.printStackTrace();
 		}
 	}
 }

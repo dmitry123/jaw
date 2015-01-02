@@ -26,7 +26,7 @@ public class System extends View {
 		template("common/header");
 		template("system/menu");
 		template("system/view");
-		template("modal/register");
+		template("modal/show-request");
 		template("common/footer");
 	}
 }

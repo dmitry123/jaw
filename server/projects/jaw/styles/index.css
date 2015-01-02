@@ -6,8 +6,8 @@ html, body {
 .background {
 	/*background-color: #ffffff;*/
 	background: lightgray url("/jaw/images/pattern.png");
-	background-attachment: fixed;
-	background-position: 0 0;
+	/*background-attachment: fixed;*/
+	/*background-position: 0 0;*/
 }
 
 .maximum-parent {
@@ -36,7 +36,6 @@ html, body {
 }
 
 .logo-form {
-	/*min-width: 350px;*/
 	max-width: 350px;
 	background-color: #2c82af;
 	box-shadow: 15px 15px 10px rgba(70, 70, 70, 0.75);
@@ -123,21 +122,6 @@ button {
 	z-index: 2000;
 }
 
-.system-tree-panel {
-	margin-left: 10px;
-	width: 250px;
-	min-height: 500px;
-	bottom: 10px;
-}
-
-.panel-heading {
-	background-color: red !important;
-}
-
-.system-tree-panel > .panel-body {
-	padding: 0;
-}
-
 .index-project-exit, .index-project-start {
 	width: 40%;
 }
@@ -185,4 +169,27 @@ button {
 
 .reference-wrapper .panel-body {
 	margin-bottom: -20px;
+}
+
+.system-employee {
+	background-color: lightgray;
+	height: 300px;
+	margin-left: 10px;
+	border-radius: 5px;
+	padding: 2px;
+	border: gray solid 1px;
+}
+
+.popover .glyphicon {
+	font-size: 15px;
+	padding-left: 5px;
+	cursor: pointer;
+}
+
+.popover a {
+	cursor: pointer;
+}
+
+.popover .table {
+	margin-bottom: 0;
 }

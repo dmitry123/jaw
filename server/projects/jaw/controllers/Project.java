@@ -3,9 +3,11 @@ package controllers;
 import jaw.Core.*;
 
 import jaw.Sql.CortegeProtocol;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Savonin on 2014-12-05
@@ -16,11 +18,6 @@ public class Project extends Controller {
 	 */
 	public Project(Environment environment) {
 		super(environment);
-	}
-
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
 	}
 
 	public void actionRegister() throws Exception {
@@ -164,6 +161,35 @@ public class Project extends Controller {
 		}
 
 		setAjaxResponse(jsonResponse.toString());
+	}
+
+	public void actionGetAcceptors() throws Exception {
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		JSONObject json = new JSONObject();
+		JSONArray array = new JSONArray();
+
+		final ResultSet resultSet = getModel().fetchSet("fetchProductLeader",
+			Integer.parseInt(GET("id"))
+		);
+
+		while (resultSet.next()) {
+			array.put(new LinkedHashMap<String, Object>() {{
+				put("id", resultSet.getInt("id"));
+				put("name",
+					resultSet.getString("surname") + " " +
+					resultSet.getString("name") + " " +
+					resultSet.getString("patronymic"));
+			}});
+		}
+
+		json.put("employees", array);
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
 	}
 
 	/**

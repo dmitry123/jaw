@@ -94,7 +94,7 @@ public class Group extends Model<Group.Row> {
 		return getConnection().createCommand()
 			.select("privilege.*, employee.*")
 			.from("groups")
-			.join("group_privilege", "group_privilege.group_id = groups.id")
+			.leftJoin("group_privilege", "group_privilege.group_id = groups.id")
 			.join("privilege", "group_privilege.privilege_id = privilege.id")
 			.join("employee_group", "employee_group.group_id = groups.id")
 			.join("employee", "employee_group.employee_id = employee.id");

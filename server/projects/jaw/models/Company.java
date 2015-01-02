@@ -6,6 +6,7 @@ import jaw.Sql.CommandProtocol;
 import jaw.Sql.CortegeProtocol;
 import jaw.Sql.CortegeRow;
 
+import java.lang.Exception;
 import java.lang.Integer;
 import java.lang.Object;
 import java.sql.ResultSet;
@@ -58,7 +59,27 @@ public class Company extends Model<Company.Row> {
 			.select("e.*")
 			.from("employee as e")
 			.where("company_id = ?")
-			.execute(new Object[] { companyID })
+			.execute(companyID)
+			.select();
+	}
+
+	public ResultSet fetchEmployeesByUser(Integer companyID, Integer userID) throws Exception {
+		return getConnection().createCommand()
+			.select("e.*")
+			.from("employee as e")
+			.where("e.company_id = ?")
+			.andWhere("e.user_id = ?")
+			.execute(companyID, userID)
+			.select();
+	}
+
+	public ResultSet fetchByEmployee(Integer employeeID) throws Exception {
+		return getConnection().createCommand()
+			.select("c.*")
+			.from("employee as e")
+			.join("company as c", "c.id = e.company_id")
+			.where("e.id = ?")
+			.execute(employeeID)
 			.select();
 	}
 
@@ -86,6 +107,25 @@ public class Company extends Model<Company.Row> {
 		return last();
 	}
 
+	public ResultSet fetchProjects(Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("r.*")
+			.from("product as p")
+			.join("project as r", "r.product_id = p.id")
+			.where("p.company_id = ?")
+			.execute(companyID)
+			.select();
+	}
+
+	public ResultSet fetchProducts(Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("p.*")
+			.from("product as p")
+			.where("p.company_id = ?")
+			.execute(companyID)
+			.select();
+	}
+
 	public Row delete(Integer projectID) throws Exception {
 		getConnection().createCommand()
 			.delete("project")
@@ -96,7 +136,7 @@ public class Company extends Model<Company.Row> {
 	}
 
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("company")

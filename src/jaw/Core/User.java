@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * Created by Savonin on 2014-11-08
  */
-public class User extends HashMap<String, String> implements UserProtocol, Serializable {
+public class User extends HashMap<String, Object> implements UserProtocol, Serializable {
 
 	/**
 	 * User's constructor, which will store basic information

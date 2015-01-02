@@ -25,7 +25,7 @@ public class EmployeeGroup extends Model<EmployeeGroup.Row> {
 	 * @throws Exception
 	 */
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("employee_group")

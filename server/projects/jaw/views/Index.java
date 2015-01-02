@@ -28,7 +28,6 @@ public class Index extends View {
 		template("common/header");
 		template("index/view");
 		template("modal/register");
-		template("modal/choose-project");
 		template("common/footer");
 	}
 
@@ -51,7 +50,6 @@ public class Index extends View {
 	public void renderProject(Map<String, Object> hashData) throws Exception {
 		template("common/header");
 		template("index/project");
-		template("modal/choose-project");
 		template("modal/create-company");
 		template("modal/join-company");
 		template("modal/create-project");

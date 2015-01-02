@@ -93,7 +93,7 @@ public class Admin extends Controller {
 	}
 
 	public boolean checkAccess() throws Exception {
-		return checkAccess("jaw-admin");
+		return checkAccess("jaw/admin");
 	}
 
 	/**

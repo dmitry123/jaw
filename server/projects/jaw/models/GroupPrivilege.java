@@ -24,7 +24,7 @@ public class GroupPrivilege extends Model {
 	 * @throws Exception
 	 */
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("privilege")

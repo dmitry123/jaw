@@ -6,8 +6,12 @@ import jaw.Sql.CortegeProtocol;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.Exception;
+import java.lang.InterruptedException;
+import java.lang.String;
 import java.util.HashMap;
 import java.sql.ResultSet;
+import java.util.LinkedHashMap;
 
 public class Company extends Controller {
 
@@ -24,11 +28,6 @@ public class Company extends Controller {
 	@Override
 	public void actionView() throws Exception {
 		redirect("Index", "Denied");
-	}
-
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
 	}
 
 	public void actionRegister() throws Exception {
@@ -119,7 +118,7 @@ public class Company extends Controller {
 		if (employee != null) {
 
 			// Fetch set with privilege
-			ResultSet privilegeSet = employeeModel.fetchSet("fetchPrivilege", employee.getID(), "delete-company");
+			ResultSet privilegeSet = employeeModel.fetchSet("fetchPrivilege", employee.getID(), "company/delete");
 
 			// Get flag and set to allow boolean cause
 			if (privilegeSet.next()) {
@@ -144,6 +143,143 @@ public class Company extends Controller {
 		jsonResponse.put("status", true);
 		jsonResponse.put("message", "Проект успешно удален");
 		setAjaxResponse(jsonResponse.toString());
+	}
+
+	public void actionGetAcceptors() throws Exception {
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		JSONObject json = new JSONObject();
+		JSONArray array = new JSONArray();
+
+		final ResultSet resultSet = getModel("Employee").fetchSet("fetchByGroupAndCompany",
+			"company-director", Integer.parseInt(GET("companyID"))
+		);
+
+		while (resultSet.next()) {
+			array.put(new LinkedHashMap<String, Object>() {{
+				put("id", resultSet.getInt("id"));
+				put("name",
+					resultSet.getString("surname") + " " +
+					resultSet.getString("name") + " " +
+					resultSet.getString("patronymic"));
+			}});
+		}
+
+		json.put("employees", array);
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
+	}
+
+	public void actionGetRows() throws Exception {
+
+		JSONObject json = new JSONObject();
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		json.put("companies", getModel().getTableRows());
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
+	}
+
+	public void actionGetProducts() throws Exception {
+
+		JSONObject json = new JSONObject();
+		JSONArray array = new JSONArray();
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		final ResultSet resultSet = getModel().fetchSet("fetchProducts",
+			GET("id")
+		);
+
+		while (resultSet.next()) {
+			JSONObject node = new JSONObject();
+			node.put("id", resultSet.getInt("id"));
+			node.put("name", resultSet.getString("name"));
+			array.put(node);
+		}
+
+		json.put("products", array);
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
+	}
+
+	public void actionGetProjects() throws Exception {
+
+		JSONObject json = new JSONObject();
+		JSONArray array = new JSONArray();
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		final ResultSet resultSet = getModel().fetchSet("fetchProducts",
+			Integer.parseInt(GET("id"))
+		);
+
+		while (resultSet.next()) {
+			JSONObject node = new JSONObject();
+			node.put("id", resultSet.getInt("id"));
+			node.put("name", resultSet.getString("name"));
+			array.put(node);
+		}
+
+		json.put("projects", array);
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
+	}
+
+	public void actionGetProjectsAndEmployees() throws Exception {
+
+		JSONObject json = new JSONObject();
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		int userID = getEnvironment().getUserSessionManager().get().getID();
+		int companyID = Integer.parseInt(GET("id"));
+
+		ResultSet resultSet = getModel().fetchSet("fetchProducts", companyID);
+		JSONArray projects = new JSONArray();
+
+		while (resultSet.next()) {
+			JSONObject node = new JSONObject();
+			node.put("id", resultSet.getInt("id"));
+			node.put("name", resultSet.getString("name"));
+			projects.put(node);
+		}
+
+		resultSet = getModel().fetchSet("fetchEmployeesByUser", companyID, userID);
+		JSONArray employees = new JSONArray();
+
+		while (resultSet.next()) {
+			JSONObject node = new JSONObject();
+			node.put("id", resultSet.getInt("id"));
+			node.put("name",
+				resultSet.getString("surname") + " " +
+				resultSet.getString("name") + " " +
+				resultSet.getString("patronymic")
+			);
+			employees.put(node);
+		}
+
+		json.put("projects", projects);
+		json.put("employees", employees);
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
 	}
 
 	public void actionGetCompanyEmployees() throws Exception {
@@ -182,5 +318,29 @@ public class Company extends Controller {
 
 		// Return ajax response
 		setAjaxResponse(jsonResponse.toString());
+	}
+
+	public void actionGetCompanies() throws Exception {
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		ResultSet resultSet = getModel().fetchRows();
+
+		JSONObject json = new JSONObject();
+		JSONArray array = new JSONArray();
+
+		while (resultSet.next()) {
+			JSONObject node = new JSONObject();
+			node.put("id", resultSet.getInt("id"));
+			node.put("name", resultSet.getString("name"));
+			array.put(node);
+		}
+
+		json.put("companies", array);
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
 	}
 }

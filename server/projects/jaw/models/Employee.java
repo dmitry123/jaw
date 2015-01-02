@@ -8,6 +8,8 @@ import jaw.Sql.CortegeRow;
 
 import java.lang.Object;
 import java.sql.ResultSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Savonin on 2014-12-05
@@ -119,8 +121,32 @@ public class Employee extends Model<Employee.Row> {
 			.select();
 	}
 
+	public ResultSet fetchByPrivilegeAndCompany(String privilegeID, Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("e.*")
+			.from("employee as e")
+			.join("employee_group as eg", "eg.employee_id = e.id")
+			.join("group_privilege as gp", "gp.group_id = eg.group_id")
+			.where("e.company_id = ?")
+			.andWhere("gp.privilege_id = ?")
+			.execute(companyID, privilegeID)
+			.select();
+	}
+
+	public ResultSet fetchByGroupAndCompany(String groupName, Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("e.*")
+			.from("employee as e")
+			.join("employee_group as eg", "eg.employee_id = e.id")
+			.join("groups as g", "g.id = eg.group_id")
+			.where("e.company_id = ?")
+			.andWhere("g.name = ?")
+			.execute(companyID, groupName)
+			.select();
+	}
+
 	@Override
-	public CommandProtocol getResultSetForTable() throws Exception {
+	public CommandProtocol getTable() throws Exception {
 		return getConnection().createCommand()
 			.select("*")
 			.from("employee")

@@ -17,11 +17,6 @@ public class User extends Controller {
 		super(environment);
 	}
 
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
 	public void actionLogin() throws Exception {
 
 		final String login = POST("login");
@@ -42,7 +37,7 @@ public class User extends Controller {
 			getEnvironment().getMustacheDefiner().put("User.ID", Integer.toString(user.getID()));
 		} else {
 			jsonResponse.put("status", false);
-			jsonResponse.put("message", "Пользователь с таким именем не зарегистрирован");
+			jsonResponse.put("message", "Неверный пароль или логин пользователя");
 		}
 
 		setAjaxResponse(jsonResponse.toString());
@@ -91,6 +86,6 @@ public class User extends Controller {
 	 */
 	@Override
 	public void actionView() throws Exception {
-		redirect("index", "view");
+		redirect("Index", "Denied");
 	}
 }

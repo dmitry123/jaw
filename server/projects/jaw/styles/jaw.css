@@ -8,6 +8,7 @@ body > .jaw-table-wrapper {
     left: 5px;
     top: 5px;
     z-index: 2000;
+    max-width: calc(100% - 10px);
 }
 
 .jaw-table .glyphicon-refresh:hover, .glyphicon-repeat:hover {

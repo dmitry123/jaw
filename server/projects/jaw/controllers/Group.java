@@ -13,12 +13,7 @@ public class Group extends Controller {
 	}
 
 	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
-	@Override
 	public void actionView() throws Exception {
-		redirect("Index", "View");
+		redirect("Index", "Denied");
 	}
 }

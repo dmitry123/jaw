@@ -12,16 +12,11 @@ public class Product extends Controller {
 		super(environment);
 	}
 
-	@Override
-	public void actionGetTable() throws Exception {
-		super.actionGetTable();
-	}
-
 	/**
 	 * Default index action
 	 */
 	@Override
 	public void actionView() throws Exception {
-
+		redirect("Index", "Denied");
 	}
 }

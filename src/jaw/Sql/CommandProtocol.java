@@ -1,6 +1,7 @@
 package jaw.Sql;
 
 
+import java.util.Map;
 
 /**
  * Created by Savonin on 2014-11-22
@@ -198,11 +199,33 @@ public interface CommandProtocol {
 	public CommandProtocol command(CommandProtocol command) throws Exception;
 
 	/**
+	 * Add with clause to query
+	 * @param command - Command for with
+	 * @return - Current self instance
+	 * @throws Exception
+	 */
+	public CommandProtocol with(Map<String, CommandProtocol> command) throws Exception;
+
+	/**
+	 * Add with clause to query
+	 * @param alias - With alias
+	 * @param command - With command
+	 * @return - Current self instance
+	 * @throws Exception
+	 */
+	public CommandProtocol with(String alias, CommandProtocol command) throws Exception;
+
+	/**
 	 * Execute query and replace ? with it's object
-	 *
 	 * @param objects - List with objects
 	 * @return - Current self instance
 	 * @throws Exception
 	 */
 	public SqlExecutor execute(Object... objects) throws Exception;
+
+	/**
+	 * Build query for statement
+	 * @return - Result query
+	 */
+	String getQuery();
 }
