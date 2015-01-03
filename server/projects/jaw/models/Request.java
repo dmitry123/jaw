@@ -45,10 +45,26 @@ public class Request extends Model<Request.Row> {
 
 	public ResultSet fetchByEmployeeID(Integer employeeID) throws Exception {
 		return getConnection().createCommand()
-			.select("r.*")
+			.select("r.*, e.*")
 			.from("request as r")
-			.where("r.employee_id = ?")
+			.where("r.receiver_id = ?")
+			.join("employee as e", "e.id = r.sender_id")
 			.execute(employeeID)
+			.select();
+	}
+
+	public ResultSet fetchInfo(Integer requestID) throws Exception {
+		return getConnection().createCommand()
+			.select("r.*, e.*, p.*, c.*, pr.*, u.*")
+			.from("request as r")
+			.join("employee as e", "e.id = r.sender_id")
+			.join("employee as e2", "e2.id = r.receiver_id")
+			.join("company as c", "c.id = e2.company_id")
+			.leftJoin("product as p", "p.id = r.product_id")
+			.join("privilege as pr", "pr.id = r.privilege_id")
+			.join("users as u", "u.id = e.user_id")
+			.where("r.id = ?")
+			.execute(requestID)
 			.select();
 	}
 

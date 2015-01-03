@@ -2,6 +2,7 @@ package controllers;
 
 import jaw.Core.*;
 
+import jaw.Core.User;
 import jaw.Html.Html;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,10 +38,21 @@ public class Index extends Controller {
 		}
 	}
 
-	/**
-	 *
-	 * @throws Exception
-	 */
+	@Override
+	public void actionFilter(String path, String action) throws Exception {
+
+		User user = getEnvironment().getUserSessionManager().get();
+
+		if (user != null && user.containsKey("employee")) {
+			getEnvironment().getMustacheDefiner().put("Employee.Request.Count",
+				"" + getModel("Request").fetchSize("receiver_id = " + user.get("employee"))
+			);
+			getEnvironment().getMustacheDefiner().put("Employee.Notification.Count",
+				"0"
+			);
+		}
+	}
+
 	public void actionProject() throws Exception {
 
 		Model companyModel = getModel("Company");

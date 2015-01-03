@@ -326,9 +326,7 @@ public class Company extends Controller {
 			return;
 		}
 
-		int userID = getEnvironment().getUserSessionManager().get().getID();
-
-		ResultSet resultSet = getModel().fetchSet("fetchByUserID", userID);
+		ResultSet resultSet = getModel().fetchRows();
 
 		JSONObject json = new JSONObject();
 		JSONArray array = new JSONArray();

@@ -35,7 +35,6 @@ public class WebServer extends NanoHttpd {
 
 		Method sessionMethod = session.getMethod();
 		String uri = session.getUri();
-		InputStream uriData = null;
 		Map<String, String> postFiles = new HashMap<String, String>();
 		View view = null;
 
@@ -125,6 +124,10 @@ public class WebServer extends NanoHttpd {
 			}
 
 			Controller controller;
+
+			environment.getControllerManager().get("Index").actionFilter(
+					totalPath, actionName
+			);
 
 			synchronized (this) {
 

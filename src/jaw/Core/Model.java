@@ -474,6 +474,19 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	}
 
 	/**
+	 * Get set with all table's rows
+	 * @return - Set with rows
+	 * @throws Exception
+	 */
+	public ResultSet fetchRows() throws Exception {
+		return getConnection().createCommand()
+			.select("*")
+			.from(getTableName())
+			.execute()
+			.select();
+	}
+
+	/**
 	 * Update cortege by it's primary key
 	 * @param id - Row's identifier
 	 * @param values - Map with values
@@ -654,16 +667,12 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws java.lang.Exception
 	 */
     public ResultSet fetchByID(Integer id) throws Exception {
-		ResultSet resultSet = getConnection().createCommand()
+		return getConnection().createCommand()
 			.select("*")
 			.from(tableName)
 			.where("id = ?")
-			.execute(new Object[] { id })
+			.execute(id)
 			.select();
-		if (!resultSet.next()) {
-			throw new Exception("Model/fetchByID() : \"Invalid primary key (" + id + ")\"");
-		}
-		return resultSet;
 	}
 
 	/**

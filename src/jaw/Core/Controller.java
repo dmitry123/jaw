@@ -33,6 +33,14 @@ public abstract class Controller extends Component {
 	public abstract void actionView() throws Exception;
 
 	/**
+	 * Override that method to filter all actions
+	 * @throws Exception
+	 */
+	public void actionFilter(String path, String action) throws Exception {
+		/* Ignored */
+	}
+
+	/**
 	 * Override that method to check privileges for action
 	 * @param privileges - List with privileges or rules
 	 * @return - True if access accepted else false

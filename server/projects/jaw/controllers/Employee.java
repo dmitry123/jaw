@@ -24,8 +24,8 @@ public class Employee extends Controller {
 			return;
 		}
 
-		User user = getEnvironment().getUserSessionManager().get();
-		user.put("employee", GET("id"));
+		getEnvironment().getUserSessionManager().get()
+			.put("employee", GET("id"));
 
 		JSONObject json = new JSONObject();
 		json.put("status", true);
@@ -33,6 +33,17 @@ public class Employee extends Controller {
 	}
 
 	public void actionLogout() throws Exception {
+
+		if (!checkAccessWithResponse()) {
+			return;
+		}
+
+		getEnvironment().getUserSessionManager().get()
+				.remove("employee");
+
+		JSONObject json = new JSONObject();
+		json.put("status", true);
+		setAjaxResponse(json.toString());
 	}
 
 	public void actionGetUserEmployees() throws Exception {
