@@ -48,7 +48,7 @@ public class Index extends Controller {
 				"" + getModel("Request").fetchSize("receiver_id = " + user.get("employee"))
 			);
 			getEnvironment().getMustacheDefiner().put("Employee.Notification.Count",
-				"0"
+				"" + getModel("Message").fetchSize("receiver_id = " + user.get("employee"))
 			);
 		}
 	}

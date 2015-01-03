@@ -62,7 +62,41 @@ public class System extends Controller {
 		}};
 
 		getEnvironment().getMustacheDefiner().put("Employee.Request.Body",
-			writer.toString()
+			writer.toString().replaceAll("[\n\t\r]", "")
+		);
+
+		writer = new StringWriter();
+
+		final ResultSet notifications = getModel("Message").fetchSet("fetchByEmployeeID",
+			Integer.parseInt(getEnvironment().getUserSessionManager().get().get("employee").toString())
+		);
+
+		new Html(writer) {{
+			while (notifications.next()) {
+
+				String message = notifications.getString("message");
+
+				if (message.length() > 100) {
+					message = message.substring(0, 100) + "...";
+				}
+
+				tr();
+					td().style("width: 100px; vertical-align: middle;");
+						a().classAttr("notification").id("notification-" + notifications.getString("id")).text(
+							notifications.getString("surname") + " " +
+							notifications.getString("name").substring(0, 1).toUpperCase() + "." +
+							notifications.getString("patronymic").substring(0, 1).toUpperCase()
+						); end();
+					end();
+					td();
+						div().text(message); end();
+					end();
+				end();
+			}
+		}};
+
+		getEnvironment().getMustacheDefiner().put("Employee.Notification.Body",
+			writer.toString().replaceAll("[\n\r\t]", "")
 		);
 	}
 

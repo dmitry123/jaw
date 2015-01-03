@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 07:26:03 [server started]
 07:26:03 [server stopped]
 07:28:18 [server started]
@@ -10,3 +11,16 @@
 07:31:17 [server stopped]
 07:34:57 [server started]
 07:34:57 [server stopped]
+=======
+01:48:58 [couldn't start server: Address already in use: JVM_Bind]
+01:48:57 [server started]
+01:48:57 [server stopped]
+01:49:06 [server started]
+01:49:06 [server stopped]
+01:51:16 [server started]
+01:51:16 [server stopped]
+11:57:35 [server started]
+11:57:35 [server stopped]
+12:20:13 [server started]
+12:20:13 [server stopped]
+>>>>>>> 72f74b45acfbc1594e33b2b63e79c5ebfd7a7d19

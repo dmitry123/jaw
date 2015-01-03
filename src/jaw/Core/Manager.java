@@ -1,5 +1,7 @@
 package jaw.Core;
 
+import jaw.Server.WebServer;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -48,8 +50,10 @@ public abstract class Manager<C extends Component> extends Extension {
 
 		do {
 			try {
-				component = getEnvironment().getComponentFactory()
-						.create(binaryPath);
+				synchronized (WebServer.getWebServer()) {
+					component = getEnvironment().getComponentFactory()
+							.create(binaryPath);
+				}
 				break;
 			} catch (NoClassDefFoundError ignore) {
 				if ((indexOf = binaryPath.lastIndexOf(File.separator)) != -1) {
