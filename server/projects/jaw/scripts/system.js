@@ -1,16 +1,63 @@
 var RequestButton = {
-    construct: function() {
-        var button = $("#btn-request")
-            .data("toggle", "popover")
-            .data("trigger", "click")
-            .data("placement", "bottom")
-            .data("container", "body")
-            .data("html", true)
-            .data("content", $("#request-table").html())
-            .attr("title", "Запросы");
-        if (+button.children(".badge").html() > 0) {
-            button.popover("hide");
+    make: function(button, table, title, classes) {
+        var render = function() {
+            return $("<div></div>", {
+                class: "popover " + classes || "",
+                role: "tooltip"
+            }).append(
+                $("<div></div>", {
+                    class: "ui-handle notification-title"
+                }).append(
+                    $("<span></span>", {
+                        style: "float: left; padding: 3px",
+                        html: "<b>" + title + "</b>"
+                    })
+                ).append(
+                    $("<span></span>", {
+                        class: "glyphicon glyphicon-remove",
+                        style: "padding: 5px"
+                    }).click(function() {
+                        $(this).parents(".popover").data("tgr").popover("hide");
+                    })
+                )
+            ).append(
+                $("<div></div>", {
+                    class: "popover-content"
+                })
+            ).draggable({
+                containment: ".system-container",
+                handle: ".ui-handle"
+            }).disableSelection();
+        };
+        var content;
+        if (!$(table).find("thead").children().text().length) {
+            return false;
+        } else {
+            content = $(table).html();
         }
+        $(button).popover({
+            content: content,
+            container: "body",
+            trigger: "manual",
+            html: true,
+            placement: "bottom",
+            title: title,
+            template: render().data("tgr", $(button))
+        }).click(function() {
+            var me = this;
+            $(".popover").each(function(i, item) {
+                $(item).popover("toggle");
+            });
+            if (!$(this).attr("aria-describedBy")) {
+                setTimeout(function () {
+                    $(me).popover("toggle");
+                }, 150);
+            }
+        });
+    },
+    construct: function() {
+        this.make("#btn-request", "#request-table", "Запросы", "popover-request");
+        this.make("#btn-notification", "#notification-table", "Сообщения", "popover-notification");
     }
 };
 

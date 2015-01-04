@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.Exception;
-import java.lang.InterruptedException;
 import java.lang.String;
 import java.util.HashMap;
 import java.sql.ResultSet;

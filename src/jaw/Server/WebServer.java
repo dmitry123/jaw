@@ -18,9 +18,20 @@ public class WebServer extends NanoHttpd {
 	/**
 	 * Constructs an HTTP server on given port.
 	 */
-	public WebServer() {
+	private WebServer() {
 		super(Config.SERVER_PORT);
 	}
+
+	/**
+	 * Get WebServer singleton instance
+	 * @return - Web server
+	 */
+	public static WebServer getWebServer() {
+		return webServer;
+	}
+
+	private static WebServer webServer
+		= new WebServer();
 
 	/**
 	 * Override this to customize the server.
@@ -37,13 +48,14 @@ public class WebServer extends NanoHttpd {
 		String uri = session.getUri();
 		Map<String, String> postFiles = new HashMap<String, String>();
 		View view = null;
+		WebSocket webSocket = new WebSocket(session);
 
 		// Parse body for post/put requests
 		if (Method.PUT.equals(sessionMethod) || Method.POST.equals(sessionMethod)) {
 			try {
 				session.parseBody(postFiles);
 			} catch (IOException e) {
-				return new Response(Response.Status.OK, Mime.TEXT_PLAIN.getName(), e.getMessage());
+				return new Response(Response.Status.INTERNAL_ERROR, Mime.TEXT_PLAIN.getName(), e.getMessage());
 			} catch (ResponseException e) {
 				return new Response(e.getStatus(), Mime.TEXT_PLAIN.getName(), e.getMessage());
 			}
@@ -129,15 +141,12 @@ public class WebServer extends NanoHttpd {
 					totalPath, actionName
 			);
 
-			synchronized (this) {
+			// Set router session and redirect to our controller's action
+			environment.getRouter().setSession(session);
+			environment.getRouter().redirect(totalPath, actionName);
 
-				// Set router session and redirect to our controller's action
-				environment.getRouter().setSession(session);
-				environment.getRouter().redirect(totalPath, actionName);
-
-				// Get current controller after invocation
-				controller = environment.getRouter().getController();
-			}
+			// Get current controller after invocation
+			controller = environment.getRouter().getController();
 
 			if (controller == null) {
 
@@ -182,7 +191,7 @@ public class WebServer extends NanoHttpd {
 				response.addHeader("Location", "0; url=/" + sitePath);
 			}
 
-			return response;
+			return webSocket.setHeaders(response);
 
 		} catch (Exception e) {
 
@@ -199,7 +208,7 @@ public class WebServer extends NanoHttpd {
 			errorResponse.put("status", false);
 			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
 
-			if (e instanceof SQLException || true) {
+			if (e instanceof SQLException) {
 				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
 					errorResponse.toString()
 				);
@@ -216,7 +225,8 @@ public class WebServer extends NanoHttpd {
 	 */
 	public static void run() throws Exception {
 
-		WebServer server = new WebServer();
+		WebServer server = getWebServer();
+
 		Machine terminal = new Machine(
 			EnvironmentManager.getInstance().get("jaw")
 		);
