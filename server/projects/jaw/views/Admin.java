@@ -1,6 +1,6 @@
 package jaw.views;
 
-import jaw.Core.*;
+import jaw.core.*;
 
 
 import java.util.Map;

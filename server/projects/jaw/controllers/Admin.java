@@ -1,7 +1,7 @@
 package jaw.controllers;
 
-import jaw.Core.*;
-import jaw.Core.Controller;
+import jaw.core.*;
+import jaw.core.Controller;
 
 import java.sql.SQLException;
 
@@ -106,14 +106,13 @@ public class Admin extends Controller {
 	@Override
 	public boolean checkAccess(String... privileges) throws Exception {
 
-		Session session = getEnvironment().getSessionManager().get();
+		Session session = getEnvironment().getSession();
 
 		if (session == null) {
 			return false;
 		}
 
-		Model employeeModel = getEnvironment().getModelManager()
-			.get("Employee");
+		Model employeeModel = getModel("Employee");
 
 		for (String privilege : privileges) {
 			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", session.getID(), privilege).next()) {

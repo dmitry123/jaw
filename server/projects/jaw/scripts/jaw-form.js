@@ -154,8 +154,8 @@ var Jaw = Jaw || {};
 
     Form.prototype.update = function() {
         var me = this;
-        // Don't update without URL
-        if (!this.property("url")) {
+        // Don't update without URL or form
+        if (!this.property("url") || !this.property("form")) {
             return false;
         }
         // Replace selector with loading image
@@ -176,7 +176,7 @@ var Jaw = Jaw || {};
                     message: json.message
                 });
             }
-
+            console.log(json);
         }, "json");
     };
 

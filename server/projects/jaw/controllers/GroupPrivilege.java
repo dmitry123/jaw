@@ -1,7 +1,7 @@
 package jaw.controllers;
 
-import jaw.Core.Controller;
-import jaw.Core.Environment;
+import jaw.core.Controller;
+import jaw.core.Environment;
 
 public class GroupPrivilege extends Controller {
 

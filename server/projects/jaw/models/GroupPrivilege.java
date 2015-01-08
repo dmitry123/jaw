@@ -1,10 +1,10 @@
 package jaw.models;
 
-import jaw.Core.Environment;
-import jaw.Core.Model;
-import jaw.Sql.CommandProtocol;
-import jaw.Sql.CortegeKey;
-import jaw.Sql.CortegeProtocol;
+import jaw.core.Environment;
+import jaw.core.Model;
+import jaw.sql.CommandProtocol;
+import jaw.sql.CortegeKey;
+import jaw.sql.CortegeProtocol;
 
 import java.sql.ResultSet;
 

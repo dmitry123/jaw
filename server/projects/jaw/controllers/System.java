@@ -1,7 +1,7 @@
 package jaw.controllers;
 
-import jaw.Core.*;
-import jaw.Core.Session;
+import jaw.core.*;
+import jaw.core.Session;
 import jaw.Html.Html;
 
 import java.io.StringWriter;

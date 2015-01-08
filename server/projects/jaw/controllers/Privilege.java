@@ -1,6 +1,6 @@
 package jaw.controllers;
 
-import jaw.Core.*;
+import jaw.core.*;
 
 public class Privilege extends Controller {
 

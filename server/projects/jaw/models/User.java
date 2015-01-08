@@ -1,12 +1,12 @@
 package jaw.models;
 
-import jaw.Core.*;
+import jaw.core.*;
 
-import jaw.Sql.CommandProtocol;
+import jaw.sql.CommandProtocol;
+import jaw.sql.CortegeRow;
 
 import java.lang.Override;
 import java.sql.*;
-import java.sql.SQLException;
 
 /**
  * UserTable
@@ -24,18 +24,23 @@ public class User extends Model<User.Row> {
     }
 
 	public boolean exists(String login) throws Exception {
-		try {
-			return execute("SELECT * FROM users WHERE login=?", login)
-					.next();
-		} catch (SQLException e) {
-			throw new Exception("User/exists() : \"Unresolved user's login (" + login + ")\"");
-		}
+		return getConnection().createCommand()
+			.select("id")
+			.from(getTableName())
+			.where("login = ?")
+			.execute(login)
+			.select()
+			.next();
 	}
 
 	@Override
 	public Row createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getInt("id"), result.getString("login"),
-			result.getString("hash"), result.getString("email"));
+		return new Row(
+			result.getInt("id"),
+			result.getString("login"),
+			result.getString("hash"),
+			result.getString("email")
+		);
 	}
 
 	public Row register(String login, String hash, String email) throws Exception {
@@ -86,14 +91,14 @@ public class User extends Model<User.Row> {
 	/**
 	 * UserRow
 	 */
-	public static class Row extends Session {
+	public static class Row extends CortegeRow {
 
 		/**
 		 * @param login User's Name
 		 * @param hash Password hash
 		 */
 		public Row(String login, String hash, String email) {
-			super(0, login, hash); this.email = email;
+			this(0, login, hash, email);
 		}
 
 		/**
@@ -102,7 +107,24 @@ public class User extends Model<User.Row> {
 		 * @param hash - Password hash
 		 */
 		public Row(int id, String login, String hash, String email) {
-			super(id, login, hash); this.email = email;
+			super(id);
+			this.login = login;
+			this.hash = hash;
+			this.email = email;
+		}
+
+		/**
+		 * @return - User's login
+		 */
+		public String getLogin() {
+			return login;
+		}
+
+		/**
+		 * @return - User's hash
+		 */
+		public String getHash() {
+			return hash;
 		}
 
 		/**
@@ -112,6 +134,8 @@ public class User extends Model<User.Row> {
 			return email;
 		}
 
+		private String login;
+		private String hash;
 		private String email;
 	}
 }
