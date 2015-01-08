@@ -20,7 +20,7 @@ public class EnvironmentManager {
 			public void run() {
 				for (Map.Entry<String, Environment> i : EnvironmentManager.getInstance().getHashMap().entrySet()) {
 					try {
-						i.getValue().getUserSessionManager().save();
+						i.getValue().getSessionManager().save();
 					} catch (Exception ignored) {
 					}
 				}
@@ -42,7 +42,7 @@ public class EnvironmentManager {
 		// Create new environment
 		Environment e = new Environment(new Connection(), name);
 		// Restore all saved sessions
-		e.getUserSessionManager().load();
+		e.getSessionManager().load();
 		// Put to hash map
 		hashMap.put(name, e);
 		// Return instance

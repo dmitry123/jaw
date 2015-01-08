@@ -9,7 +9,7 @@ import java.util.HashMap;
 /**
  * Created by dmitry on 18.11.14
  */
-public abstract class Manager<C extends Component> extends Extension {
+public class Manager<C extends Component> extends Extension {
 
 	/**
 	 * @param environment - Project's environment
@@ -34,7 +34,8 @@ public abstract class Manager<C extends Component> extends Extension {
 			}
 		} catch (InstantiationException ignored) {
 		} catch (IllegalAccessException ignored) {
-		} catch (InvocationTargetException ignored) {
+		} catch (InvocationTargetException e) {
+			throw new Exception(e.getCause().getMessage());
 		} catch (NoSuchMethodException ignored) {
 		}
 
@@ -86,6 +87,8 @@ public abstract class Manager<C extends Component> extends Extension {
 			return null;
 		}
 
+		path = path.toLowerCase();
+
 		if (cachedComponents.containsKey(path)) {
 			return cachedComponents.get(path);
 		} else {
@@ -100,6 +103,8 @@ public abstract class Manager<C extends Component> extends Extension {
 	 * @return - Found component or null
 	 */
 	private C getCached(String path) {
+
+		path = path.toLowerCase();
 
 		if (cachedComponents.containsKey(path)) {
 			return cachedComponents.get(path);

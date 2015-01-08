@@ -1,11 +1,3 @@
-var ProjectForm = {
-    construct: function() {
-        $(".logo-form .index-project-exit").click(function() {
-            window.location.href = "/jaw/user/logout";
-        });
-    }
-};
-
 var IndexProjectEmployee = {
     activate: function(selector, handler) {
         $(".index-project-start")
@@ -540,7 +532,6 @@ $(document).ready(function() {
     ModalCreateCompany.construct();
     ModalCreateProject.construct();
     GodButton.construct();
-    ProjectForm.construct();
     ModalJoinCompany.construct();
     ModalJoinProject.construct();
 });

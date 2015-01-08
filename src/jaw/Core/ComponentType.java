@@ -14,7 +14,8 @@ public enum ComponentType {
 	WIDGET     ("widget",     Config.WIDGET_PATH),
 	BINARY     ("binary",     Config.BINARY_PATH),
 	LOG        ("log",        Config.LOG_PATH),
-	COMPONENT  ("component",  Config.COMPONENT_PATH);
+	COMPONENT  ("component",  Config.COMPONENT_PATH),
+	FORM       ("form",       Config.FORM_PATH);
 
 	/**
 	 * @param name - Name

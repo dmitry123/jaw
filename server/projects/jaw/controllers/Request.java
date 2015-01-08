@@ -1,4 +1,4 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 import org.json.JSONObject;
@@ -30,7 +30,7 @@ public class Request extends Controller {
 			return;
 		}
 
-		int userID = getEnvironment().getUserSessionManager().get().getID();
+		int userID = getEnvironment().getSessionManager().get().getID();
 		int receiverID = Integer.parseInt(GET("receiverID"));
 		int companyID = getModel("Company").fetchRow("fetchByEmployee", receiverID).getID();
 
@@ -53,7 +53,7 @@ public class Request extends Controller {
 
 	public void actionGetInfo() throws Exception {
 
-		if (!checkAccessWithResponse() || !getEnvironment().getUserSessionManager().get().containsKey("employee")) {
+		if (!checkAccessWithResponse() || !getEnvironment().getSessionManager().get().containsKey("employee")) {
 			return;
 		}
 
@@ -74,14 +74,14 @@ public class Request extends Controller {
 
 	public void actionCancel() throws Exception {
 
-		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSessionManager().get();
 
-		if (!checkAccessWithResponse() || !user.containsKey("employee")) {
+		if (!checkAccessWithResponse() || !session.containsKey("employee")) {
 			return;
 		}
 
 		final int requestID = Integer.parseInt(GET("id"));
-		int employeeID = Integer.parseInt(user.get("employee").toString());
+		int employeeID = Integer.parseInt(session.get("employee").toString());
 
 		final ResultSet requestSet = getModel().fetchByID(requestID);
 
@@ -118,14 +118,14 @@ public class Request extends Controller {
 
 	public void actionAccept() throws Exception {
 
-		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSessionManager().get();
 
-		if (!checkAccessWithResponse() || !user.containsKey("employee")) {
+		if (!checkAccessWithResponse() || !session.containsKey("employee")) {
 			return;
 		}
 
 		final int requestID = Integer.parseInt(GET("id"));
-		int employeeID = Integer.parseInt(user.get("employee").toString());
+		int employeeID = Integer.parseInt(session.get("employee").toString());
 
 		ResultSet requestSet = getModel().fetchSet("fetchInfo", requestID);
 

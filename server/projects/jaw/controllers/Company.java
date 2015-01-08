@@ -1,4 +1,4 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 
@@ -46,10 +46,10 @@ public class Company extends Controller {
 		final Model groupModel = getModel("Group");
 
 		// Get current user by it's session
-		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		final Session session = getEnvironment().getSessionManager().get();
 
 		// Check for opened user's session
-		if (user == null) {
+		if (session == null) {
 			postErrorMessage("Недостаточно прав для совершения действий");
 			return;
 		}
@@ -63,7 +63,7 @@ public class Company extends Controller {
 
 			// Register new employee as director in this company
 			CortegeProtocol directorRow = employeeModel.fetchRow("register", directorName,
-				directorSurname, directorPatronymic, user.getID(), 0, 0, companyRow.getID()
+				directorSurname, directorPatronymic, session.getID(), 0, 0, companyRow.getID()
 			);
 
 			// Bind director to it's group
@@ -100,10 +100,10 @@ public class Company extends Controller {
 		final int companyID = Integer.parseInt(GET("id"));
 
 		// Get current user by it's session
-		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		final Session session = getEnvironment().getSession();
 
 		// Check for opened user's session
-		if (user == null) {
+		if (session == null) {
 			jsonResponse.put("status", false);
 			jsonResponse.put("message", "Доступ запрещен, обновите страницу");
 			setAjaxResponse(jsonResponse.toString());
@@ -111,7 +111,7 @@ public class Company extends Controller {
 		}
 
 		// Fetch current user's employee
-		CortegeProtocol employee = employeeModel.fetchRow("fetchByUserAndCompanyID", user.getID(), companyID);
+		CortegeProtocol employee = employeeModel.fetchRow("fetchByUserAndCompanyID", session.getID(), companyID);
 
 		// If employee isn't null, then check it's privilege to create companies
 		if (employee != null) {
@@ -247,7 +247,7 @@ public class Company extends Controller {
 			return;
 		}
 
-		int userID = getEnvironment().getUserSessionManager().get().getID();
+		int userID = getEnvironment().getSession().getID();
 		int companyID = Integer.parseInt(GET("id"));
 
 		ResultSet resultSet = getModel().fetchSet("fetchProducts", companyID);
@@ -288,7 +288,7 @@ public class Company extends Controller {
 		// Get post company identifier
 		final int companyID = Integer.parseInt(POST("company_id"));
 
-		if (getEnvironment().getUserSessionManager().has()) {
+		if (getEnvironment().getSessionManager().has()) {
 
 			// Fetch set with company's employees
 			final ResultSet employees = getModel("Company").fetchSet("fetchEmployees", companyID);

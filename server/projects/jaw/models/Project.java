@@ -1,4 +1,4 @@
-package models;
+package jaw.models;
 
 import jaw.Core.*;
 

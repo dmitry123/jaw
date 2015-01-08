@@ -9,8 +9,6 @@ import java.util.Vector;
  */
 public class Logger {
 
-	private static int FLUSH_LIMIT = 100;
-
 	/**
 	 * @param log - String to log
 	 */
@@ -20,6 +18,7 @@ public class Logger {
 				twoSymbols(calendar.get(Calendar.MINUTE)),
 				twoSymbols(calendar.get(Calendar.SECOND))
 		);
+		int FLUSH_LIMIT = 100;
 		if (logVector.add(strTime + " [" + log + "]\n") && logVector.size() >= FLUSH_LIMIT) {
 			try {
 				flush();

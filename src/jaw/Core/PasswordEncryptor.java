@@ -12,22 +12,15 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 /**
  * Created by Savonin on 2014-11-08
  */
-public class PasswordEncryptor extends UserSecurity {
+public class PasswordEncryptor {
 
 	static {
 		Security.addProvider(new SunJCE());
 	}
 
 	/**
-	 * @param user - Reference to security's user
-	 */
-	public PasswordEncryptor(User user) {
-		super(user);
-	}
-
-	/**
-	 *
-	 * @return
+	 * Generate session's identifier via PRNG (20 bytes)
+	 * @return - String in hex format with random 20 bytes
 	 * @throws Exception
 	 */
 	public static String generateSessionID() throws Exception {
@@ -114,7 +107,7 @@ public class PasswordEncryptor extends UserSecurity {
 			throw new Exception("PasswordEncryptor/crypt() : \"" + e.getMessage() + "\"");
 		}
 
-		byte[] bytes = new byte[0];
+		byte[] bytes;
 		try {
 			bytes = cipher.doFinal();
 		} catch (IllegalBlockSizeException e) {
@@ -142,8 +135,8 @@ public class PasswordEncryptor extends UserSecurity {
 	 * DES3 Salt
 	 */
 	private static final byte[] SALT = {
-			(byte) 0xf5, (byte) 0x33, (byte) 0x01, (byte) 0x2a,
-			(byte) 0xb2, (byte) 0xcc, (byte) 0xe4, (byte) 0x7f
+		(byte) 0xf5, (byte) 0x33, (byte) 0x01, (byte) 0x2a,
+		(byte) 0xb2, (byte) 0xcc, (byte) 0xe4, (byte) 0x7f
 	};
 
 	/**

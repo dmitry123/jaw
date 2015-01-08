@@ -46,6 +46,16 @@ public class Environment {
 			= new ModelManager(this);
 
 	/**
+	 * @return - Project's form manager
+	 */
+	public FormManager getFormManager() {
+		return formManager;
+	}
+
+	private FormManager formManager
+			= new FormManager(this);
+
+	/**
 	 * @return - Component's manager
 	 */
 	public ComponentManager getComponentManager() {
@@ -74,16 +84,6 @@ public class Environment {
 
 	private ViewManager viewManager
 			= new ViewManager(this);
-
-	/**
-	 * @return - User's validator
-	 */
-	public UserValidator getUserValidator() {
-		return userValidator;
-	}
-
-	private UserValidator userValidator
-			= new UserValidator(this);
 
 	/**
 	 * @return - Project's manager
@@ -118,12 +118,19 @@ public class Environment {
 	/**
 	 * @return - User session manager
 	 */
-	public UserSessionManager getUserSessionManager() {
-		return userSessionManager;
+	public SessionManager getSessionManager() {
+		return sessionManager;
 	}
 
-	private UserSessionManager userSessionManager
-			= new UserSessionManager(this);
+	private SessionManager sessionManager
+			= new SessionManager(this);
+
+	/**
+	 * @return - Current user's session
+	 */
+	public Session getSession() {
+		return getSessionManager().get();
+	}
 
 	/**
 	 *

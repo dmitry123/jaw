@@ -104,10 +104,10 @@ public class ServerTerminal extends Station {
 							);
 						}
 						Environment e = EnvironmentManager.getInstance().get(arguments[0]);
-						for (Map.Entry<String, User> i : e.getUserSessionManager().getEmployeeHashMap().entrySet()) {
+						for (Map.Entry<String, Session> i : e.getSessionManager().getEmployeeHashMap().entrySet()) {
 							System.out.format(" + [%s] -> (%s)\n", i.getKey(), i.getValue().getLogin());
 						}
-						if (e.getUserSessionManager().getEmployeeHashMap().size() == 0) {
+						if (e.getSessionManager().getEmployeeHashMap().size() == 0) {
 							System.out.println(" + No sessions open");
 						}
 					}
@@ -122,7 +122,7 @@ public class ServerTerminal extends Station {
 							);
 						}
 						EnvironmentManager.getInstance().get(arguments[0])
-								.getUserSessionManager().getEmployeeHashMap().clear();
+								.getSessionManager().getEmployeeHashMap().clear();
 					}
 				});
 
@@ -134,9 +134,9 @@ public class ServerTerminal extends Station {
 								"That instruction can assume only two arguments"
 							);
 						}
-						Map<String, User> stringUserMap = EnvironmentManager.getInstance().get(arguments[0])
-								.getUserSessionManager().getEmployeeHashMap();
-						for (Map.Entry<String, User> i : stringUserMap.entrySet()) {
+						Map<String, Session> stringUserMap = EnvironmentManager.getInstance().get(arguments[0])
+								.getSessionManager().getEmployeeHashMap();
+						for (Map.Entry<String, Session> i : stringUserMap.entrySet()) {
 							if (i.getValue().getLogin().equals(arguments[1])) {
 								stringUserMap.remove(i.getKey());
 								System.out.println(" + Session dropped [" + i.getKey() + "]");
@@ -153,7 +153,7 @@ public class ServerTerminal extends Station {
 								"That instruction can assume only two arguments"
 							);
 						}
-						EnvironmentManager.getInstance().get(arguments[0]).getUserSessionManager().save();
+						EnvironmentManager.getInstance().get(arguments[0]).getSessionManager().save();
 					}
 				});
 
@@ -165,7 +165,7 @@ public class ServerTerminal extends Station {
 								"That instruction can assume only two arguments"
 							);
 						}
-						EnvironmentManager.getInstance().get(arguments[0]).getUserSessionManager().load();
+						EnvironmentManager.getInstance().get(arguments[0]).getSessionManager().load();
 					}
 				});
 			}

@@ -99,7 +99,7 @@ public class Router extends Extension {
 	 * @throws Exception
 	 */
 	public static String getBinaryPath(String projectPath, String componentPath, String componentFolder) throws Exception {
-		return getPath(projectPath, componentPath, componentFolder, true, false);
+		return getPath(projectPath.replace(Config.PROJECT_PATH, Config.BINARY_PATH), componentPath, componentFolder, true, false);
 	}
 
 	/**
@@ -134,9 +134,6 @@ public class Router extends Extension {
 		String[] listPath = componentPath.split("\\.");
 		String componentName = listPath[listPath.length - 1];
 		String absolutePath = projectPath;
-		if (seekBinary) {
-			absolutePath += Config.BINARY_PATH;
-		}
 		if (listPath.length > 1 && !Config.WIDGET_PATH.equals(listPath[0] + File.separator)) {
 			absolutePath += Config.MODULE_PATH;
 		}

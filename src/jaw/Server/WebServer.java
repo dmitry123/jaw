@@ -128,7 +128,7 @@ public class WebServer extends NanoHttpd {
 			// Set environment's session ID
 			environment.setSessionID(sessionID);
 
-			jaw.Core.User user = environment.getUserSessionManager().get();
+			Session user = environment.getSessionManager().get();
 
 			if (user != null) {
 				environment.getMustacheDefiner().put("User.Login", user.getLogin());
@@ -142,15 +142,17 @@ public class WebServer extends NanoHttpd {
 			);
 
 			// Set router session and redirect to our controller's action
-			environment.getRouter().setSession(session);
-			environment.getRouter().redirect(totalPath, actionName);
+			synchronized (this) {
+				environment.getRouter().setSession(session);
+				environment.getRouter().redirect(totalPath, actionName);
+			}
 
 			// Get current controller after invocation
 			controller = environment.getRouter().getController();
 
 			if (controller == null) {
 
-				// If we havn't loaded controller, then load index controller
+				// If we haven't loaded controller, then load index controller
 				controller = environment.getControllerManager().get("Index");
 
 				if (controller == null) {
@@ -161,6 +163,7 @@ public class WebServer extends NanoHttpd {
 
 				// Invoke action 404
 				controller.action404();
+
 			} else {
 
 				// Load controller's view
@@ -214,7 +217,9 @@ public class WebServer extends NanoHttpd {
 				);
 			} else {
 				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
-					"<body style=\"width:100%; height:100%;background-color:lightgray;\"><pre style=\"color: #7b1010;\">" + stringWriter.toString() + "</pre></body>"
+					"<body style=\"width:100%; height:100%;background-color:lightgray;\"><pre style=\"color: #7b1010;\">" +
+							"<b>" + e.getMessage() + "</b><br>" + stringWriter.toString() +
+					"</pre></body>"
 				);
 			}
 		}

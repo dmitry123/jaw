@@ -29,9 +29,6 @@ public class ProjectCompiler {
 
 		cleanup();
 
-		String projectName = getProjectManager().getEnvironment()
-				.getProjectName();
-
 		String projectPath = getProjectManager().getEnvironment()
 				.getProjectPath();
 
@@ -57,18 +54,14 @@ public class ProjectCompiler {
 		for (String s : files) {
 
 			String newFilePath = s.replace(projectPath,
-				projectPath + Config.BINARY_PATH
+				Config.BINARY_PATH
 			);
 
 			newFilePath = newFilePath.substring(0,
 				newFilePath.lastIndexOf(File.separator));
 
-			if (!new File(newFilePath).mkdirs()) {
-				/* Ignore */
-			}
-
 			newFilePath = newFilePath.substring(0,
-					newFilePath.lastIndexOf(File.separator));
+				newFilePath.lastIndexOf(File.separator));
 
 			compile(s, newFilePath);
 		}
@@ -79,11 +72,8 @@ public class ProjectCompiler {
 		String projectName = getProjectManager().getEnvironment()
 				.getProjectName();
 
-		String projectPath = getProjectManager().getEnvironment()
-				.getProjectPath();
-
 		File projectHandle = new File(
-			projectPath + Config.BINARY_PATH
+			Config.BINARY_PATH + projectName
 		);
 
 		Vector<String> files = new Vector<String>(100);
@@ -130,7 +120,7 @@ public class ProjectCompiler {
 	 * @param path - Path to directory with files
 	 * @throws Exception
 	 */
-	private void findFiles(Collection<String> collection, String path) throws Exception {
+	private static void findFiles(Collection<String> collection, String path) throws Exception {
 		File handle = new File(path);
 		if (!handle.exists()) {
 			if (!handle.mkdir()) {
@@ -180,11 +170,14 @@ public class ProjectCompiler {
 
 		if (!task.call() && diagnosticCollector.getDiagnostics().size() > 0) {
 
-			Diagnostic<? extends JavaFileObject> d = diagnosticCollector
-				.getDiagnostics().get(0);
+			String error = "Syntax error:\n";
 
-			throw new Exception("ProjectCompiler/compile() : Syntax error on line [" + d.getLineNumber()
-				+ "] in " + d.getSource().toUri() + " : \"" + d.getMessage(Locale.getDefault()) + "\"");
+			for (Diagnostic<? extends JavaFileObject> d : diagnosticCollector.getDiagnostics()) {
+				error += " + " + d.getSource().toUri() + " [" + d.getLineNumber() + ", " + d.getColumnNumber() + "] - \"" +
+						d.getMessage(Locale.getDefault()) + "\"\n";
+			}
+
+			throw new Exception(error);
 		}
 
 		try {

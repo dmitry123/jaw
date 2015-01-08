@@ -185,6 +185,7 @@ var RequestModal = {
 };
 
 $(document).ready(function() {
+
     RequestButton.construct();
     RequestModal.construct();
 });

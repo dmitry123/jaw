@@ -1,8 +1,8 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 
-import jaw.Core.User;
+import jaw.Core.Session;
 import jaw.Html.Html;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,7 +31,7 @@ public class Index extends Controller {
 	public void actionView() throws Exception {
 
 		// If we have user's session then redirect to system view else render current
-		if (getEnvironment().getUserSessionManager().has()) {
+		if (getEnvironment().getSessionManager().has()) {
 			redirect("Index", "Project");
 		} else {
 			render("View");
@@ -41,14 +41,14 @@ public class Index extends Controller {
 	@Override
 	public void actionFilter(String path, String action) throws Exception {
 
-		User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSession();
 
-		if (user != null && user.containsKey("employee")) {
+		if (session != null && session.containsKey("employee")) {
 			getEnvironment().getMustacheDefiner().put("Employee.Request.Count",
-				"" + getModel("Request").fetchSize("receiver_id = " + user.get("employee"))
+				"" + getModel("Request").fetchSize("receiver_id = " + session.get("employee"))
 			);
 			getEnvironment().getMustacheDefiner().put("Employee.Notification.Count",
-				"" + getModel("Message").fetchSize("receiver_id = " + user.get("employee"))
+				"" + getModel("Message").fetchSize("receiver_id = " + session.get("employee"))
 			);
 		}
 	}
@@ -58,10 +58,10 @@ public class Index extends Controller {
 		Model companyModel = getModel("Company");
 
 		// Check for opened session
-		if (getEnvironment().getUserSessionManager().has()) {
+		if (getEnvironment().getSessionManager().has()) {
 
 			final ResultSet companySet = companyModel.fetchSet("fetchByUserID",
-				getEnvironment().getUserSessionManager().get().getID()
+				getEnvironment().getSession().getID()
 			);
 
 			StringWriter writer = new StringWriter();
@@ -97,13 +97,13 @@ public class Index extends Controller {
 		JSONArray jsonEmployees = new JSONArray();
 
 		// Get user's identifier
-		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSession();
 
-		if (user != null) {
+		if (session != null) {
 
 			// Fetch set with user's employees
 			final ResultSet projectEmployees = employeeModel.fetchSet(
-				"fetchProjectsByUserID", user.getID()
+				"fetchProjectsByUserID", session.getID()
 			);
 
 			// Get result's meta data object with all columns and tables info

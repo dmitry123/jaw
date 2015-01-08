@@ -94,6 +94,31 @@ var Jaw = Jaw || {};
     };
 
     /**
+     * Sub-Component class, use it to declare sub component, that instance
+     * won't be rendered automatically, you shall manually invoke render method
+     * @param component {Component} - Parent component
+     * @constructor
+     */
+    Jaw.Sub = function(component) {
+        this.component = function() {
+            return component;
+        };
+        Jaw.Component.call(this, {}, {}, true);
+    };
+
+    Jaw.extend(Jaw.Sub, Jaw.Component);
+
+    /**
+     * That method will fetch properties values from
+     * parent's component
+     * @param key {String} - Property name
+     * @param value {*} - Property value
+     */
+    Jaw.Sub.prototype.property = function(key, value) {
+        return this.component().property.apply(this.component(), arguments);
+    };
+  
+    /**
      * Create new component's instance and render to DOM
      * @param component {Jaw.Component|Object} - Component's instance
      * @param selector {HTMLElement|string} - Parent's selector
@@ -103,6 +128,7 @@ var Jaw = Jaw || {};
             component.selector()
         );
         component.update();
+        return component;
     };
 
     /**

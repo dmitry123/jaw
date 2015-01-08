@@ -11,7 +11,6 @@ public class Main {
 	 */
     public static void main(String[] args) {
 		try {
-			// Mary's comment here
 			WebServer.run();
 		} catch (Throwable e) {
 			Logger.getLogger().log(

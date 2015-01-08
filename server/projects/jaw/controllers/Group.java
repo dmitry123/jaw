@@ -1,4 +1,4 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 

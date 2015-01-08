@@ -1,7 +1,7 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
-import jaw.Core.User;
+import jaw.Core.Session;
 import jaw.Html.Html;
 
 import java.io.StringWriter;
@@ -23,16 +23,16 @@ public class System extends Controller {
 	@Override
 	public void actionFilter(String path, String action) throws Exception {
 
-		User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSession();
 
-		if (user == null || !user.containsKey("employee")) {
+		if (session == null || !session.containsKey("employee")) {
 			return;
 		}
 
 		StringWriter writer = new StringWriter();
 
 		final ResultSet requests = getModel("Request").fetchSet("fetchByEmployeeID",
-			Integer.parseInt(getEnvironment().getUserSessionManager().get().get("employee").toString())
+			Integer.parseInt(getEnvironment().getSession().get("employee").toString())
 		);
 
 		new Html(writer) {{
@@ -68,7 +68,7 @@ public class System extends Controller {
 		writer = new StringWriter();
 
 		final ResultSet notifications = getModel("Message").fetchSet("fetchByEmployeeID",
-			Integer.parseInt(getEnvironment().getUserSessionManager().get().get("employee").toString())
+			Integer.parseInt(getEnvironment().getSession().get("employee").toString())
 		);
 
 		new Html(writer) {{
@@ -106,14 +106,14 @@ public class System extends Controller {
 	@Override
 	public void actionView() throws Exception {
 
-		User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSession();
 
-		if (user == null || !user.containsKey("employee")) {
+		if (session == null || !session.containsKey("employee")) {
 			redirect("Index", "View");
 			return;
 		}
 
-		this.actionFilter(null, null);
+		actionFilter(null, null);
 
 		render("View");
 	}

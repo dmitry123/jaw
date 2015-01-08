@@ -6,7 +6,7 @@ import java.util.HashMap;
 /**
  * Created by Savonin on 2014-11-08
  */
-public class User extends HashMap<String, Object> implements UserProtocol, Serializable {
+public class Session extends HashMap<String, Object> implements UserProtocol, Serializable {
 
 	/**
 	 * User's constructor, which will store basic information
@@ -18,7 +18,7 @@ public class User extends HashMap<String, Object> implements UserProtocol, Seria
 	 * @param login - User's unique login name
 	 * @param hash - Hash of user's password (crypted by PasswordEncryptor)
 	 */
-	public User(int id, String login, String hash) {
+	public Session(int id, String login, String hash) {
 		this.id = id;
 		this.login = login;
 		this.hash = hash;

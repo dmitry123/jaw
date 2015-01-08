@@ -1,4 +1,4 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 import jaw.Core.Controller;
@@ -106,9 +106,9 @@ public class Admin extends Controller {
 	@Override
 	public boolean checkAccess(String... privileges) throws Exception {
 
-		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSessionManager().get();
 
-		if (user == null) {
+		if (session == null) {
 			return false;
 		}
 
@@ -116,7 +116,7 @@ public class Admin extends Controller {
 			.get("Employee");
 
 		for (String privilege : privileges) {
-			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", user.getID(), privilege).next()) {
+			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", session.getID(), privilege).next()) {
 				return false;
 			}
 		}

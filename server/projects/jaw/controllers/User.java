@@ -1,4 +1,4 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 
@@ -30,11 +30,11 @@ public class User extends Controller {
 		);
 
 		if (cortegeProtocol != null) {
-			jaw.Core.User user = (jaw.Core.User) cortegeProtocol;
-			getEnvironment().getUserSessionManager().put(user);
+			Session session = (Session) cortegeProtocol;
+			getEnvironment().getSessionManager().put(session);
 			jsonResponse.put("status", true);
-			getEnvironment().getMustacheDefiner().put("User.Login", user.getLogin());
-			getEnvironment().getMustacheDefiner().put("User.ID", Integer.toString(user.getID()));
+			getEnvironment().getMustacheDefiner().put("User.Login", session.getLogin());
+			getEnvironment().getMustacheDefiner().put("User.ID", Integer.toString(session.getID()));
 		} else {
 			jsonResponse.put("status", false);
 			jsonResponse.put("message", "Неверный пароль или логин пользователя");
@@ -71,14 +71,16 @@ public class User extends Controller {
 
 		getSession().getCookies().delete("JAW_SESSION_ID");
 
-		if (getEnvironment().getUserSessionManager().has()) {
-			getEnvironment().getUserSessionManager().remove();
+		if (getEnvironment().getSessionManager().has()) {
+			getEnvironment().getSessionManager().remove();
 		}
 
 		getEnvironment().getMustacheDefiner().remove("User.Login");
 		getEnvironment().getMustacheDefiner().remove("User.ID");
 
-		redirect("Index", "View");
+		JSONObject json = new JSONObject();
+		json.put("status", true);
+		setAjaxResponse(json.toString());
 	}
 
 	/**

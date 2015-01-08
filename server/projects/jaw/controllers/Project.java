@@ -1,4 +1,4 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
 
@@ -33,9 +33,9 @@ public class Project extends Controller {
 		final Model projectModel = getModel("Project");
 
 		// Find user for current session
-		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		final Session session = getEnvironment().getSessionManager().get();
 
-		if (user == null) {
+		if (session == null) {
 			postErrorMessage("Недостаточно прав для совершения действий");
 			return;
 		}
@@ -45,7 +45,7 @@ public class Project extends Controller {
 
 		// Fetch cortege with current employee's identifier
 		CortegeProtocol employeeProtocol = employeeModel.fetchRow("fetchByUserAndCompanyID",
-			user.getID(), companyID
+			session.getID(), companyID
 		);
 
 		if (employeeProtocol == null) {
@@ -88,9 +88,9 @@ public class Project extends Controller {
 		JSONObject jsonResponse = new JSONObject();
 
 		// Find user for current session
-		final jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		final Session session = getEnvironment().getSessionManager().get();
 
-		if (user == null) {
+		if (session == null) {
 			postErrorMessage("Доступ закрыт, обновите страницу");
 			return;
 		}
@@ -115,7 +115,7 @@ public class Project extends Controller {
 
 		// Fetch employee by user's id and company's id
 		CortegeProtocol employeeProtocol = employeeModel.fetchRow("fetchByUserAndCompanyID",
-			user.getID(), companyID
+			session.getID(), companyID
 		);
 
 		if (employeeProtocol == null) {

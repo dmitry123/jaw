@@ -1,7 +1,6 @@
-package controllers;
+package jaw.controllers;
 
 import jaw.Core.*;
-import jaw.Core.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,8 +23,8 @@ public class Employee extends Controller {
 			return;
 		}
 
-		getEnvironment().getUserSessionManager().get()
-			.put("employee", GET("id"));
+		getEnvironment().getSession()
+			.put("employee", Integer.parseInt(GET("id")));
 
 		JSONObject json = new JSONObject();
 		json.put("status", true);
@@ -38,7 +37,7 @@ public class Employee extends Controller {
 			return;
 		}
 
-		getEnvironment().getUserSessionManager().get()
+		getEnvironment().getSession()
 				.remove("employee");
 
 		JSONObject json = new JSONObject();
@@ -52,7 +51,7 @@ public class Employee extends Controller {
 			return;
 		}
 
-		int userID = getEnvironment().getUserSessionManager().get().getID();
+		int userID = getEnvironment().getSession().getID();
 
 		ResultSet resultSet = getModel().fetchSet("fetchUserEmployee", userID);
 

@@ -22,6 +22,61 @@ var BackgroundParallax = {
     }
 };
 
+var LogoutButton = {
+    construct: function() {
+        $(".logout").click(function() {
+            $.get("/jaw/user/logout", {}, function(json) {
+                if (!json.status) {
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
+                }
+                window.location.href = "/jaw";
+            }, "json");
+        });
+    }
+};
+
+var DarkInterface = {
+    update: function() {
+        if (!$(".navbar").hasClass("navbar-inverse")) {
+            $(".dark-interface").parent().removeClass("active");
+        } else {
+            $(".dark-interface").parent().addClass("active");
+        }
+    },
+    construct: function() {
+        $(".dark-interface").click(function() {
+            var menu = $(".navbar");
+            if (menu.hasClass("navbar-inverse")) {
+                menu.removeClass("navbar-inverse");
+            } else {
+                menu.addClass("navbar-inverse");
+            }
+            DarkInterface.update();
+        });
+        this.update();
+    }
+};
+
+var EmployeeLogout = {
+    construct: function() {
+        $(".employee-logout").click(function() {
+            $.get("/jaw/employee/logout", {}, function(json) {
+                if (!json.status) {
+                    return Jaw.createMessage({
+                        message: json.message
+                    });
+                }
+                window.location.href = "/jaw/index/project";
+            }, "json");
+        });
+    }
+};
+
 $(document).ready(function() {
     //BackgroundParallax.construct();
+    LogoutButton.construct();
+    EmployeeLogout.construct();
+    DarkInterface.construct();
 });

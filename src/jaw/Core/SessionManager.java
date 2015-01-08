@@ -6,12 +6,12 @@ import java.util.HashMap;
 /**
  * Created by Savonin on 2014-12-04
  */
-public class UserSessionManager extends Extension {
+public class SessionManager extends Extension {
 
 	/**
 	 * @param environment - Every core's extension must have environment with predeclared extensions
 	 */
-	public UserSessionManager(Environment environment) {
+	public SessionManager(Environment environment) {
 		super(environment);
 	}
 
@@ -28,7 +28,7 @@ public class UserSessionManager extends Extension {
 	 * @param user - Reference to user
 	 * @return - Just added user's instance
 	 */
-	public User put(User user) {
+	public Session put(Session user) {
 		String session = getEnvironment().getSessionID();
 		if (session == null) {
 			return user;
@@ -36,7 +36,7 @@ public class UserSessionManager extends Extension {
 		if (userHashMap.containsKey(session)) {
 			return userHashMap.get(session);
 		}
-		userHashMap.put(session, new User(
+		userHashMap.put(session, new Session(
 			user.getID(),
 			user.getLogin(),
 			user.getHash()
@@ -48,7 +48,7 @@ public class UserSessionManager extends Extension {
 	 * Get user from current session
 	 * @return - User's instance or null
 	 */
-	public User get() {
+	public Session get() {
 		String session = getEnvironment().getSessionID();
 		if (session == null) {
 			return null;
@@ -93,7 +93,7 @@ public class UserSessionManager extends Extension {
 		}
 		try {
 			objectOutputStream.writeInt(userHashMap.size());
-			for (HashMap.Entry<String, User> i : userHashMap.entrySet()) {
+			for (HashMap.Entry<String, Session> i : userHashMap.entrySet()) {
 				objectOutputStream.write(i.getKey().getBytes());
 				objectOutputStream.writeObject(i.getValue());
 			}
@@ -127,8 +127,8 @@ public class UserSessionManager extends Extension {
 				byte[] sessionBytes = new byte[40];
 				objectInputStream.read(sessionBytes);
 				String sessionID = new String(sessionBytes);
-				User user = ((User) objectInputStream.readObject());
-				userHashMap.put(sessionID, user);
+				Session session = ((Session) objectInputStream.readObject());
+				userHashMap.put(sessionID, session);
 			}
 			fileInputStream.close();
 		} catch (ClassNotFoundException e) {
@@ -141,10 +141,10 @@ public class UserSessionManager extends Extension {
 	 * Get hash map with all authorized users
 	 * @return - Map with users
 	 */
-	public HashMap<String, User> getEmployeeHashMap() {
+	public HashMap<String, Session> getEmployeeHashMap() {
 		return userHashMap;
 	}
 
-	private HashMap<String, User> userHashMap
-			= new HashMap<String, User>();
+	private HashMap<String, Session> userHashMap
+			= new HashMap<String, Session>();
 }

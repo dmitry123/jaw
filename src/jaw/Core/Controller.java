@@ -5,10 +5,8 @@ import jaw.Server.NanoHttpd;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -48,9 +46,9 @@ public abstract class Controller extends Component {
 	 */
 	public boolean checkAccess(String... privileges) throws Exception {
 
-		jaw.Core.User user = getEnvironment().getUserSessionManager().get();
+		Session session = getEnvironment().getSessionManager().get();
 
-		if (user == null) {
+		if (session == null) {
 			return false;
 		}
 
@@ -62,8 +60,14 @@ public abstract class Controller extends Component {
 		}
 
 		for (String privilege : privileges) {
-			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", user.getID(), privilege).next()) {
-				return false;
+			if (!session.containsKey("employee")) {
+				if (!employeeModel.fetchSet("fetchPrivilegeByUserID", session.getID(), privilege).next()) {
+					return false;
+				}
+			} else {
+				if (!employeeModel.fetchSet("fetchPrivilege", session.get("employee"), privilege).next()) {
+					return false;
+				}
 			}
 		}
 
@@ -105,13 +109,11 @@ public abstract class Controller extends Component {
 
 		final String action = GET("action");
 
-		if (!checkAccess("jaw/admin")) {
-			postErrorMessage("Недостаточно прав");
+		if (!checkAccessWithResponse("jaw/admin")) {
 			return;
 		}
 
-		JSONObject jsonResponse = new JSONObject();
-		jsonResponse.put("action", action);
+		JSONObject json = new JSONObject();
 
 		if (action.equals("fetch")) {
 
@@ -125,11 +127,11 @@ public abstract class Controller extends Component {
 				getSession().getParms().get("order")
 			);
 
-			jsonResponse.put("table", new JSONArray(wrapper.toArray()));
-			jsonResponse.put("length", jsonResponse.getJSONArray("table").length());
-			jsonResponse.put("page", page != null ? Integer.parseInt(page) : 0);
-			jsonResponse.put("limit", limit != null ? Integer.parseInt(limit) : 0);
-			jsonResponse.put("pages", ((Model.Wrapper)wrapper).getPages());
+			json.put("table", new JSONArray(wrapper.toArray()));
+			json.put("length", json.getJSONArray("table").length());
+			json.put("page", page != null ? Integer.parseInt(page) : 0);
+			json.put("limit", limit != null ? Integer.parseInt(limit) : 0);
+			json.put("pages", ((Model.Wrapper) wrapper).getPages());
 
 		} else if (action.equals("add")) {
 
@@ -188,21 +190,34 @@ public abstract class Controller extends Component {
 			getSession().getParms().remove("id");
 			getSession().getParms().remove("action");
 
-			jsonResponse.put("reference", getModel().fetchReferences(alias, id));
+			json.put("reference", getModel().fetchReferences(alias, id));
 
 		} else if (action.equals("all")) {
 
-			jsonResponse.put("rows", getModel().getRows());
-			jsonResponse.put("key", GET("key"));
-			jsonResponse.put("display", GET("display"));
-			jsonResponse.put("separator", GET("separator"));
+			json.put("rows", getModel().getRows());
+			json.put("key", GET("key"));
+			json.put("display", GET("display"));
+			json.put("separator", GET("separator"));
 
 		} else {
 			postErrorMessage("Unknown action");
 		}
 
-		jsonResponse.put("status", true);
-		setAjaxResponse(jsonResponse.toString());
+		json.put("status", true);
+		setAjaxResponse(json.toString());
+	}
+
+	public void actionGetForm() throws Exception {
+
+		final String form = GET("form");
+
+		JSONObject json = new JSONObject();
+
+
+
+		json.put("status", true);
+
+		setAjaxResponse(json.toString());
 	}
 
 	/**
@@ -291,6 +306,15 @@ public abstract class Controller extends Component {
 				"Controller/render() : \"Unresolved render method (" + action + ")\""
 			);
 		}
+	}
+
+	/**
+	 * Find form and return it's instance
+	 * @return - Form's instance
+	 * @throws Exception
+	 */
+	public Form getForm(String form) throws Exception {
+		return getEnvironment().getFormManager().get(form);
 	}
 
 	/**

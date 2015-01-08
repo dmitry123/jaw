@@ -1,4 +1,4 @@
-package views;
+package jaw.views;
 
 import jaw.Core.*;
 

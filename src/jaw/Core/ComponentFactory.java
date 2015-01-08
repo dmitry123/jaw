@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
+import java.util.Vector;
 
 /**
  * Created by Savonin on 2014-11-24
@@ -27,7 +29,7 @@ public class ComponentFactory extends Extension {
 	 * @return - New component's instance
 	 * @throws Exception
 	 */
-	public <T> T create(String className) throws Exception, ClassNotFoundException {
+	public <T> T create(String className) throws Exception {
 
 		Class<T> modelClass = loadClass(className);
 		Constructor<T> constructor;
@@ -78,15 +80,14 @@ public class ComponentFactory extends Extension {
 	 * @return - Loaded class
 	 * @throws Exception
 	 */
-	private <C> Class<C> loadClass(String className) throws Exception, ClassNotFoundException {
+	private <C> Class<C> loadClass(String className) throws Exception {
 
-		String binaryPath = getEnvironment().getProjectPath() + Config.BINARY_PATH;
+		String binaryPath = Config.BINARY_PATH.substring(0, Config.BINARY_PATH.length() - 1);
+		File binaryDir = new File(binaryPath);
 
 		if (className.startsWith(binaryPath)) {
-			className = className.substring(binaryPath.length());
+			className = className.substring(binaryPath.length() + 1);
 		}
-
-		File binaryDir = new File(binaryPath);
 
 		if (!binaryDir.exists()) {
 			throw new Exception(
@@ -106,30 +107,65 @@ public class ComponentFactory extends Extension {
 			url
 		});
 
-		String[] names = className.split("\\\\|/");
+		String[] names = className.split("[\\\\|/\\.]");
+		String name = names[names.length - 1];
 
-		if (names.length < 2) {
-			throw new ClassNotFoundException(className);
-		}
+//		if (names.length < 2) {
+//			throw new ClassNotFoundException(className);
+//		}
+//
+//		File fileDir = new File(Config.BINARY_PATH);
+//
+//		if (!fileDir.exists()) {
+//			throw new ClassNotFoundException(className);
+//		}
+//
 
-		File fileDir = new File(
-			binaryDir.getPath() + File.separator + names[0]
-		);
-
-		if (!fileDir.exists()) {
-			throw new ClassNotFoundException(className);
-		}
-
-		String[] files = fileDir.list();
+		Vector<String> files = new Vector<String>(100);
+		findFiles(files, Config.BINARY_PATH);
 
 		for (String s : files) {
-			if (s.toLowerCase().equals((names[1] + ".class").toLowerCase())) {
-				return (Class<C>) classLoader.loadClass(
-					names[0] + "." + s.replace(".class", "")
-				);
+			s = s.substring(s.lastIndexOf(File.separatorChar) + 1);
+			if (s.toLowerCase().equals((name + ".class").toLowerCase())) {
+//				s = s.substring((Config.BINARY_PATH + getEnvironment().getProjectName()).length() + 1);
+//				s = s.substring(s.indexOf(File.separator) + 1);
+				s = names[0] + "." + names[1] + "." + s.replace(".class", "");
+				return (Class<C>) classLoader.loadClass(s);
 			}
 		}
 
 		return (Class<C>) classLoader.loadClass(className);
+	}
+
+	/**
+	 * Find files at path with depth and store it in collection
+	 * @param collection - Collection to store elements
+	 * @param path - Path to directory with files
+	 * @throws Exception
+	 */
+	private static void findFiles(Collection<String> collection, String path) throws Exception {
+		File handle = new File(path);
+		if (!handle.exists()) {
+			if (!handle.mkdir()) {
+				throw new Exception(
+					"ClassSeeker/findFiles() : \"Unable to create directory (" + handle.getPath() + ")\""
+				);
+			}
+			return ;
+		}
+		File[] files = handle.listFiles();
+		if (files == null) {
+			return ;
+		}
+		for (File f : files) {
+			if (f.isDirectory()) {
+				findFiles(collection, f.getPath());
+			} else {
+				if (!f.getName().endsWith(".class")) {
+					continue;
+				}
+				collection.add(f.getPath());
+			}
+		}
 	}
 }

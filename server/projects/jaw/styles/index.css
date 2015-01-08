@@ -122,7 +122,8 @@ button {
 	z-index: 2000;
 }
 
-.index-project-exit, .index-project-start {
+.login .logout,
+.login .index-project-start {
 	width: 40%;
 }
 
@@ -144,7 +145,6 @@ button {
 
 .denied-wrapper {
 	border-radius: 5px;
-	margin-bottom: 10px;
 	padding-bottom: 5px;
 }
 
@@ -194,12 +194,11 @@ button {
 	margin-bottom: 0;
 }
 
-body + .popover-notification, body + .popover-request {
+body + .popover-notification,
+body + .popover-request {
 	overflow: hidden;
 }
 body > .popover-notification {
-	margin-right: 10px;
-	margin-left: 10px;
 	margin-bottom: 10px;
 }
 
@@ -237,16 +236,25 @@ body > .popover-notification {
 	color: gray;
 }
 
+/*.navbar-brand img {*/
+	/*margin-top: -5px;*/
+/*}*/
 /*.navbar-nav > li > a {*/
-	/*padding-top:10px !important;*/
-	/*padding-bottom:10px !important;*/
+	/*padding-top: 10px !important;*/
+	/*padding-bottom: 10px !important;*/
 /*}*/
 /*.navbar {*/
 	/*min-height: 40px !important;*/
-	/*height: 0;*/
+	/*height: 0 !important;*/
 /*}*/
 
 .system-container {
-	width: 100%;
+	width: calc(100% - 20px);
 	min-height: 100%;
+	margin-left: 10px;
+}
+
+.ticket-table {
+	width: 100%;
+	margin-bottom: 10px;
 }

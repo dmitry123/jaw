@@ -47,7 +47,7 @@ public abstract class View extends Component {
 
 		inputStream = Mime.TEXT_HTML.getLoader().load(htmlPath);
 
-		byte[] chunk = new byte[1024];
+		byte[] chunk = new byte[16384];
 		int length;
 
 		try {

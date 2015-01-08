@@ -1,4 +1,4 @@
-package models;
+package jaw.models;
 
 import jaw.Core.*;
 
@@ -86,7 +86,7 @@ public class User extends Model<User.Row> {
 	/**
 	 * UserRow
 	 */
-	public static class Row extends jaw.Core.User {
+	public static class Row extends Session {
 
 		/**
 		 * @param login User's Name
