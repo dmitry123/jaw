@@ -44,7 +44,7 @@ var Jaw = Jaw || {};
         ).append(
             $("<span></span>", {
                 class: "jaw-message",
-                text: this.property("message")
+                html: this.property("message")
             })
         );
     };

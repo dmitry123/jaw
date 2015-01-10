@@ -5,6 +5,7 @@ import jaw.core.*;
 import jaw.sql.CortegeProtocol;
 import jaw.sql.CortegeRow;
 
+import java.lang.Exception;
 import java.lang.Object;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
@@ -57,6 +58,15 @@ public class Product extends Model<Product.Row> {
 			.execute(new Object[] { productID, employeeID })
 			.delete();
 		return null;
+	}
+
+	public ResultSet fetchByCompany(Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("*")
+			.from("product as p")
+			.where("p.company_id = ?")
+			.execute(companyID)
+			.select();
 	}
 
 	/**

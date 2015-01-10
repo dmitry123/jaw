@@ -44,10 +44,10 @@ public class Index extends Controller {
 		Session session = getEnvironment().getSession();
 
 		if (session != null && session.containsKey("employee")) {
-			getEnvironment().getMustacheDefiner().put("Employee.Request.Count",
+			getEnvironment().getMustacheDefiner().put("EMPLOYEE_REQUEST_COUNT",
 				"" + getModel("Request").fetchSize("receiver_id = " + session.get("employee"))
 			);
-			getEnvironment().getMustacheDefiner().put("Employee.Notification.Count",
+			getEnvironment().getMustacheDefiner().put("EMPLOYEE_NOTIFICATION_COUNT",
 				"" + getModel("Message").fetchSize("receiver_id = " + session.get("employee"))
 			);
 		}
@@ -73,7 +73,7 @@ public class Index extends Controller {
 			}
 
 			getEnvironment().getMustacheDefiner().put(
-				"Index.Project.Company.List", writer.toString()
+				"INDEX_PROJECT_LIST", writer.toString()
 			);
 
 			render("Project");

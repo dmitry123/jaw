@@ -61,7 +61,7 @@ public class System extends Controller {
 			}
 		}};
 
-		getEnvironment().getMustacheDefiner().put("Employee.Request.Body",
+		getEnvironment().getMustacheDefiner().put("EMPLOYEE_REQUEST_TABLE",
 			writer.toString().replaceAll("[\n\t\r]", "")
 		);
 
@@ -95,7 +95,7 @@ public class System extends Controller {
 			}
 		}};
 
-		getEnvironment().getMustacheDefiner().put("Employee.Notification.Body",
+		getEnvironment().getMustacheDefiner().put("EMPLOYEE_NOTIFICATION_TABLE",
 			writer.toString().replaceAll("[\n\r\t]", "")
 		);
 	}

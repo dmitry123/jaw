@@ -23,7 +23,7 @@ public class Tracker extends Controller {
 	@Override
 	public void actionView() throws Exception {
 
-		if (!checkAccessWithResponse() || !getEnvironment().getSessionManager().get().containsKey("employee")) {
+		if (!checkAccessWithResponse() || !getEnvironment().getSession().containsKey("employee")) {
 			redirect("Index", "Denied"); return;
 		}
 
@@ -32,15 +32,14 @@ public class Tracker extends Controller {
 
 	public void actionCurrent() throws Exception {
 
-		if (!checkAccessWithResponse() || !getEnvironment().getSessionManager().get().containsKey("employee")) {
+		if (!checkAccessWithResponse() || !getEnvironment().getSession().containsKey("employee")) {
 			redirect("Index", "Denied"); return;
 		}
 
-		renderTickets("System/Ticket/Current/TableBody", getModel("Ticket").fetchSet(
-				"fetchByEmployee", Integer.parseInt(
-						getEnvironment().getSessionManager().get()
-								.get("employee").toString()
-				)
+		renderTickets("SYSTEM_CURRENT_TICKET_TABLE", getModel("Ticket").fetchSet(
+			"fetchByEmployee", Integer.parseInt(
+				getEnvironment().getSessionManager().get().get("employee").toString()
+			)
 		));
 
 		render("Current");
@@ -48,15 +47,14 @@ public class Tracker extends Controller {
 
 	public void actionCompany() throws Exception {
 
-		if (!checkAccessWithResponse() || !getEnvironment().getSessionManager().get().containsKey("employee")) {
+		if (!checkAccessWithResponse() || !getEnvironment().getSession().containsKey("employee")) {
 			redirect("Index", "Denied"); return;
 		}
 
-		renderTickets("System/Ticket/Company/TableBody", getModel("Ticket").fetchSet(
-				"fetchCompanyByEmployee", Integer.parseInt(
-						getEnvironment().getSessionManager().get()
-								.get("employee").toString()
-				)
+		renderTickets("SYSTEM_TICKET_COMPANY_TABLE", getModel("Ticket").fetchSet(
+			"fetchCompanyByEmployee", Integer.parseInt(
+				getEnvironment().getSessionManager().get().get("employee").toString()
+			)
 		));
 
 		render("Company");
@@ -64,15 +62,14 @@ public class Tracker extends Controller {
 
 	public void actionProject() throws Exception {
 
-		if (!checkAccessWithResponse() || !getEnvironment().getSessionManager().get().containsKey("employee")) {
+		if (!checkAccessWithResponse() || !getEnvironment().getSession().containsKey("employee")) {
 			redirect("Index", "Denied"); return;
 		}
 
-		renderTickets("System/Ticket/Project/TableBody", getModel("Ticket").fetchSet(
-				"fetchProjectByEmployee", Integer.parseInt(
-						getEnvironment().getSessionManager().get()
-								.get("employee").toString()
-				)
+		renderTickets("SYSTEM_TICKET_PROJECT_TABLE", getModel("Ticket").fetchSet(
+			"fetchProjectByEmployee", Integer.parseInt(
+				getEnvironment().getSessionManager().get().get("employee").toString()
+			)
 		));
 
 		render("Project");
@@ -123,6 +120,6 @@ public class Tracker extends Controller {
 			button = writer.toString().replaceAll("[\n\r\t]+", "");
 		}
 
-		getEnvironment().getMustacheDefiner().put("System/Ticket/ButtonCreate", button);
+		getEnvironment().getMustacheDefiner().put("SYSTEM_TICKET_CREATE_BUTTON", button);
 	}
 }

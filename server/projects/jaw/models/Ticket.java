@@ -55,6 +55,16 @@ public class Ticket extends Model<Ticket.Row> {
 			.select();
 	}
 
+	public ResultSet fetchByCompany(Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("*")
+			.from("ticket as t")
+			.join("employee as e", "e.id = t.creator_id")
+			.where("e.company_id = ?")
+			.execute(companyID)
+			.select();
+	}
+
 	public static class Row extends CortegeRow {
 
 		public Row(int id) {

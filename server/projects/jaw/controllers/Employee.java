@@ -23,8 +23,19 @@ public class Employee extends Controller {
 			return;
 		}
 
-		getEnvironment().getSession()
-			.put("employee", Integer.parseInt(GET("id")));
+		int employeeID = Integer.parseInt(GET("id"));
+
+		ResultSet employee = getModel("Employee").fetchByID(employeeID);
+
+		if (!employee.next()) {
+			postErrorMessage("Сотрудник с таким идентификатором не зарегистрирован в системе");
+			return;
+		}
+
+		getEnvironment().getSession().put("company",
+			employee.getInt("company_id")
+		);
+		getEnvironment().getSession().put("employee", employeeID);
 
 		JSONObject json = new JSONObject();
 		json.put("status", true);

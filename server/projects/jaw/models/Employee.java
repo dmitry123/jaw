@@ -6,6 +6,8 @@ import jaw.sql.CommandProtocol;
 import jaw.sql.CortegeProtocol;
 import jaw.sql.CortegeRow;
 
+import java.lang.Exception;
+import java.lang.Integer;
 import java.lang.Object;
 import java.sql.ResultSet;
 
@@ -116,6 +118,25 @@ public class Employee extends Model<Employee.Row> {
 			.join("users as u", "e.user_id = u.id")
 			.where("u.id = ?")
 			.execute(new Object[] { userID })
+			.select();
+	}
+
+	public ResultSet fetchCompanyEmployeeByEmployee(Integer employeeID) throws Exception {
+		return getConnection().createCommand()
+			.select("e2.*")
+			.from("employee as e")
+			.join("employee as e2", "e2.company_id = e.company_id")
+			.where("e.id = ?")
+			.execute(employeeID)
+			.select();
+	}
+
+	public ResultSet fetchByCompany(Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("*")
+			.from("employee as e")
+			.where("e.company_id = ?")
+			.execute(companyID)
 			.select();
 	}
 

@@ -74,6 +74,16 @@ public class Project extends Model<Project.Row> {
 			.select();
 	}
 
+	public ResultSet fetchByCompany(Integer companyID) throws Exception {
+		return getConnection().createCommand()
+			.select("p.*, d.*")
+			.from("project as p")
+			.join("product as d", "d.id = p.product_id")
+			.where("d.company_id = ?")
+			.execute(companyID)
+			.select();
+	}
+
 	/**
 	 *
 	 */

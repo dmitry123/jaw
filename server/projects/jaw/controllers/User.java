@@ -39,8 +39,8 @@ public class User extends Controller {
 			);
 			getEnvironment().getSessionManager().put(session);
 			json.put("status", true);
-			session.getMustacheDefiner().put("User.Login", session.getLogin());
-			session.getMustacheDefiner().put("User.ID", Integer.toString(session.getID()));
+			session.getMustacheDefiner().put("USER_LOGIN", session.getLogin());
+			session.getMustacheDefiner().put("USER_ID", Integer.toString(session.getID()));
 		} else {
 			json.put("status", false);
 			json.put("message", "Неверный пароль или логин пользователя");

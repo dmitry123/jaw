@@ -55,12 +55,12 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a id="btn-notification" type="button" href="javascript:void(0)">Уведомления <span style="background-color: #2c82af" class="badge">{{ Employee.Notification.Count }}</span></a></li>
-                <li><a id="btn-request" type="button" href="javascript:void(0)">Запросы <span style="background-color: #2c82af" class="badge">{{ Employee.Request.Count }}</span></a></li>
+                <li><a id="btn-notification" type="button" href="javascript:void(0)">Уведомления <span style="background-color: #2c82af" class="badge">{{ EMPLOYEE_NOTIFICATION_COUNT }}</span></a></li>
+                <li><a id="btn-request" type="button" href="javascript:void(0)">Запросы <span style="background-color: #2c82af" class="badge">{{ EMPLOYEE_REQUEST_COUNT }}</span></a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <span class="glyphicon glyphicon-user"></span>
-                        <span class="system-login">{{User.Login}}</span>
+                        <span class="system-login">{{USER_LOGIN}}</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
@@ -78,11 +78,11 @@
 </nav>
 <div class="col-md-12 hidden" id="request-table">
     <table class="table">
-        <thead> {{{ Employee.Request.Body }}} </thead>
+        <thead> {{{ EMPLOYEE_REQUEST_TABLE }}} </thead>
     </table>
 </div>
 <div class="col-md-12 hidden" id="notification-table">
     <table class="table">
-        <thead> {{{ Employee.Notification.Body }}} </thead>
+        <thead> {{{ EMPLOYEE_NOTIFICATION_TABLE }}} </thead>
     </table>
 </div>

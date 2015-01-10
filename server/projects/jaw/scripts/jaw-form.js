@@ -170,14 +170,16 @@ var Jaw = Jaw || {};
         );
         $.get(this.property("url"), {
             form: this.property("form")
-        }, function(json) {
+        }, function(data) {
+            var json = $.parseJSON(data);
             if (!json.status) {
                 return Jaw.createMessage({
-                    message: json.message
+                    message: json.trace || json.message,
+                    delay: -1
                 });
             }
             console.log(json);
-        }, "json");
+        });
     };
 
     /**
