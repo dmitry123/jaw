@@ -253,7 +253,6 @@ public class WebServer extends NanoHttpd {
 			System.exit(-1);
 		}
 
-		logger.log("server started");
 		System.out.println("Server Terminal:");
 
 		terminal.register("terminal",
@@ -262,7 +261,6 @@ public class WebServer extends NanoHttpd {
 		terminal.start();
 
 		server.stop();
-		logger.log("server stopped");
 	}
 
 	/**
