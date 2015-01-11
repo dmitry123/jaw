@@ -84,7 +84,10 @@ public class User extends Controller {
 
 		if (getEnvironment().getSessionManager().has()) {
 			getEnvironment().getSessionManager().remove();
+			getEnvironment().getSessionManager().save();
 		}
+
+		getSession().getCookies().delete("JAW_SESSION_ID");
 
 		JSONObject json = new JSONObject();
 		json.put("status", true);
