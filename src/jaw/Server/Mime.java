@@ -1,4 +1,4 @@
-package jaw.Server;
+package jaw.server;
 
 /**
  * Created by Savonin on 2014-11-09

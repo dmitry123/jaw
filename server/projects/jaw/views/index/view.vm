@@ -1,0 +1,58 @@
+#if (${controller.checkAccess()})
+<script type="text/javascript" src="/jaw/content/scripts/project.js"></script>
+#else
+<script type="text/javascript" src="/jaw/content/scripts/index.js"></script>
+#end
+<div class="maximum-parent background">
+    <table class="hundred-percents"><tr><td>
+        <div class="">
+            <div class="logo-form">
+                <div class="logo-wrapper">
+                    <div class="logo"></div>
+                </div>
+                #if (${controller.checkAccess()})
+                <div class="login" id="project">
+                    <div class="index-project-wrapper">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation" id="create-company">
+                                <a href="javascript:void(0)"><b>Создать компанию</b></a>
+                            </li>
+                            <li role="presentation" id="join-company">
+                                <a href="javascript:void(0)"><b>Вступить в компанию</b></a>
+                            </li>
+                            <li role="presentation" id="create-project">
+                                <a href="javascript:void(0)"><b>Создать проект</b></a>
+                            </li>
+                            <li role="presentation" id="join-project">
+                                <a href="javascript:void(0)"><b>Вступить в проект</b></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="index-project-wrapper">
+                        <ul class="nav nav-pills nav-stacked index-project-list"></ul>
+                    </div>
+                    <button class="btn btn-danger logout">Выйти</button>
+                    <button class="btn btn-primary index-project-start active" data-loading-text="Начинаем...">Начать работу</button>
+                </div>
+                <span class="glyphicon glyphicon-refresh"></span>
+                #else
+                <div class="login" id="login">
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                        <input type="text" value="dmitry" class="form-control login-login" placeholder="Логин">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                        <input type="password" value="dmitry" class="form-control login-password" placeholder="Пароль">
+                    </div>
+                    <button class="btn btn-default login-register">Регистрация</button>
+                    <button class="btn btn-default login-submit">Вход</button>
+                </div>
+                #end
+            </div>
+        </div>
+    </td></tr></table>
+    #if (${controller.checkAccess("jaw/admin")})
+    <a href="/jaw/admin"><img class="god-button" src="/jaw/content/images/god-2.png"></a>
+    #end
+</div>

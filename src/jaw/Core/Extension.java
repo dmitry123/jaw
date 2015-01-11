@@ -1,4 +1,4 @@
-package jaw.Core;
+package jaw.core;
 
 /**
  * Created by Savonin on 2014-11-22
@@ -18,6 +18,16 @@ public class Extension {
 	 */
 	public Environment getEnvironment() {
 		return environment;
+	}
+
+	/**
+	 * Set environment (only for serializable classes)
+	 * @param environment - New environment
+	 */
+	protected void setEnvironment(Environment environment) {
+		if (this.environment != null) {
+			this.environment = environment;
+		}
 	}
 
 	private Environment environment;

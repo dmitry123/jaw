@@ -1,6 +1,6 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Sql.CortegeProtocol;
+import jaw.sql.CortegeProtocol;
 
 import java.io.Serializable;
 

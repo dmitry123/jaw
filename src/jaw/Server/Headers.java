@@ -1,4 +1,4 @@
-package jaw.Server;
+package jaw.server;
 
 /**
  * Class with headers

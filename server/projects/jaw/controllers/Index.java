@@ -31,11 +31,13 @@ public class Index extends Controller {
 	public void actionView() throws Exception {
 
 		// If we have user's session then redirect to system view else render current
-		if (getEnvironment().getSessionManager().has()) {
-			redirect("Index", "Project");
-		} else {
-			render("View");
-		}
+//		if (getEnvironment().getSessionManager().has()) {
+//			redirect("Index", "Project");
+//		} else {
+//			renderVm("View");
+//		}
+
+		renderVm("View");
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class Index extends Controller {
 				"INDEX_PROJECT_LIST", writer.toString()
 			);
 
-			render("Project");
+			renderVm("Project");
 		} else {
 			redirect("Index", "View");
 		}

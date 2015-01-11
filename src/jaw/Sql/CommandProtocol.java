@@ -1,4 +1,4 @@
-package jaw.Sql;
+package jaw.sql;
 
 
 import java.util.Map;

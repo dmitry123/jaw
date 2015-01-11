@@ -1,0 +1,29 @@
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-group-privilege"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-group-privilege", {
+            header: [
+                {
+                    id: "group_privilege.id",
+                    name: "#",
+                    style: "width: 10px; text-align: center;"
+                },  {
+                    id: "group_privilege.group_id",
+                    name: "Группа",
+                    display: "groups.description",
+                    type: "number",
+                    url: "/jaw/group/getTable"
+                },  {
+                    id: "group_privilege.privilege_id",
+                    name: "Привилегия",
+                    display: "privilege.name",
+                    url: "/jaw/privilege/getTable"
+                }
+            ],
+            table: "group_privilege",
+            url: "/jaw/groupprivilege/getTable"
+        });
+    });
+</script>

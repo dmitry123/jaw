@@ -1,16 +1,18 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Server.HtmlBuilder;
-import jaw.Server.NanoHttpd;
+import jaw.server.HtmlBuilder;
+import jaw.server.NanoHttpd;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.util.*;
 
 /**
  * Created by Savonin on 2014-11-02
@@ -207,15 +209,36 @@ public abstract class Controller extends Component {
 		setAjaxResponse(json.toString());
 	}
 
+	/**
+	 * That action returns model data for form, see jaw-form.js for client
+	 * side. Override that method to check privileges and invoke super one
+	 * @throws Exception
+	 */
 	public void actionGetForm() throws Exception {
 
-		final String form = GET("form");
+		final String formName = GET("form");
 
 		JSONObject json = new JSONObject();
+		Form form = getForm(formName);
 
-
-
-		json.put("status", true);
+		if (form != null) {
+			form.setModel(getModel());
+			Map<String, ResultSet> map = form.getForm();
+			Map<String, Collection<Object>> collection
+				= new LinkedHashMap<String, Collection<Object>>();
+			for (Map.Entry<String, ResultSet> entry : map.entrySet()) {
+				Collection<Object> vector = new Vector<Object>();
+				while (entry.getValue().next()) {
+					vector.add(Model.buildStaticMap(entry.getValue()));
+				}
+				collection.put(entry.getKey(), vector);
+			}
+			json.put("model", collection);
+			json.put("status", true);
+		} else {
+			json.put("message", "Невозможно найти форму для получения данных");
+			json.put("status", false);
+		}
 
 		setAjaxResponse(json.toString());
 	}
@@ -259,6 +282,81 @@ public abstract class Controller extends Component {
 	 */
 	public void redirect(String path, String action) throws Exception {
 		getEnvironment().getRouter().redirect(path, action);
+	}
+
+	/**
+	 * Render VM file
+	 * @param action - Action's name
+	 * @throws Exception
+	 */
+	public void renderVm(String action) throws Exception {
+		renderVm(action, new HashMap<String, Object>());
+	}
+
+	/**
+	 * Render VM file with action and data
+	 * @param action - Action's name
+	 * @param hashData - Data to render
+	 * @throws Exception
+	 */
+	public void renderVm(final String action, Map<String, Object> hashData) throws Exception {
+
+		hashData.put("url", "/" + getEnvironment().getProjectName());
+		hashData.put("controller", this);
+
+		loadVm(getVmPath("common", "header"), new HashMap<String, Object>());
+
+		loadVm(getVmPath(getClass().getName().substring(
+				getClass().getName().lastIndexOf('.') + 1
+		), action), hashData);
+
+		loadVm(getVmPath("common", "footer"), new HashMap<String, Object>());
+	}
+
+	/**
+	 * Calculate path ot VM file
+	 * @param controllerName - Name of controller (folder with VM file)
+	 * @param actionName - Name of controller's action (file with VM content)
+	 * @return - Relative path to VM file with HTML content
+	 * @throws Exception
+	 */
+	private String getVmPath(String controllerName, String actionName) throws Exception {
+		return Config.PROJECT_PATH + getEnvironment().getProjectName() + File.separator + Config.VIEW_PATH
+			+ controllerName + File.separator + actionName + ".vm";
+	}
+
+	/**
+	 * Load VM file and set view's content
+	 * @param vmPath - Path to VM file
+	 * @param hashData - Data to render
+	 * @throws Exception
+	 */
+	private void loadVm(String vmPath, Map<String, Object> hashData) throws Exception {
+
+		if (!new File(vmPath).exists()) {
+			throw new Exception("Can't resolve template name (" + getClass().getName() + File.separator + "." + vmPath + ")");
+		}
+
+		VelocityEngine engine = new VelocityEngine() {{
+			init();
+		}};
+
+		VelocityContext context = new VelocityContext();
+		StringWriter writer = new StringWriter();
+
+		for (Map.Entry<String, Object> entry : hashData.entrySet()) {
+			context.put(entry.getKey(), entry.getValue());
+		}
+
+		engine.getTemplate(vmPath, "UTF-8").merge(context, writer);
+
+		if (getView() != null) {
+			if (getView().getHtmlContent() != null) {
+				getView().setHtmlContent(getView().getHtmlContent() + writer.toString());
+			} else {
+				getView().setHtmlContent(writer.toString());
+			}
+		}
 	}
 
 	/**
@@ -398,6 +496,22 @@ public abstract class Controller extends Component {
 	}
 
 	/**
+	 * Set controller's module
+	 * @param module - Module
+	 */
+	public void setModule(Module module) {
+		this.module = module;
+	}
+
+	/**
+	 * Get controller's module
+	 * @return - Module
+	 */
+	public Module getModule() {
+		return module;
+	}
+
+	/**
 	 * Get html builder
 	 * @return - Html builder
 	 */
@@ -425,4 +539,5 @@ public abstract class Controller extends Component {
 	private Model model = null;
 	private View view  = null;
 	private String ajaxResponse = null;
+	private Module module = null;
 }

@@ -1,4 +1,4 @@
-package jaw.Terminal;
+package jaw.terminal;
 
 
 

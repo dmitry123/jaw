@@ -1,11 +1,12 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Sql.*;
+import jaw.sql.CommandProtocol;
+import jaw.sql.Connection;
+import jaw.sql.CortegeProtocol;
 import org.json.JSONArray;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -289,17 +290,6 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 */
 	public CommandProtocol getReferences() throws Exception {
-		return null;
-	}
-
-	/**
-	 * Override that method to return dependencies for current table associated
-	 * with map's key as table name, it will increase performance and give more
-	 * suitable syntax with allowed aliases (getReferences still here for compatibility)
-	 * @return - Map with commands
-	 * @throws Exception
-	 */
-	public Map<String, CommandProtocol> getReferences2() throws Exception {
 		return null;
 	}
 
@@ -604,57 +594,32 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	}
 
 	/**
-	 * Execute/Update/Prepare query
-	 * and * change ${TABLE} macros
-	 * to table's name
-	 *
-	 * @param query
-	 * 		String with Sql query
-	 * @return Result with executed statement
-	 * @throws Exception
+	 * Associate columns with tables
+	 * @param resultSet - Set with results
+	 * @return - Map with names and values
 	 */
-    public PreparedStatement prepareStatement(String query) throws Exception {
-		try {
-			return getConnection().getSqlConnection().prepareStatement(query);
-		} catch (SQLException e) {
-			throw new Exception("Model/createStatementForSelect() : \"" + e.getMessage() + "\"");
-		}
-    }
-
-	/**
-	 * Execute/Update/Prepare query
-	 * and * change ${TABLE} macros
-	 * to table's name
-	 *
-	 * @param query - String with Sql query
-	 *
-	 * @param list - Argument fetchList with all elements
-	 * 		which have to be appended to query
-	 *
-	 * @return - Result with executed statement
-	 * @throws Exception
-	 */
-	public ResultSet execute(String query, Object... list) throws Exception {
-		try {
-			PreparedStatement preparedStatement = getConnection().getSqlConnection()
-				.prepareStatement(query);
-
-			SqlTypeBinder sqlTypeBinder = new SqlTypeBinder(
-				preparedStatement
-			);
-
-			for (Object a : list) {
-				sqlTypeBinder.bind(a);
+	public static LinkedHashMap<String, String> buildStaticMap(ResultSet resultSet) throws SQLException{
+		ResultSetMetaData columns = resultSet.getMetaData();
+		LinkedHashMap<String, String> columnMap
+				= new LinkedHashMap<String, String>();
+		for (int i = 1; i <= columns.getColumnCount(); i++) {
+			String field = columns.getColumnName(i);
+			if (columnMap.containsKey(field)) {
+				String value = columnMap.get(field);
+				if (value.startsWith("[")) {
+					JSONArray array = new JSONArray(value);
+					array.put(resultSet.getString(i));
+					columnMap.put(field, array.toString());
+				} else {
+					JSONArray array = new JSONArray();
+					array.put(resultSet.getString(i));
+					columnMap.put(field, array.toString());
+				}
+			} else {
+				columnMap.put(field, resultSet.getString(i));
 			}
-
-			if (query.startsWith("INSERT")) {
-				preparedStatement.execute(); return null;
-			}
-
-			return preparedStatement.executeQuery();
-		} catch (SQLException e) {
-			throw new Exception("Model/execute() : \"" + e.getMessage() + "\"");
 		}
+		return columnMap;
 	}
 
 	/**
@@ -669,7 +634,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
     public ResultSet fetchByID(Integer id) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
-			.from(tableName)
+			.from(getTableName())
 			.where("id = ?")
 			.execute(id)
 			.select();
@@ -712,17 +677,6 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			return 0;
 		}
 	}
-
-	/**
-	 * Check object for existence by
-	 * name or identifier
-	 *
-	 * @param id Row's identifier
-	 * @return Boolean state
-	 */
-    public boolean exists(int id) throws Exception {
-        return fetchByID(id) != null;
-    }
 
 	/**
 	 * Get MySql's helper object,

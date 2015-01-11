@@ -1,0 +1,40 @@
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-user"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-user", {
+            header: [
+                {
+                    id: "users.id",
+                    name: "#",
+                    style: "width: 10px; text-align: center;"
+                },  {
+                    id: "users.login",
+                    name: "Логин"
+                },  {
+                    id: "users.hash",
+                    name: "Пароль",
+                    type: "password"
+                },  {
+                    id: "users.email",
+                    name: "Почта"
+                }
+            ],
+            reference: [
+                {
+                    id: "employee",
+                    name: "Сотрудники",
+                    display: [
+                        "surname",
+                        "name",
+                        "patronymic"
+                    ],
+                    separator: " "
+                }
+            ],
+            table: "users",
+            url: "/jaw/user/getTable"
+        });
+    });
+</script>

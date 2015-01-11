@@ -1,4 +1,4 @@
-package jaw.Server;
+package jaw.server;
 
 import jaw.Html.Html;
 

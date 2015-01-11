@@ -1,4 +1,4 @@
-package jaw.Terminal;
+package jaw.terminal;
 
 /**
  * Created by Savonin on 2014-11-15

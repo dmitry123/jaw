@@ -1,9 +1,11 @@
-package jaw.Server;
+package jaw.server;
 
-import jaw.Core.*;
+import jaw.core.Config;
 
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 /**
  * HtmlReader

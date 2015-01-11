@@ -1,4 +1,4 @@
-package jaw.Core;
+package jaw.core;
 
 import javax.tools.*;
 import java.io.File;

@@ -1,4 +1,4 @@
-package jaw.Core;
+package jaw.core;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

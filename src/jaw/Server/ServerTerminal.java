@@ -1,9 +1,13 @@
-package jaw.Server;
+package jaw.server;
 
-import jaw.Core.*;
-
-import jaw.Terminal.*;
-import jaw.Terminal.Error;
+import jaw.core.Environment;
+import jaw.core.EnvironmentManager;
+import jaw.core.Logger;
+import jaw.core.Session;
+import jaw.terminal.Error;
+import jaw.terminal.Instruction;
+import jaw.terminal.Machine;
+import jaw.terminal.Station;
 
 import java.util.Map;
 import java.util.Vector;
@@ -53,7 +57,7 @@ public class ServerTerminal extends Station {
 
 		register(new Instruction(this, "compile", "-c") {
 			@Override
-			public void run(String[] arguments) throws Exception, InterruptedException {
+			public void run(String[] arguments) throws Exception {
 				if (arguments.length != 1) {
 					throw new Error(this,
 							"That instruction can assume only one argument"
@@ -75,7 +79,7 @@ public class ServerTerminal extends Station {
 
 		register(new Instruction(this, "cleanup", "-r") {
 			@Override
-			public void run(String[] arguments) throws Exception, InterruptedException {
+			public void run(String[] arguments) throws Exception {
 				if (arguments.length != 1) {
 					throw new Error(this,
 							"That instruction can assume only one argument"
@@ -97,7 +101,7 @@ public class ServerTerminal extends Station {
 			{
 				register(new Instruction(this, "show", "-s") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
 							throw new Error(this,
 									"That instruction can assume only one argument"
@@ -115,7 +119,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "clear", "-c") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
 							throw new Error(this,
 									"That instruction can assume only one argument"
@@ -128,7 +132,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "drop", "-d") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 2) {
 							throw new Error(this,
 								"That instruction can assume only two arguments"
@@ -147,7 +151,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "save", "-sf") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
 							throw new Error(this,
 								"That instruction can assume only two arguments"
@@ -159,7 +163,7 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "load", "-lf") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
 							throw new Error(this,
 								"That instruction can assume only two arguments"

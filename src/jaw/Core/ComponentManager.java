@@ -1,4 +1,4 @@
-package jaw.Core;
+package jaw.core;
 
 public class ComponentManager extends Manager<Component> {
 

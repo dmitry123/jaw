@@ -1,6 +1,6 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Sql.Connection;
+import jaw.sql.Connection;
 
 import java.io.File;
 
@@ -137,11 +137,11 @@ public class Environment {
 	 * @return - Mustache definer
 	 */
 	public MustacheDefiner getMustacheDefiner() {
-		return mustacheDefiner;
+		if (getSession() != null) {
+			return getSession().getMustacheDefiner();
+		}
+		return null;
 	}
-
-	private MustacheDefiner mustacheDefiner
-			= new MustacheDefiner(this);
 
 	/**
 	 * @return - Path to project

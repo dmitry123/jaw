@@ -1,6 +1,6 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Server.WebServer;
+import jaw.server.WebServer;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +13,7 @@ public class Manager<C extends Component> extends Extension {
 
 	/**
 	 * @param environment - Project's environment
+	 * @param type - Component's type
 	 */
 	public Manager(Environment environment, ComponentType type) {
 		super(environment); this.type = type;

@@ -1,11 +1,12 @@
-package jaw.Server;
+package jaw.server;
 
-import jaw.Core.*;
-
-import jaw.Terminal.Machine;
+import jaw.core.*;
+import jaw.terminal.Machine;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -131,8 +132,8 @@ public class WebServer extends NanoHttpd {
 			Session user = environment.getSessionManager().get();
 
 			if (user != null) {
-				environment.getMustacheDefiner().put("User.Login", user.getLogin());
-				environment.getMustacheDefiner().put("User.ID", Integer.toString(user.getID()));
+				environment.getMustacheDefiner().put("USER_LOGIN", user.getLogin());
+				environment.getMustacheDefiner().put("USER_ID", Integer.toString(user.getID()));
 			}
 
 			Controller controller;
@@ -173,9 +174,11 @@ public class WebServer extends NanoHttpd {
 			Response response;
 
 			if (view != null && view.getHtmlContent() != null) {
-				response = new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
-					environment.getMustacheDefiner().execute(view.getHtmlContent())
-				);
+				String content = view.getHtmlContent();
+				if (environment.getMustacheDefiner() != null) {
+					content = environment.getMustacheDefiner().execute(view.getHtmlContent());
+				}
+				response = new Response(Response.Status.OK, Mime.TEXT_HTML.getName(), content);
 			} else {
 				if (controller.getAjaxResponse() != null) {
 					response = new Response(controller.getAjaxResponse());
@@ -204,12 +207,17 @@ public class WebServer extends NanoHttpd {
 				stringWriter
 			);
 
+			Logger.getLogger().log(
+				e.getMessage()
+			);
+
 			e.printStackTrace(writer);
 
 			JSONObject errorResponse = new JSONObject();
 
 			errorResponse.put("status", false);
 			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
+			errorResponse.put("trace", "<pre>" + stringWriter.toString() + "</pre>");
 
 			if (e instanceof SQLException) {
 				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),

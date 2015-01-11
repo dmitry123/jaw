@@ -1,4 +1,4 @@
-package jaw.Sql;
+package jaw.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

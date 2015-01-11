@@ -1,6 +1,6 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Server.Mime;
+import jaw.server.Mime;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by Savonin on 2014-11-02
  */
-public abstract class View extends Component {
+public class View extends Component {
 
 	/**
 	 * @param environment - Every core's extension must have environment with predeclared extensions
@@ -24,13 +24,16 @@ public abstract class View extends Component {
 	 * method to display basic information about
 	 * page or widget
 	 */
-	public abstract void renderView(Map<String, Object> hashData) throws Exception;
+	public void renderView(Map<String, Object> hashData) throws Exception {
+		/* Backward compatibility */
+	}
 
 	/**
 	 * Every view must implements default 404
 	 * render method to display basic error
 	 */
 	public void render404(Map<String, Object> hashData) throws Exception {
+		/* Backward compatibility */
 	}
 
 	/**
@@ -45,7 +48,7 @@ public abstract class View extends Component {
 
 		String htmlPath = absolutePath + ".html";
 
-		inputStream = Mime.TEXT_HTML.getLoader().load(htmlPath);
+		InputStream inputStream = Mime.TEXT_HTML.getLoader().load(htmlPath);
 
 		byte[] chunk = new byte[16384];
 		int length;
@@ -66,20 +69,20 @@ public abstract class View extends Component {
 	}
 
 	/**
-	 * @return - View's input stream
-	 */
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-
-	/**
-	 *
-	 * @return
+	 * Get view's html content to render
+	 * @return - Content with HTML page
 	 */
 	public String getHtmlContent() {
 		return htmlContent;
 	}
 
+	/**
+	 * Set view's html content
+	 * @param htmlContent - Content with HTML page
+	 */
+	public void setHtmlContent(String htmlContent) {
+		this.htmlContent = htmlContent;
+	}
+
 	private String htmlContent = null;
-	private InputStream inputStream = null;
 }

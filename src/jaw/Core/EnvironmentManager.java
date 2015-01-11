@@ -1,6 +1,6 @@
-package jaw.Core;
+package jaw.core;
 
-import jaw.Sql.Connection;
+import jaw.sql.Connection;
 
 import java.util.HashMap;
 import java.util.Map;
