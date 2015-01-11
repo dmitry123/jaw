@@ -311,7 +311,7 @@ var Jaw = Jaw || {};
                 style: "width: 100%; text-align: center;"
             }).append(
                 $("<img>", {
-                    src: "/jaw/content/images/ajax-loader.gif"
+                    src: "/jaw/images/ajax-loader.gif"
                 })
             )
         );
@@ -917,7 +917,7 @@ var Jaw = Jaw || {};
             }).append(
                 $("<img>", {
                     class: "col-md-offset-6",
-                    src: jaw.url + "/content/images/ajax-loader.gif",
+                    src: "/jaw/images/ajax-loader.gif",
                     style: "padding: 10px"
                 })
             )

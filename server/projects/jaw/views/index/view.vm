@@ -1,7 +1,7 @@
 #if (${controller.checkAccess()})
-<script type="text/javascript" src="/jaw/content/scripts/project.js"></script>
+<script type="text/javascript" src="/jaw/scripts/project.js"></script>
 #else
-<script type="text/javascript" src="/jaw/content/scripts/index.js"></script>
+<script type="text/javascript" src="/jaw/scripts/index.js"></script>
 #end
 <div class="maximum-parent background">
     <table class="hundred-percents"><tr><td>
@@ -53,6 +53,6 @@
         </div>
     </td></tr></table>
     #if (${controller.checkAccess("jaw/admin")})
-    <a href="/jaw/admin"><img class="god-button" src="/jaw/content/images/god-2.png"></a>
+    <a href="/jaw/admin"><img class="god-button" src="/jaw/images/god-2.png"></a>
     #end
 </div>

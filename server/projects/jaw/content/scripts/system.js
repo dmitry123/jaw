@@ -68,7 +68,7 @@ var RequestModal = {
         body.empty().append(
             $("<img>", {
                 class: "col-md-offset-6",
-                src: "/jaw/content/images/ajax-loader.gif"
+                src: "/jaw/images/ajax-loader.gif"
             })
         ).append("<br>");
         var put = function(label, text) {

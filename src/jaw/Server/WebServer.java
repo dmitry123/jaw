@@ -69,6 +69,8 @@ public class WebServer extends NanoHttpd {
 			// If we have mime type, then load file
 			if (mime != null) {
 				uri = uri.substring(1);
+				int slash = uri.indexOf('/');
+				uri = uri.substring(0, slash) + "/content" + uri.substring(slash);
 				try {
 					return new Response(Response.Status.OK, mime.getName(), mime.getLoader().load(Config.PROJECT_PATH + uri));
 				} catch (Exception ignored) {

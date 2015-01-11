@@ -5,7 +5,7 @@ html, body {
 
 .background {
 	/*background-color: #ffffff;*/
-	background: lightgray url("/jaw/content/images/pattern.png");
+	background: lightgray url("/jaw/images/pattern.png");
 	/*background-attachment: fixed;*/
 	/*background-position: 0 0;*/
 }
@@ -75,7 +75,7 @@ html, body {
 .logo {
     background-size: 100% auto;
     background-repeat: no-repeat;
-    background-image: url("/jaw/content/images/logo.png");
+    background-image: url("/jaw/images/logo.png");
 	width: 100%;
 	height: 100%;
 	margin-left: auto;

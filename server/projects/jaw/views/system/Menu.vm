@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/jaw/system/view">
-                <img src="/jaw/content/images/logo-small.png" width="35" height="20">
+                <img src="/jaw/images/logo-small.png" width="35" height="20">
             </a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

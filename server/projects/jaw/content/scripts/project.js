@@ -18,7 +18,7 @@ var IndexProjectEmployee = {
                 role: "presentation"
             }).append(
                 $("<img>", {
-                    src: "/jaw/content/images/ajax-loader.gif"
+                    src: "/jaw/images/ajax-loader.gif"
                 })
             )
         );

@@ -43,7 +43,7 @@ public class View extends Component {
 	public void template(String path) throws Exception {
 
 		String absolutePath = Router.getStaticPath(
-			getEnvironment().getProjectPath(), path, "templates" + File.separator
+			getEnvironment().getProjectPath(), path, Config.TEMPLATE_PATH
 		);
 
 		String htmlPath = absolutePath + ".html";

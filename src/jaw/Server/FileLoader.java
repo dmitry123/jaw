@@ -1,7 +1,5 @@
 package jaw.server;
 
-import jaw.core.Config;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,22 +38,6 @@ public class FileLoader {
 		}
 
 		return html;
-	}
-
-	/**
-	 * Load html file from view path
-	 *
-	 * @param fileName File's name
-	 */
-	public String loadView(String fileName) throws Exception {
-		return load(Config.VIEW_PATH + fileName);
-	}
-
-	/**
-	 * Load index.html
-	 */
-	public String loadIndex() throws Exception {
-		return load(Config.INDEX_PATH);
 	}
 
 	/**
