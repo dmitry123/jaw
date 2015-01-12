@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="PostgreSQL - jaw@localhost" uuid="d0bfa0dc-1896-48e3-880c-024503897315">
+    <database-info product="PostgreSQL" version="9.3.5" jdbc-version="4.0" driver-name="PostgreSQL Native Driver" driver-version="PostgreSQL 9.3 JDBC4 (build 1100)">
+      <identifier-quote-string>&quot;</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact"/>
+    <schema name="public" catalog="jaw"/>
+    <table name="company" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnY29tcGFueV9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="name" sqlType="text" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="director_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <primary-key name="company_pkey" columns="id"/>
+      <exported-key name="product_company_id_fkey" table="product" schema="public" catalog="jaw" columns="company_id"/>
+    </table>
+    <table name="company_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="employee" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnZW1wbG95ZWVfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="name" sqlType="varchar" precision="80" scale="0" nullable="false" jdbcType="12"/>
+      <column name="surname" sqlType="varchar" precision="80" scale="0" nullable="false" jdbcType="12"/>
+      <column name="user_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="manager_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="director_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="company_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="patronymic" sqlType="varchar" precision="80" scale="0" nullable="true" jdbcType="12"/>
+      <column name="join_date" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93" def="bm93KCk="/>
+      <primary-key name="employee_pkey" columns="id"/>
+      <foreign-key name="employee_user_id_fkey" columns="user_id" ref-table="users" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="employee_group_employee_id_fkey" table="employee_group" schema="public" catalog="jaw" columns="employee_id"/>
+      <exported-key name="history_employee_id_fkey" table="history" schema="public" catalog="jaw" columns="employee_id"/>
+      <exported-key name="message_receiver_id_fkey" table="message" schema="public" catalog="jaw" columns="receiver_id"/>
+      <exported-key name="message_sender_id_fkey" table="message" schema="public" catalog="jaw" columns="sender_id"/>
+      <exported-key name="product_creator_id_fkey" table="product" schema="public" catalog="jaw" columns="creator_id"/>
+      <exported-key name="product_employee_employee_id_fkey" table="product_employee" schema="public" catalog="jaw" columns="employee_id"/>
+      <exported-key name="project_leader_id_fkey" table="project" schema="public" catalog="jaw" columns="leader_id"/>
+      <exported-key name="request_receiver_id_fkey" table="request" schema="public" catalog="jaw" columns="receiver_id"/>
+      <exported-key name="request_sender_id_fkey" table="request" schema="public" catalog="jaw" columns="sender_id"/>
+      <exported-key name="ticket_created_by_fkey" table="ticket" schema="public" catalog="jaw" columns="creator_id"/>
+      <exported-key name="ticket_owner_id_fkey" table="ticket" schema="public" catalog="jaw" columns="owner_id"/>
+      <exported-key name="ticket_comment_owner_id_fkey" table="ticket_comment" schema="public" catalog="jaw" columns="owner_id"/>
+    </table>
+    <table name="employee_group" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnZW1wbG95ZWVfZ3JvdXBfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="employee_id" sqlType="int4" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="group_id" sqlType="int4" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <primary-key name="employee_group_pkey" columns="id"/>
+      <foreign-key name="employee_group_employee_id_fkey" columns="employee_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="employee_group_group_id_fkey" columns="group_id" ref-table="groups" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="employee_group_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="employee_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="files" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnZmlsZXNfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="files_pkey" columns="id"/>
+      <foreign-key name="files_product_id_fkey" columns="product_id" ref-table="product" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="ticket_attachment_file_id_fkey" table="ticket_attachment" schema="public" catalog="jaw" columns="file_id"/>
+    </table>
+    <table name="files_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="group_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="group_privilege" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnZ3JvdXBfcHJpdmlsZWdlX2lkX3NlcSc6OnJlZ2NsYXNzKQ==" autoIncrement="true"/>
+      <column name="group_id" sqlType="int4" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="privilege_id" sqlType="varchar" precision="20" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="group_privilege_pkey" columns="id"/>
+      <foreign-key name="group_privilege_group_id_fkey" columns="group_id" ref-table="groups" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="group_privilege_privilege_id_fkey" columns="privilege_id" ref-table="privilege" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="group_privilege_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="groups" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnZ3JvdXBfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="name" sqlType="varchar" precision="20" scale="0" nullable="false" jdbcType="12"/>
+      <column name="description" sqlType="varchar" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="group_pkey" columns="id"/>
+      <exported-key name="employee_group_group_id_fkey" table="employee_group" schema="public" catalog="jaw" columns="group_id"/>
+      <exported-key name="group_privilege_group_id_fkey" table="group_privilege" schema="public" catalog="jaw" columns="group_id"/>
+    </table>
+    <table name="history" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnaGlzdG9yeV9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="employee_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="modified" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93" def="bm93KCk="/>
+      <primary-key name="history_pkey" columns="id"/>
+      <foreign-key name="history_employee_id_fkey" columns="employee_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="history_product_id_fkey" columns="product_id" ref-table="product" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="history_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="message" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnbWVzc2FnZV9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="sender_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="receiver_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="message" sqlType="text" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="message_pkey" columns="id"/>
+      <foreign-key name="message_receiver_id_fkey" columns="receiver_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="message_sender_id_fkey" columns="sender_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="message_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="module" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgnbW9kdWxlX2lkX3NlcSc6OnJlZ2NsYXNzKQ==" autoIncrement="true"/>
+      <column name="project_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="module_pkey" columns="id"/>
+      <foreign-key name="module_product_id_fkey" columns="product_id" ref-table="product" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="module_project_id_fkey" columns="project_id" ref-table="project" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="module_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="privilege" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="varchar" precision="20" scale="0" nullable="false" jdbcType="12"/>
+      <column name="name" sqlType="varchar" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <column name="description" sqlType="text" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="privilege_pkey" columns="id"/>
+      <exported-key name="group_privilege_privilege_id_fkey" table="group_privilege" schema="public" catalog="jaw" columns="privilege_id"/>
+      <exported-key name="request_privilege_id_fkey" table="request" schema="public" catalog="jaw" columns="privilege_id"/>
+    </table>
+    <table name="product" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgncHJvZHVjdF9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="name" sqlType="text" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="company_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="creator_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="created" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93" def="bm93KCk="/>
+      <column name="parent_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <primary-key name="product_pkey" columns="id"/>
+      <foreign-key name="product_company_id_fkey" columns="company_id" ref-table="company" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="product_creator_id_fkey" columns="creator_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="files_product_id_fkey" table="files" schema="public" catalog="jaw" columns="product_id"/>
+      <exported-key name="history_product_id_fkey" table="history" schema="public" catalog="jaw" columns="product_id"/>
+      <exported-key name="module_product_id_fkey" table="module" schema="public" catalog="jaw" columns="product_id"/>
+      <exported-key name="product_employee_product_id_fkey" table="product_employee" schema="public" catalog="jaw" columns="product_id"/>
+      <exported-key name="project_product_id_fkey" table="project" schema="public" catalog="jaw" columns="product_id"/>
+      <exported-key name="ticket_product_id_fkey" table="ticket" schema="public" catalog="jaw" columns="product_id"/>
+    </table>
+    <table name="product_employee" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgncHJvZHVjdF9lbXBsb3llZV9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="employee_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="product_employee_pkey" columns="id"/>
+      <foreign-key name="product_employee_employee_id_fkey" columns="employee_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="product_employee_product_id_fkey" columns="product_id" ref-table="product" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="product_employee_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="product_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="project" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgncHJvamVjdF9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="leader_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <primary-key name="project_pkey" columns="id"/>
+      <foreign-key name="project_leader_id_fkey" columns="leader_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="project_product_id_fkey" columns="product_id" ref-table="product" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="module_project_id_fkey" table="module" schema="public" catalog="jaw" columns="project_id"/>
+      <exported-key name="ticket_project_id_fkey" table="ticket" schema="public" catalog="jaw" columns="project_id"/>
+    </table>
+    <table name="project_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="request" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgncmVxdWVzdF9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="receiver_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="sender_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="privilege_id" sqlType="varchar" precision="20" scale="0" nullable="true" jdbcType="12"/>
+      <column name="message" sqlType="text" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <primary-key name="request_pkey" columns="id"/>
+      <foreign-key name="request_receiver_id_fkey" columns="receiver_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="request_sender_id_fkey" columns="sender_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="request_privilege_id_fkey" columns="privilege_id" ref-table="privilege" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="request_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="ticket" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgndGlja2V0X2lkX3NlcSc6OnJlZ2NsYXNzKQ==" autoIncrement="true"/>
+      <column name="creator_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="owner_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="precedence" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="product_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="project_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="description" sqlType="text" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <column name="parent_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="creation_date" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93" def="bm93KCk="/>
+      <column name="name" sqlType="text" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="ticket_pkey" columns="id"/>
+      <foreign-key name="ticket_created_by_fkey" columns="creator_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="ticket_owner_id_fkey" columns="owner_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="ticket_product_id_fkey" columns="product_id" ref-table="product" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="ticket_project_id_fkey" columns="project_id" ref-table="project" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <exported-key name="ticket_attachment_ticket_id_fkey" table="ticket_attachment" schema="public" catalog="jaw" columns="ticket_id"/>
+      <exported-key name="ticket_comment_ticket_id_fkey" table="ticket_comment" schema="public" catalog="jaw" columns="ticket_id"/>
+    </table>
+    <table name="ticket_attachment" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgndGlja2V0X2F0dGFjaG1lbnRfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="file_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="ticket_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="comment_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4" def="MA=="/>
+      <column name="creation_date" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93" def="bm93KCk="/>
+      <primary-key name="ticket_attachment_pkey" columns="id"/>
+      <foreign-key name="ticket_attachment_file_id_fkey" columns="file_id" ref-table="files" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="ticket_attachment_ticket_id_fkey" columns="ticket_id" ref-table="ticket" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="ticket_attachment_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="ticket_comment" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgndGlja2V0X2NvbW1lbnRfaWRfc2VxJzo6cmVnY2xhc3Mp" autoIncrement="true"/>
+      <column name="ticket_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="owner_id" sqlType="int4" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="message" sqlType="text" precision="2147483647" scale="0" nullable="true" jdbcType="12"/>
+      <column name="creation_date" sqlType="timestamp" precision="29" scale="6" nullable="true" jdbcType="93" def="bm93KCk="/>
+      <primary-key name="ticket_comment_pkey" columns="id"/>
+      <foreign-key name="ticket_comment_owner_id_fkey" columns="owner_id" ref-table="employee" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="ticket_comment_ticket_id_fkey" columns="ticket_id" ref-table="ticket" ref-schema="public" ref-catalog="" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+    </table>
+    <table name="ticket_comment_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="ticket_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="user_id_seq" schema="public" catalog="jaw" type="SEQUENCE">
+      <column name="sequence_name" sqlType="name" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="last_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="start_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="increment_by" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="max_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="min_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="cache_value" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="log_cnt" sqlType="int8" precision="19" scale="0" nullable="false" jdbcType="-5"/>
+      <column name="is_cycled" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="is_called" sqlType="bool" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+    </table>
+    <table name="users" schema="public" catalog="jaw" type="TABLE">
+      <column name="id" sqlType="serial" precision="10" scale="0" nullable="false" jdbcType="4" def="bmV4dHZhbCgndXNlcl9pZF9zZXEnOjpyZWdjbGFzcyk=" autoIncrement="true"/>
+      <column name="login" sqlType="varchar" precision="20" scale="0" nullable="false" jdbcType="12"/>
+      <column name="hash" sqlType="text" precision="2147483647" scale="0" nullable="false" jdbcType="12"/>
+      <column name="email" sqlType="varchar" precision="50" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="user_pkey" columns="id"/>
+      <exported-key name="employee_user_id_fkey" table="employee" schema="public" catalog="jaw" columns="user_id"/>
+    </table>
+    <procedure name="company_delete" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="company_insert" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="employee_insert" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="privilege_insert" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="product_delete" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="product_insert" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="project_after_delete" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="project_delete" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+    <procedure name="project_insert" schema="public" catalog="jaw" type="2">
+      <prototype>
+        <parameter name="returnValue" sqlType="trigger" precision="0" scale="0" nullable="true" jdbcType="1111" type="5" index="0"/>
+      </prototype>
+    </procedure>
+  </data-source>
+</component>

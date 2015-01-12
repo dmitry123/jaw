@@ -173,7 +173,7 @@ BEGIN
 	-- Delete connector between product and it's employee
 	DELETE FROM product_employee WHERE product_id = OLD.id;
 	-- Remove all product's children
-	DELETE FROM product WHERE parent_id = OLD.id AND id <> OLD.id;
+	DELETE FROM product WHERE parent_id = OLD.id;
 	RETURN OLD;
 END;
 $$;

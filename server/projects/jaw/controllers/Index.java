@@ -7,10 +7,14 @@ import jaw.Html.Html;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.Object;
+import java.lang.String;
 import java.util.HashMap;
 import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * Created by Savonin on 2014-11-08
@@ -30,14 +34,26 @@ public class Index extends Controller {
 	@Override
 	public void actionView() throws Exception {
 
-		// If we have user's session then redirect to system view else render current
-//		if (getEnvironment().getSessionManager().has()) {
-//			redirect("Index", "Project");
-//		} else {
-//			renderVm("View");
-//		}
+		if (!checkAccess()) {
+			renderVm("View"); return;
+		}
 
-		renderVm("View");
+		Session session = getEnvironment().getSession();
+		Model employeeModel = getModel("Employee");
+
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		Vector<Map<String, String>> employees = new Vector<Map<String, String>>();
+
+		final ResultSet projectEmployees = employeeModel.fetchSet(
+			"fetchProjectsByUserID", session.getID()
+		);
+
+		while (projectEmployees.next()) {
+			employees.add(Model.buildMap(projectEmployees));
+		}
+
+		data.put("employees", employees);
+		renderVm("View", data);
 	}
 
 	@Override

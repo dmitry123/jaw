@@ -66,7 +66,6 @@ var IndexProjectEmployee = {
                     $("<li></li>", {
                         role: "presentation",
                         class: "index-project-employee",
-                        id: "join-project",
                         style: "text-align: left"
                     }).append(
                         $("<a></a>", {
@@ -141,7 +140,28 @@ var IndexProjectEmployee = {
                 me._handler();
             }
         });
-        this.update();
+        $(".logo-form").find(".glyphicon-refresh").click(function() {
+            IndexProjectEmployee.update();
+        });
+        $(".index-project-employee").click(function() {
+            var li = $(this);
+            IndexProjectEmployee.activate(li, function() {
+                var employee = this._active.data("instance");
+                $(".index-project-start").button("loading");
+                $.get("/jaw/employee/login", {
+                    id: li.data("employee") || employee["employee.id"]
+                }, function(data) {
+                    var json = $.parseJSON(data);
+                    $(".index-project-start").button("reset");
+                    if (!json.status) {
+                        return Jaw.createMessage({
+                            message: json.message
+                        });
+                    }
+                    window.location.href = "/jaw/system";
+                });
+            });
+        });
     },
     _active: null,
     _handler: null

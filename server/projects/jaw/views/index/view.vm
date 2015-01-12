@@ -29,7 +29,20 @@
                         </ul>
                     </div>
                     <div class="index-project-wrapper">
-                        <ul class="nav nav-pills nav-stacked index-project-list"></ul>
+                        <ul class="nav nav-pills nav-stacked index-project-list">
+                            #foreach ($employee in $employees)
+                                #set ($fio = $employee["employee.surname"] + " " +
+                                    $employee["employee.name"].substring(0, 1).toUpperCase() + "." +
+                                    $employee["employee.patronymic"].substring(0, 1).toUpperCase()
+                                )
+                            <li data-employee="$!employee["employee.id"]" role="presentation" class="index-project-employee"><a href="javascript:void(0)">
+                                <table width="100%"><thead><tr>
+                                    <td width="50%" style="text-align: left"><b>$employee["product.name"]</b></td>
+                                    <td style="text-align: right">$fio</td>
+                                </tr></thead></table>
+                            </a></li>
+                            #end
+                        </ul>
                     </div>
                     <button class="btn btn-danger logout">Выйти</button>
                     <button class="btn btn-primary index-project-start active" data-loading-text="Начинаем...">Начать работу</button>

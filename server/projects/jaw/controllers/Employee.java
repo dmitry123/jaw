@@ -1,11 +1,14 @@
 package jaw.controllers;
 
+import jaw.Html.Html;
 import jaw.core.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.StringWriter;
 import java.lang.Exception;
 import java.sql.ResultSet;
+import java.util.Map;
 
 public class Employee extends Controller {
 
