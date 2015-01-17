@@ -1,9 +1,8 @@
 package jaw.forms;
 
-import jaw.core.Environment;
-import jaw.core.Form;
+import jaw.Core.Environment;
+import jaw.Core.Form;
 
-import java.lang.Object;
 import java.lang.String;
 import java.sql.ResultSet;
 import java.util.LinkedHashMap;

@@ -1,6 +1,6 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.sql.CortegeProtocol;
+import jaw.Sql.CortegeProtocol;
 
 import java.sql.ResultSet;
 

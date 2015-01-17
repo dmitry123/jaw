@@ -1,7 +1,7 @@
-package jaw.server;
+package jaw.Server;
 
-import jaw.core.*;
-import jaw.terminal.Machine;
+import jaw.Core.*;
+import jaw.Terminal.Machine;
 import org.json.JSONObject;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package jaw.sql;
+package jaw.Sql;
 
 import java.io.Serializable;
 

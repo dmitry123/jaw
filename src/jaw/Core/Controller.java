@@ -1,7 +1,7 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.server.HtmlBuilder;
-import jaw.server.NanoHttpd;
+import jaw.Server.HtmlBuilder;
+import jaw.Server.NanoHttpd;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.json.JSONArray;

@@ -1,9 +1,9 @@
 package jaw.models;
 
-import jaw.core.*;
+import jaw.Core.*;
 
-import jaw.sql.CortegeProtocol;
-import jaw.sql.CortegeRow;
+import jaw.Sql.CortegeProtocol;
+import jaw.Sql.CortegeRow;
 
 import java.lang.Exception;
 import java.lang.Object;

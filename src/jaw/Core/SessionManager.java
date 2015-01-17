@@ -1,4 +1,4 @@
-package jaw.core;
+package jaw.Core;
 
 import java.io.*;
 import java.util.HashMap;

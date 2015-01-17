@@ -1,6 +1,6 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.sql.Connection;
+import jaw.Sql.Connection;
 
 import java.io.File;
 

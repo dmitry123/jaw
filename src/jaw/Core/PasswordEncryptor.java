@@ -1,4 +1,4 @@
-package jaw.core;
+package jaw.Core;
 
 import com.sun.crypto.provider.SunJCE;
 import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;

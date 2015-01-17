@@ -1,8 +1,8 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.sql.CommandProtocol;
-import jaw.sql.Connection;
-import jaw.sql.CortegeProtocol;
+import jaw.Sql.CommandProtocol;
+import jaw.Sql.Connection;
+import jaw.Sql.CortegeProtocol;
 import org.json.JSONArray;
 
 import java.lang.reflect.InvocationTargetException;

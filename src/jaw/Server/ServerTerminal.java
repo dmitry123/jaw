@@ -1,13 +1,13 @@
-package jaw.server;
+package jaw.Server;
 
-import jaw.core.Environment;
-import jaw.core.EnvironmentManager;
-import jaw.core.Logger;
-import jaw.core.Session;
-import jaw.terminal.Error;
-import jaw.terminal.Instruction;
-import jaw.terminal.Machine;
-import jaw.terminal.Station;
+import jaw.Core.Environment;
+import jaw.Core.EnvironmentManager;
+import jaw.Core.Logger;
+import jaw.Core.Session;
+import jaw.Terminal.Error;
+import jaw.Terminal.Instruction;
+import jaw.Terminal.Machine;
+import jaw.Terminal.Station;
 
 import java.util.Map;
 import java.util.Vector;

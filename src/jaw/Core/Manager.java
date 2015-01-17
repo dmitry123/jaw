@@ -1,6 +1,6 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.server.WebServer;
+import jaw.Server.WebServer;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

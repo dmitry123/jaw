@@ -1,7 +1,7 @@
 package jaw.controllers;
 
-import jaw.core.*;
-import jaw.core.Controller;
+import jaw.Core.*;
+import jaw.Core.Controller;
 
 import java.sql.SQLException;
 

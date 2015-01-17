@@ -1,6 +1,6 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.server.NanoHttpd;
+import jaw.Server.NanoHttpd;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -79,7 +79,7 @@ public class Router extends Extension {
 	 * @param projectPath - Path to project
 	 * @param componentPath - Name of component, which you'd like to find
 	 * @param componentFolder - Name of component type's folder
-	 * @see jaw.core.Config
+	 * @see jaw.Core.Config
 	 * @return - Absolute path to file (about project path)
 	 * @throws Exception
 	 */
@@ -94,7 +94,7 @@ public class Router extends Extension {
 	 * @param projectPath - Path to project
 	 * @param componentPath - Name of component, which you'd like to find
 	 * @param componentFolder - Name of component type's folder
-	 * @see jaw.core.Config
+	 * @see jaw.Core.Config
 	 * @return - Absolute path to file (about project path)
 	 * @throws Exception
 	 */
@@ -109,7 +109,7 @@ public class Router extends Extension {
 	 * @param projectPath - Path to project
 	 * @param componentPath - Name of component, which you'd like to find
 	 * @param componentFolder - Name of component type's folder
-	 * @see jaw.core.Config
+	 * @see jaw.Core.Config
 	 * @return - Absolute path to file (about project path)
 	 * @throws Exception
 	 */
@@ -122,7 +122,7 @@ public class Router extends Extension {
 	 * @param projectPath - Path to project
 	 * @param componentPath - Name of component, which you'd like to find
 	 * @param componentFolder - Name of component type's folder
-	 * @see jaw.core.Config
+	 * @see jaw.Core.Config
 	 * @return - Path to file (about project path)
 	 * @throws Exception
 	 */

@@ -1,8 +1,7 @@
-package jaw.core;
+package jaw.Core;
 
-import jaw.server.Mime;
+import jaw.Server.Mime;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

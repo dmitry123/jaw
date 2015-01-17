@@ -1,4 +1,4 @@
-package jaw.core;
+package jaw.Core;
 
 /**
  * Created by Savonin on 2014-11-08

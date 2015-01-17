@@ -1,4 +1,4 @@
-package jaw.core;
+package jaw.Core;
 
 import java.sql.ResultSet;
 import java.util.LinkedHashMap;

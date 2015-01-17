@@ -1,8 +1,8 @@
 package jaw.controllers;
 
-import jaw.core.Controller;
-import jaw.core.Environment;
-import jaw.core.Model;
+import jaw.Core.Controller;
+import jaw.Core.Environment;
+import jaw.Core.Model;
 import jaw.Html.Html;
 
 import java.lang.Exception;

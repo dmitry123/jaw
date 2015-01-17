@@ -1,4 +1,4 @@
-package jaw.server;
+package jaw.Server;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

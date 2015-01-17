@@ -1,4 +1,4 @@
-package jaw.core;
+package jaw.Core;
 
 import java.io.Serializable;
 import java.util.HashMap;
