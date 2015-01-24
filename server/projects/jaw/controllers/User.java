@@ -1,8 +1,7 @@
 package jaw.controllers;
 
-import jaw.core.*;
+import jaw.Core.*;
 
-import jaw.sql.CortegeProtocol;
 import org.json.JSONObject;
 
 import java.sql.ResultSet;

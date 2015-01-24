@@ -1,5 +1,5 @@
-import jaw.core.*;
-import jaw.server.WebServer;
+import jaw.Core.*;
+import jaw.Server.WebServer;
 
 /**
  * Entry point

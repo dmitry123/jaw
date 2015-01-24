@@ -1,6 +1,6 @@
 package jaw.controllers;
 
-import jaw.core.*;
+import jaw.Core.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -1,8 +1,8 @@
 package jaw.controllers;
 
-import jaw.core.*;
+import jaw.Core.*;
 
-import jaw.sql.CortegeProtocol;
+import jaw.Sql.CortegeProtocol;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

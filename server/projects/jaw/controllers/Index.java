@@ -1,8 +1,8 @@
 package jaw.controllers;
 
-import jaw.core.*;
+import jaw.Core.*;
 
-import jaw.core.Session;
+import jaw.Core.Session;
 import jaw.Html.Html;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -1,7 +1,7 @@
 package jaw.controllers;
 
-import jaw.core.Controller;
-import jaw.core.Environment;
+import jaw.Core.Controller;
+import jaw.Core.Environment;
 
 public class Product extends Controller {
 

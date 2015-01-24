@@ -1,7 +1,7 @@
 package jaw.modules;
 
-import jaw.core.Environment;
-import jaw.core.Module;
+import jaw.Core.Environment;
+import jaw.Core.Module;
 
 /**
  * Created by Savonin on 2015-01-08
