@@ -21,7 +21,7 @@ public class System extends Controller {
 	}
 
 	@Override
-	public void actionFilter(String path, String action) throws Exception {
+	public void filterCheckAccess(String path, String action) throws Exception {
 
 		Session session = getEnvironment().getSession();
 
@@ -113,7 +113,7 @@ public class System extends Controller {
 			return;
 		}
 
-		actionFilter(null, null);
+		filterCheckAccess(null, null);
 
 		render("View");
 	}

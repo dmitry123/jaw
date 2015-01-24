@@ -1,16 +1,15 @@
 #if (${this.checkAccess()})
-<script type="text/javascript" src="/jaw/scripts/project.js"></script>
+    <script type="text/javascript" src="/jaw/scripts/project.js"></script>
 #else
-<script type="text/javascript" src="/jaw/scripts/index.js"></script>
+    <script type="text/javascript" src="/jaw/scripts/index.js"></script>
 #end
 <div class="maximum-parent background">
     <table class="hundred-percents"><tr><td>
-        <div class="">
-            <div class="logo-form">
-                <div class="logo-wrapper">
-                    <div class="logo"></div>
-                </div>
-                #if (${this.checkAccess()})
+        <div class="logo-form">
+            <div class="logo-wrapper">
+                <div class="logo"></div>
+            </div>
+            #if (${this.checkAccess()})
                 <div class="login" id="project">
                     <div class="index-project-wrapper">
                         <ul class="nav nav-pills nav-stacked">
@@ -48,7 +47,7 @@
                     <button class="btn btn-primary index-project-start active" data-loading-text="Начинаем...">Начать работу</button>
                 </div>
                 <span class="glyphicon glyphicon-refresh"></span>
-                #else
+            #else
                 <div class="login" id="login">
                     <div class="input-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
@@ -61,14 +60,13 @@
                     <button class="btn btn-default login-register">Регистрация</button>
                     <button class="btn btn-default login-submit">Вход</button>
                 </div>
-                #end
-            </div>
+            #end
         </div>
     </td></tr></table>
     #if (${this.checkAccess("jaw/admin")})
-    <a href="/jaw/admin"><img class="god-button" src="/jaw/images/god-2.png"></a>
+        <a href="/jaw/admin"><img class="god-button" src="/jaw/images/god-2.png"></a>
     #end
 </div>
 #if (!${this.checkAccess()})
-    ${this.runWidget("Register")}
+    {{{ REGISTER }}}
 #end

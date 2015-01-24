@@ -11,9 +11,7 @@
     <link rel="stylesheet" type="text/css" href="/jaw/styles/jaw.css">
     <link rel="stylesheet" type="text/css" href="/jaw/styles/jquery-ui.css">
 </head>
-<script> var jaw = {
-    url: "${url}"
-}; </script>
+<script> var jaw = { url: "${url}" }; </script>
 <script type="text/javascript" src="/jaw/scripts/jquery.js"></script>
 <script type="text/javascript" src="/jaw/scripts/jquery-ui.js"></script>
 <script type="text/javascript" src="/jaw/scripts/bootstrap.js"></script>

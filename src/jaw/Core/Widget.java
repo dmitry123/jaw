@@ -69,9 +69,7 @@ public abstract class Widget extends Controller {
 		data.put("url", "/" + getEnvironment().getProjectName());
 		data.put("this", getController());
 
-		loadVm(getVmWidgetPath(getClass().getName().substring(
-			getClass().getName().lastIndexOf('.') + 1
-		), action), data);
+		loadVm(getVmWidgetPath(action), data);
 	}
 
 	/**
@@ -84,12 +82,11 @@ public abstract class Widget extends Controller {
 
 	/**
 	 * Calculate path ot VM file
-	 * @param controllerName - Name of controller (folder with VM file)
 	 * @param actionName - Name of controller's action (file with VM content)
 	 * @return - Relative path to VM file with HTML content
 	 * @throws Exception
 	 */
-	private String getVmWidgetPath(String controllerName, String actionName) throws Exception {
+	private String getVmWidgetPath(String actionName) throws Exception {
 		return Config.PROJECT_PATH + getEnvironment().getProjectName() + File.separator
 			+ Config.WIDGET_PATH + Config.VIEW_PATH + actionName + ".vm";
 	}

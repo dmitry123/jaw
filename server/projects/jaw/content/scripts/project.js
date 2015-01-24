@@ -162,6 +162,16 @@ var IndexProjectEmployee = {
                 });
             });
         });
+        var list = $(".index-project-list");
+        if (!list.children("li").length) {
+            list.append(
+                $("<li></li>", {
+                    role: "presentation"
+                }).append(
+                    $("<b>Вы не подключены ни к одному проекту</b>")
+                )
+            );
+        }
     },
     _active: null,
     _handler: null

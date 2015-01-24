@@ -31,35 +31,4 @@ public class GroupPrivilege extends Model {
 			.join("group_privilege", "group_privilege.privilege_id = privilege.id")
 			.join("groups", "group_privilege.group_id = groups.id");
 	}
-
-	class Row extends CortegeKey {
-
-		/**
-		 * @param key Key
-		 */
-		public Row(String key, int groupID, int privilegeID) {
-			super(key); this.groupID = groupID; this.privilegeID = privilegeID;
-		}
-
-		public int getGroupID() {
-			return groupID;
-		}
-
-		public int getPrivilegeID() {
-			return privilegeID;
-		}
-
-		private int groupID;
-		private int privilegeID;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getString("id"), result.getInt("group_id"), result.getInt("privilege_id"));
-	}
 }

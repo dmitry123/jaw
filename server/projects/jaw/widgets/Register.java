@@ -24,9 +24,7 @@ public class Register extends Widget {
 	 */
 	@Override
 	public void run(HashMap<String, Object> data) throws Exception {
-		render(new LinkedHashMap<String, Object>() {{
-			put("body", "Hello, World");
-		}});
+		render();
 	}
 
 	/**

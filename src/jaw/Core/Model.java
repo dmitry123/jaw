@@ -3,6 +3,7 @@ package jaw.Core;
 import jaw.Sql.CommandProtocol;
 import jaw.Sql.Connection;
 import jaw.Sql.CortegeProtocol;
+import jaw.Sql.CortegeRow;
 import org.json.JSONArray;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,18 +15,16 @@ import java.util.*;
 
 /**
  * AbstractTable
- * @param <T>
  */
-abstract public class Model<T extends CortegeProtocol> extends Component implements ModelProtocol {
+abstract public class Model extends Component implements ModelProtocol {
 
 	/**
 	 * Filter interface, which provides
 	 * implementation of 'test' method
 	 * to check object's fields
-	 * @param <T> - CortegeProtocol implementation
 	 */
-    public static interface Filter<T> {
-        boolean test(T u);
+    public static interface Filter {
+        boolean test(CortegeProtocol u);
     }
 
 	/**
@@ -39,20 +38,13 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
     }
 
 	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	public abstract CortegeProtocol createFromSet(ResultSet result) throws Exception;
-
-	/**
 	 * Fetch row from list via it's action name
 	 * @param fetchAction - Fetch action name
 	 * @param argumentList - List with arguments
 	 * @return - Found row
 	 * @throws Exception
 	 */
-	public T fetchRow(String fetchAction, Object... argumentList) throws Exception {
+	public CortegeProtocol fetchRow(String fetchAction, Object... argumentList) throws Exception {
 		Method method;
 		Class<?>[] typeList = new Class<?>[
 			argumentList.length
@@ -73,12 +65,9 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		try {
 			Object result = method.invoke(this, argumentList);
 			if (result instanceof ResultSet) {
-				if (((ResultSet) result).next()) {
-					return (T) createFromSet(((ResultSet) result));
-				}
-				return null;
+				return new CortegeRow(((ResultSet) result).getInt("id"));
 			} else {
-				return ((T) result);
+				return ((CortegeProtocol) result);
 			}
 		} catch (IllegalAccessException e) {
 			throw new Exception(
@@ -164,10 +153,10 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 				this, argumentList
 			);
 			if (result instanceof ResultSet) {
-				ResultSet rs = ((ResultSet) result);
-				Vector<CortegeProtocol> rv = new Vector<CortegeProtocol>(rs.getFetchSize());
-				while (rs.next()) {
-					rv.add(createFromSet(rs));
+				ResultSet resultSet = ((ResultSet) result);
+				Vector<CortegeProtocol> rv = new Vector<CortegeProtocol>(resultSet.getFetchSize());
+				while (resultSet.next()) {
+					rv.add(new CortegeRow(resultSet.getInt("id")));
 				}
 				return rv;
 			}
@@ -175,7 +164,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 				return (Vector<CortegeProtocol>) result;
 			} catch (ClassCastException e) {
 				return new Vector<CortegeProtocol>() {{
-					add(((T) result));
+					add(((CortegeProtocol) result));
 				}};
 			}
 		} catch (IllegalAccessException e) {
@@ -537,10 +526,10 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			}
 		}
 		return getConnection().createCommand()
-			.insert(getTableName(), columns)
-			.values(variables)
-			.execute(objects.toArray())
-			.insert();
+				.insert(getTableName(), columns)
+				.values(variables)
+				.execute(objects.toArray())
+				.insert();
 	}
 
 	/**
@@ -549,7 +538,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public T last() throws Exception {
+	public CortegeProtocol last() throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from(getTableName())
@@ -559,9 +548,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		if (!resultSet.next()) {
 			return null;
 		}
-		return (T) createFromSet(
-			resultSet
-		);
+		return new CortegeRow(resultSet.getInt("id"));
 	}
 
 	/**
@@ -647,16 +634,16 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @param where Where statement
 	 * @return Vector with founded rows
 	 */
-    public Vector<T> fetchList(String where) throws Exception {
+    public Vector<CortegeProtocol> fetchList(String where) throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from(getTableName())
 			.where(where)
 			.execute()
 			.select();
-		Vector<T> result = new Vector<T>();
+		Vector<CortegeProtocol> result = new Vector<CortegeProtocol>();
 		while (resultSet.next()) {
-			result.add((T) createFromSet(resultSet));
+			result.add(new CortegeRow(resultSet.getInt("id")));
 		}
 		return result;
 	}
@@ -664,12 +651,12 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	/**
 	 * @return Table's size
 	 */
-    public int fetchSize(String where) throws Exception {
+    public int fetchSize(String where, Object... arguments) throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("count(*) as c")
 			.from(getTableName())
 			.where(where)
-			.execute()
+			.execute(arguments)
 			.select();
 		if (resultSet.next()) {
 			return resultSet.getInt("c");

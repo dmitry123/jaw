@@ -8,7 +8,7 @@ import jaw.Sql.CortegeRow;
 import java.sql.ResultSet;
 import java.util.Map;
 
-public class Request extends Model<Request.Row> {
+public class Request extends Model {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
@@ -76,60 +76,5 @@ public class Request extends Model<Request.Row> {
 			.where("e.company_id = ?")
 			.execute(companyID)
 			.select();
-	}
-
-	public static class Row extends CortegeRow {
-
-		public Row(int id, int receiverID, int senderID, int productID, String privilegeID, String message) {
-			super(id);
-			this.receiverID = receiverID;
-			this.senderID = senderID;
-			this.productID = productID;
-			this.privilegeID = privilegeID;
-			this.message = message;
-		}
-
-		public int getReceiverID() {
-			return receiverID;
-		}
-
-		public int getSenderID() {
-			return senderID;
-		}
-
-		public int getProductID() {
-			return productID;
-		}
-
-		public String getPrivilegeID() {
-			return privilegeID;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		private int receiverID;
-		private int senderID;
-		private int productID;
-		private String privilegeID;
-		private String message;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return new Row(
-			result.getInt("id"),
-			result.getInt("receiver_id"),
-			result.getInt("sender_id"),
-			result.getInt("product_id"),
-			result.getString("privilege_id"),
-			result.getString("message")
-		);
 	}
 }

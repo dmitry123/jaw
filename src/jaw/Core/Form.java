@@ -1,9 +1,5 @@
 package jaw.Core;
 
-import java.sql.ResultSet;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class Form extends Component {

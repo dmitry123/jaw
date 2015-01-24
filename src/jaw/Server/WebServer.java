@@ -140,7 +140,7 @@ public class WebServer extends NanoHttpd {
 
 			Controller controller;
 
-			environment.getControllerManager().get("Index").actionFilter(
+			environment.getControllerManager().get("Index").filterCheckAccess(
 					totalPath, actionName
 			);
 

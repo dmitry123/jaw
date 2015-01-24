@@ -35,7 +35,8 @@ public class Index extends Controller {
 	public void actionView() throws Exception {
 
 		if (!checkAccess()) {
-			renderVm("View"); return;
+			renderVm("View", "Register");
+			return;
 		}
 
 		Session session = getEnvironment().getSession();
@@ -57,7 +58,7 @@ public class Index extends Controller {
 	}
 
 	@Override
-	public void actionFilter(String path, String action) throws Exception {
+	public void filterCheckAccess(String path, String action) throws Exception {
 
 		Session session = getEnvironment().getSession();
 

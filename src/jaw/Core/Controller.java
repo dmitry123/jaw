@@ -35,7 +35,7 @@ public abstract class Controller extends Component {
 	 * Override that method to filter all actions
 	 * @throws Exception
 	 */
-	public void actionFilter(String path, String action) throws Exception {
+	public void filterCheckAccess(String path, String action) throws Exception {
 		/* Ignored */
 	}
 
@@ -144,7 +144,7 @@ public abstract class Controller extends Component {
 						PasswordEncryptor.crypt(GET("login"), password)
 				);
 			}
-
+			
 			getModel().insert(
 				getSession().getParms()
 			);
@@ -289,6 +289,19 @@ public abstract class Controller extends Component {
 	 * @throws Exception
 	 */
 	public void renderVm(String action) throws Exception {
+		renderVm(action, new HashMap<String, Object>());
+	}
+
+	/**
+	 * Render VM file and load widgets for it's view
+	 * @param action - Name of render action
+	 * @param widgets - List with widgets to render
+	 * @throws Exception
+	 */
+	public void renderVm(String action, String... widgets) throws Exception {
+		for (String widget : widgets) {
+			runWidget(widget);
+		}
 		renderVm(action, new HashMap<String, Object>());
 	}
 

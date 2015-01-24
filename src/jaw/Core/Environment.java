@@ -119,9 +119,12 @@ public class Environment {
 	public MustacheDefiner getMustacheDefiner() {
 		if (getSession() != null) {
 			return getSession().getMustacheDefiner();
+		} else {
+			return mustacheDefiner;
 		}
-		return null;
 	}
+
+	private MustacheDefiner mustacheDefiner = new MustacheDefiner();
 
 	/**
 	 * @return - Path to project
