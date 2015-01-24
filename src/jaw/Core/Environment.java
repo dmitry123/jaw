@@ -38,52 +38,37 @@ public class Environment {
 	/**
 	 * @return - Project's model manager
 	 */
-	public ModelManager getModelManager() {
+	public AbstractManager<Model> getModelManager() {
 		return modelManager;
 	}
-
-	private ModelManager modelManager
-			= new ModelManager(this);
 
 	/**
 	 * @return - Project's form manager
 	 */
-	public FormManager getFormManager() {
+	public AbstractManager<Form> getFormManager() {
 		return formManager;
 	}
-
-	private FormManager formManager
-			= new FormManager(this);
-
-	/**
-	 * @return - Component's manager
-	 */
-	public ComponentManager getComponentManager() {
-		return componentManager;
-	}
-
-	private ComponentManager componentManager
-			= new ComponentManager(this);
 
 	/**
 	 * @return - Controller manager
 	 */
-	public ControllerManager getControllerManager() {
+	public AbstractManager<Controller> getControllerManager() {
 		return controllerManager;
 	}
-
-	private ControllerManager controllerManager
-			= new ControllerManager(this);
 
 	/**
 	 * @return - View manager
 	 */
-	public ViewManager getViewManager() {
+	public AbstractManager<View> getViewManager() {
 		return viewManager;
 	}
 
-	private ViewManager viewManager
-			= new ViewManager(this);
+	/**
+	 * @return - Module manager
+	 */
+	public AbstractManager<Module> getModuleManager() {
+		return moduleManager;
+	}
 
 	/**
 	 * @return - Project's manager
@@ -92,18 +77,12 @@ public class Environment {
 		return projectManager;
 	}
 
-	private ProjectManager projectManager
-			= new ProjectManager(this);
-
 	/**
 	 * @return - Component's factory
 	 */
 	public ComponentFactory getComponentFactory() {
 		return componentFactory;
 	}
-
-	private ComponentFactory componentFactory
-			= new ComponentFactory(this);
 
 	/**
 	 * @return - Router
@@ -112,18 +91,12 @@ public class Environment {
 		return router;
 	}
 
-	private Router router
-			= new Router(this);
-
 	/**
 	 * @return - User session manager
 	 */
 	public SessionManager getSessionManager() {
 		return sessionManager;
 	}
-
-	private SessionManager sessionManager
-			= new SessionManager(this);
 
 	/**
 	 * @return - Current user's session
@@ -178,8 +151,17 @@ public class Environment {
 		this.sessionID = sessionID;
 	}
 
+	private AbstractManager<Model> modelManager = ManagerFactory.getManager().createModelManager(this);
+	private AbstractManager<Form> formManager = ManagerFactory.getManager().createFormManager(this);
+	private AbstractManager<Controller> controllerManager = ManagerFactory.getManager().createControllerManager(this);
+	private AbstractManager<View> viewManager = ManagerFactory.getManager().createViewManager(this);
+	private AbstractManager<Module> moduleManager = ManagerFactory.getManager().createModuleManager(this);
 	private String projectName;
 	private String projectPath;
 	private Connection connection;
 	private String sessionID;
+	private ProjectManager projectManager = new ProjectManager(this);
+	private ComponentFactory componentFactory = new ComponentFactory(this);
+	private Router router = new Router(this);
+	private SessionManager sessionManager = new SessionManager(this);
 }

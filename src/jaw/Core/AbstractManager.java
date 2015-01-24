@@ -9,13 +9,13 @@ import java.util.HashMap;
 /**
  * Created by dmitry on 18.11.14
  */
-public class Manager<C extends Component> extends Extension {
+public class AbstractManager<C extends Component> extends Extension {
 
 	/**
 	 * @param environment - Project's environment
 	 * @param type - Component's type
 	 */
-	public Manager(Environment environment, ComponentType type) {
+	public AbstractManager(Environment environment, ComponentType type) {
 		super(environment); this.type = type;
 	}
 
