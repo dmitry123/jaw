@@ -1,4 +1,4 @@
-#if (${controller.checkAccess()})
+#if (${this.checkAccess()})
 <script type="text/javascript" src="/jaw/scripts/project.js"></script>
 #else
 <script type="text/javascript" src="/jaw/scripts/index.js"></script>
@@ -10,7 +10,7 @@
                 <div class="logo-wrapper">
                     <div class="logo"></div>
                 </div>
-                #if (${controller.checkAccess()})
+                #if (${this.checkAccess()})
                 <div class="login" id="project">
                     <div class="index-project-wrapper">
                         <ul class="nav nav-pills nav-stacked">
@@ -65,7 +65,10 @@
             </div>
         </div>
     </td></tr></table>
-    #if (${controller.checkAccess("jaw/admin")})
+    #if (${this.checkAccess("jaw/admin")})
     <a href="/jaw/admin"><img class="god-button" src="/jaw/images/god-2.png"></a>
     #end
 </div>
+#if (!${this.checkAccess()})
+    ${this.runWidget("Register")}
+#end

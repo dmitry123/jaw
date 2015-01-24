@@ -1,7 +1,10 @@
 package jaw.Core;
 
 import java.sql.ResultSet;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public abstract class Form extends Component {
 
@@ -13,10 +16,15 @@ public abstract class Form extends Component {
 	}
 
 	/**
-	 * Override that method to return form's model
-	 * @return - Linked hash map associated with collections or object values
+	 * Override that method to return form configuration, form should return
+	 * map in next format: Every map's key is name of form's identification value, likes
+	 * name of table in database or something else. Every row must contains:
+	 *  + text - Translated text that will be displayed
+	 *  + type - Type of value (number, text, select, date ... etc)
+	 * @return - Form configuration
+	 * @throws Exception
 	 */
-	public abstract LinkedHashMap<String, ResultSet> getForm() throws Exception;
+	public abstract Map<String, Object> getConfig() throws Exception;
 
 	/**
 	 * Set form's model

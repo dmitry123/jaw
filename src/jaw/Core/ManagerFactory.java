@@ -37,6 +37,10 @@ public class ManagerFactory {
 		return new AbstractManager<Module>(environment, ComponentType.MODULE);
 	}
 
+	public AbstractManager<Widget> createWidgetManager(Environment environment) throws Exception {
+		return new AbstractManager<Widget>(environment, ComponentType.WIDGET);
+	}
+
 	private static ManagerFactory managerFactory
 			= new ManagerFactory();
 }

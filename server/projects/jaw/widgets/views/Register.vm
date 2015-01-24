@@ -1,0 +1,13 @@
+${this.runWidget("Modal",
+	"{
+		title: 'Регистрация',
+		id: 'modal-register',
+		buttons: [
+			{
+				text: 'Отправить',
+				cls: 'btn btn-primary'
+			}
+		],
+		body: 123
+	}"
+)}

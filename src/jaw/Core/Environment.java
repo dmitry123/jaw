@@ -71,6 +71,13 @@ public class Environment {
 	}
 
 	/**
+	 * @return - Widget manager
+	 */
+	public AbstractManager<Widget> getWidgetManager() {
+		return widgetManager;
+	}
+
+	/**
 	 * @return - Project's manager
 	 */
 	public ProjectManager getProjectManager() {
@@ -156,6 +163,7 @@ public class Environment {
 	private AbstractManager<Controller> controllerManager = ManagerFactory.getManager().createControllerManager(this);
 	private AbstractManager<View> viewManager = ManagerFactory.getManager().createViewManager(this);
 	private AbstractManager<Module> moduleManager = ManagerFactory.getManager().createModuleManager(this);
+	private AbstractManager<Widget> widgetManager = ManagerFactory.getManager().createWidgetManager(this);
 	private String projectName;
 	private String projectPath;
 	private Connection connection;

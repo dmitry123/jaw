@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
 import java.util.*;
 
 /**
@@ -221,24 +220,24 @@ public abstract class Controller extends Component {
 		JSONObject json = new JSONObject();
 		Form form = getForm(formName);
 
-		if (form != null) {
-			form.setModel(getModel());
-			Map<String, ResultSet> map = form.getForm();
-			Map<String, Collection<Object>> collection
-				= new LinkedHashMap<String, Collection<Object>>();
-			for (Map.Entry<String, ResultSet> entry : map.entrySet()) {
-				Collection<Object> vector = new Vector<Object>();
-				while (entry.getValue().next()) {
-					vector.add(Model.buildStaticMap(entry.getValue()));
-				}
-				collection.put(entry.getKey(), vector);
-			}
-			json.put("model", collection);
-			json.put("status", true);
-		} else {
-			json.put("message", "Невозможно найти форму для получения данных");
-			json.put("status", false);
-		}
+//		if (form != null) {
+//			form.setModel(getModel());
+//			Map<String, ResultSet> map = form.getForm();
+//			Map<String, Collection<Object>> collection
+//				= new LinkedHashMap<String, Collection<Object>>();
+//			for (Map.Entry<String, ResultSet> entry : map.entrySet()) {
+//				Collection<Object> vector = new Vector<Object>();
+//				while (entry.getValue().next()) {
+//					vector.add(Model.buildStaticMap(entry.getValue()));
+//				}
+//				collection.put(entry.getKey(), vector);
+//			}
+//			json.put("model", collection);
+//			json.put("status", true);
+//		} else {
+//			json.put("message", "Невозможно найти форму для получения данных");
+//			json.put("status", false);
+//		}
 
 		setAjaxResponse(json.toString());
 	}
@@ -294,15 +293,93 @@ public abstract class Controller extends Component {
 	}
 
 	/**
+	 * Load widget and run
+	 * @throws Exception
+	 */
+	public void runWidget(String path) throws Exception {
+		runWidget(path, new HashMap<String, Object>());
+	}
+
+	/**
+	 * Load widget with json config
+	 * @param path - Path to widget
+	 * @param json - Json parameters
+	 * @throws Exception
+	 */
+	public void runWidget(String path, String json) throws Exception {
+		runWidget(path, jsonToMap(new JSONObject(json)));
+	}
+
+	/**
+	 * Convert json array to vector
+	 * @param node - Json array
+	 * @return - Vector
+	 * @throws Exception
+	 */
+	private Vector<Object> jsonToArray(JSONArray node) throws Exception {
+		Vector<Object> data = new Vector<Object>();
+		for (int i = 0; i < node.length(); i++) {
+			Object object = node.get(i);
+			if (object instanceof JSONObject) {
+				object = jsonToMap((JSONObject) object);
+			} else if (object instanceof JSONArray) {
+				object = jsonToArray((JSONArray) object);
+			}
+			data.add(object);
+		}
+		return data;
+	}
+
+	/**
+	 * Convert json object to hash map
+	 * @param node - Json node
+	 * @return - Hash map
+	 * @throws Exception
+	 */
+	private HashMap<String, Object> jsonToMap(JSONObject node) throws Exception {
+		HashMap<String, Object> data = new HashMap<String, Object>();
+		for (String key : node.keySet()) {
+			Object object = node.get(key);
+			if (object instanceof JSONObject) {
+				object = jsonToMap((JSONObject) object);
+			} else if (object instanceof JSONArray) {
+				object = jsonToArray((JSONArray) object);
+			}
+			data.put(key, object);
+		}
+		return data;
+	}
+
+	/**
+	 * Load widget and run
+	 * @param path - Path to widget
+	 * @param data - Data for widget
+	 * @throws Exception
+	 */
+	public void runWidget(String path, HashMap<String, Object> data) throws Exception {
+		Widget widget = getEnvironment().getWidgetManager().get(path);
+		if (widget == null) {
+			throw new Exception("Unresolved widget path (" + path + ")");
+		}
+		widget.setController(this);
+		if (data == null) {
+			data = new HashMap<String, Object>();
+		}
+		widget.run(data);
+	}
+
+	/**
 	 * Render VM file with action and data
 	 * @param action - Action's name
 	 * @param hashData - Data to render
 	 * @throws Exception
 	 */
-	public void renderVm(final String action, Map<String, Object> hashData) throws Exception {
+	public void renderVm(String action, Map<String, Object> hashData) throws Exception {
+
+		action = action.substring(action.lastIndexOf(".") + 1);
 
 		hashData.put("url", "/" + getEnvironment().getProjectName());
-		hashData.put("controller", this);
+		hashData.put("this", this);
 
 		loadVm(getVmPath("common", "header"), new HashMap<String, Object>());
 
@@ -331,7 +408,7 @@ public abstract class Controller extends Component {
 	 * @param hashData - Data to render
 	 * @throws Exception
 	 */
-	private void loadVm(String vmPath, Map<String, Object> hashData) throws Exception {
+	protected void loadVm(String vmPath, Map<String, Object> hashData) throws Exception {
 
 		if (!new File(vmPath).exists()) {
 			throw new Exception("Can't resolve template name (" + getClass().getName() + File.separator + "." + vmPath + ")");
@@ -350,7 +427,11 @@ public abstract class Controller extends Component {
 
 		engine.getTemplate(vmPath, "UTF-8").merge(context, writer);
 
-		if (getView() != null) {
+		if (this instanceof Widget && getEnvironment().getMustacheDefiner() != null) {
+			getEnvironment().getMustacheDefiner().put(((Widget) this).getAlias(),
+				writer.toString()
+			);
+		} else if (getView() != null) {
 			if (getView().getHtmlContent() != null) {
 				getView().setHtmlContent(getView().getHtmlContent() + writer.toString());
 			} else {
