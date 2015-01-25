@@ -54,7 +54,7 @@ public class Index extends Controller {
 		}
 
 		data.put("employees", employees);
-		renderVm("View", data);
+		renderVm("View", data, "JoinCompany", "JoinProject", "RegisterCompany", "RegisterProject");
 	}
 
 	@Override
@@ -171,9 +171,7 @@ public class Index extends Controller {
 	 * @throws Exception
 	 */
 	public void actionDenied() throws Exception {
-
-		// Render denied page
-		render("Denied");
+		renderVm("Denied");
 	}
 
 	/**
@@ -182,10 +180,6 @@ public class Index extends Controller {
 	 */
 	@Override
 	public void action404() throws Exception {
-
-		// Render 404 error
-		if (getView() != null) {
-			render("404");
-		}
+		renderVm("404");
 	}
 }

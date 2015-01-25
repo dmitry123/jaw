@@ -84,7 +84,7 @@ var IndexProjectEmployee = {
                                             message: json.message
                                         });
                                     }
-                                    window.location.href = "/jaw/system/view";
+                                    window.location.href = "/jaw/system";
                                 });
                             });
                         }).data("instance", employees[i])

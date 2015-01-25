@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/jaw">
+            <a class="navbar-brand" href="/jaw/admin">
                 <img src="/jaw/images/logo-small.png" width="35" height="22">
             </a>
         </div>
@@ -44,14 +44,15 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <span class="glyphicon glyphicon-user"></span>
-                        <span class="system-login">{{USER_LOGIN}}</span>
+                        <span class="system-login">${this.getLogin()}</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#">Настройки</a></li>
-                        <li><a href="javascript:void(0)" class="dark-interface">
-                            <div>Темный интерфейс</div>
-                        </a></li>
+##                        <li><a href="javascript:void(0)" class="dark-interface">
+##                            <div>Темный интерфейс</div>
+##                        </a></li>
+                        <li><a href="/jaw">Закрыть сессию</a></li>
                         <li><a class="logout" href="javascript:void(0)">Выйти</a></li>
                     </ul>
                 </li>

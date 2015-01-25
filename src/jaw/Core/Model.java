@@ -5,6 +5,7 @@ import jaw.Sql.Connection;
 import jaw.Sql.CortegeProtocol;
 import jaw.Sql.CortegeRow;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,6 +66,9 @@ abstract public class Model extends Component implements ModelProtocol {
 		try {
 			Object result = method.invoke(this, argumentList);
 			if (result instanceof ResultSet) {
+				if (!((ResultSet) result).next()) {
+					return null;
+				}
 				return new CortegeRow(((ResultSet) result).getInt("id"));
 			} else {
 				return ((CortegeProtocol) result);
@@ -594,12 +598,20 @@ abstract public class Model extends Component implements ModelProtocol {
 			if (columnMap.containsKey(field)) {
 				String value = columnMap.get(field);
 				if (value.startsWith("[")) {
-					JSONArray array = new JSONArray(value);
-					array.put(resultSet.getString(i));
-					columnMap.put(field, array.toString());
+					try {
+						JSONArray array = new JSONArray(value);
+						array.put(resultSet.getString(i));
+						columnMap.put(field, array.toString());
+					} catch (JSONException ignored) {
+						JSONArray array = new JSONArray();
+						array.put(resultSet.getString(i));
+						array.put(columnMap.get(field));
+						columnMap.put(field, array.toString());
+					}
 				} else {
 					JSONArray array = new JSONArray();
 					array.put(resultSet.getString(i));
+					array.put(columnMap.get(field));
 					columnMap.put(field, array.toString());
 				}
 			} else {

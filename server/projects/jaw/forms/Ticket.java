@@ -3,8 +3,10 @@ package jaw.forms;
 import jaw.Core.Environment;
 import jaw.Core.Form;
 
+import java.lang.Object;
 import java.lang.String;
 import java.util.*;
+import java.util.LinkedHashMap;
 
 /**
  * Created by Savonin on 2015-01-08
@@ -21,7 +23,7 @@ public class Ticket extends Form {
 	@Override
 	public Map<String, Object> getConfig() throws Exception {
 
-		return new HashMap<String, Object>() {{
+		return new LinkedHashMap<String, Object>() {{
 
 			// Name
 			put("name", new HashMap<String, Object>() {{
@@ -32,10 +34,11 @@ public class Ticket extends Form {
 			// Owner
 			put("owner_id", new HashMap<String, Object>() {{
 				put("text", "Владелец задачи");
-				put("type", "text");
+				put("type", "select");
 				put("data", getModel("Employee").fetchSet("fetchByCompany",
 					getEnvironment().getSession().get("company")
 				));
+				put("format", "%{employee.surname} %{employee.name}, %{product.name}");
 			}});
 
 			// Precedence

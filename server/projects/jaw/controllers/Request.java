@@ -30,7 +30,7 @@ public class Request extends Controller {
 			return;
 		}
 
-		int userID = getEnvironment().getSessionManager().get().getID();
+		int userID = getEnvironment().getSession().getID();
 		int receiverID = Integer.parseInt(GET("receiverID"));
 		int companyID = getModel("Company").fetchRow("fetchByEmployee", receiverID).getID();
 

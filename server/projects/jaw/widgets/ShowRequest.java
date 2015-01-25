@@ -5,12 +5,12 @@ import jaw.Core.Widget;
 
 import java.util.HashMap;
 
-public class Login extends Widget {
+public class ShowRequest extends Widget {
 
 	/**
 	 * @param environment - Every core's extension must have environment with predeclared extensions
 	 */
-	public Login(Environment environment) {
+	public ShowRequest(Environment environment) {
 		super(environment);
 	}
 
@@ -20,7 +20,7 @@ public class Login extends Widget {
 	 */
 	@Override
 	public void run(HashMap<String, Object> data) throws Exception {
-		render(data);
+		render();
 	}
 
 	/**
@@ -29,6 +29,6 @@ public class Login extends Widget {
 	 */
 	@Override
 	public String getAlias() {
-		return "LOGIN";
+		return "SHOW_REQUEST";
 	}
 }

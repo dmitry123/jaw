@@ -144,10 +144,8 @@ public abstract class Controller extends Component {
 						PasswordEncryptor.crypt(GET("login"), password)
 				);
 			}
-			
-			getModel().insert(
-				getSession().getParms()
-			);
+
+			getModel().insert(getSession().getParms());
 
 		} else if (action.equals("update")) {
 
@@ -290,6 +288,20 @@ public abstract class Controller extends Component {
 	 */
 	public void renderVm(String action) throws Exception {
 		renderVm(action, new HashMap<String, Object>());
+	}
+
+	/**
+	 * Render VM file and load widgets for it's view
+	 * @param action - Name of render action
+	 * @param hashData - Data to render
+	 * @param widgets - List with widgets to render
+	 * @throws Exception
+	 */
+	public void renderVm(String action, Map<String, Object> hashData, String... widgets) throws Exception {
+		for (String widget : widgets) {
+			runWidget(widget);
+		}
+		renderVm(action, hashData);
 	}
 
 	/**
@@ -442,7 +454,7 @@ public abstract class Controller extends Component {
 
 		if (this instanceof Widget && getEnvironment().getMustacheDefiner() != null) {
 			getEnvironment().getMustacheDefiner().put(((Widget) this).getAlias(),
-				writer.toString()
+					writer.toString()
 			);
 		} else if (getView() != null) {
 			if (getView().getHtmlContent() != null) {
@@ -501,6 +513,14 @@ public abstract class Controller extends Component {
 	}
 
 	/**
+	 * Get user's login for current session
+	 * @return - User's login
+	 */
+	public String getLogin() {
+		return getEnvironment().getSession().getLogin();
+	}
+
+	/**
 	 * Find form and return it's instance
 	 * @return - Form's instance
 	 * @throws Exception
@@ -539,6 +559,9 @@ public abstract class Controller extends Component {
 	 * @return - Current controller's view
 	 */
 	public View getView() throws Exception {
+		if (getView(null) == null) {
+			setView(new View(getEnvironment()));
+		}
 		return getView(null);
 	}
 

@@ -1,13 +1,21 @@
 package jaw.widgets;
 
 import jaw.Core.Environment;
+import jaw.Core.Model;
 import jaw.Core.Widget;
 
+import java.lang.Exception;
+import java.lang.Object;
+import java.lang.Override;
+import java.lang.String;
+import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * Created by Savonin on 2015-01-16
- */
 public class Form extends Widget {
 
 	/**
@@ -22,8 +30,56 @@ public class Form extends Widget {
 	 * @param data - Data to run widget
 	 */
 	@Override
-	public void run(HashMap<String, Object> data) throws Exception {
-		
+	public void run(final HashMap<String, Object> data) throws Exception {
+		if (!data.containsKey("form")) {
+			throw new Exception("Form widget must contains 'form' field with form name");
+		}
+		if (getEnvironment().getFormManager().get(data.get("form").toString()) == null) {
+			throw new Exception("Unresolved form path \"" + data.get("form") + "\"");
+		}
+		final Map<String, Object> config = getEnvironment().getFormManager().get(data.get("form").toString()).getConfig();
+		for (Object value : config.values()) {
+			HashMap<String, Object> map = ((HashMap<String, Object>) value);
+			if (!map.containsKey("type")) {
+				map.put("type", "text");
+			}
+			if (!map.containsKey("data")) {
+				continue;
+			}
+			Object configData = map.get("data");
+			if (!(configData instanceof ResultSet)) {
+				continue;
+			}
+			ResultSet set = ((ResultSet) configData);
+			Vector<LinkedHashMap<String, String>> map2 = new Vector<LinkedHashMap<String, String>>();
+			while (set.next()) {
+				map2.add(Model.buildMap(set));
+			}
+			if (map.containsKey("format")) {
+				String format = map.get("format").toString();
+				Vector<String> vector = new Vector<String>(map2.size());
+				for (LinkedHashMap<String, String> field : map2) {
+					String result = format;
+					Matcher matcher = Pattern.compile("%\\{(.*?)\\}").matcher(format);
+					while (matcher.find()) {
+						String id = matcher.group(1);
+						if (field.get(id) == null) {
+							continue;
+						}
+						result = result.replaceAll("%\\{(" + id + ")\\}", field.get(id));
+					}
+					vector.add(result);
+				}
+				map.put("data", vector);
+			} else {
+				map.put("data", map2);
+			}
+		}
+		render(new HashMap<String, Object>() {{
+			put("config", config);
+			put("id", data.get("id"));
+			put("title", data.get("title"));
+		}});
 	}
 
 	/**

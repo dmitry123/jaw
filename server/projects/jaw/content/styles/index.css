@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
 	min-height: 100% !important;
 	height: 100%;
 }
@@ -260,7 +261,6 @@ body > .popover-notification {
 .system-container {
 	width: calc(100% - 20px);
 	min-height: 100%;
-	margin-left: 10px;
 }
 
 .ticket-table {

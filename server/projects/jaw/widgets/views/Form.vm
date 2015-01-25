@@ -1,0 +1,20 @@
+$config
+<form>
+    #foreach ($field in $config)
+        <div class="form-group required">
+            <label class="col-md-offset-1 col-md-4 control-label">${field.text}</label>
+            <div class="col-md-5">
+                #if ($field.type.equals("select"))
+                    <select class="form-control">
+                        <option value="-1">Нет</option>
+                        #foreach ($value in $field.data)
+                            <option value="$value.id">$value</option>
+                        #end
+                    </select>
+                #else
+                    <input type="${field.type}" class="form-control" placeholder="${field.text}">
+                #end
+            </div>
+        </div><br><br>
+    #end
+</form>

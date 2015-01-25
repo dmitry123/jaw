@@ -173,7 +173,7 @@ public class ProjectCompiler {
 			String error = "Syntax error:\n";
 
 			for (Diagnostic<? extends JavaFileObject> d : diagnosticCollector.getDiagnostics()) {
-				error += " + " + d.getSource().toUri() + " [" + d.getLineNumber() + ", " + d.getColumnNumber() + "] - \"" +
+				error += " + " + (d.getSource() != null ? d.getSource().toUri() : "Warning") + " [" + d.getLineNumber() + ", " + d.getColumnNumber() + "] - \"" +
 						d.getMessage(Locale.getDefault()) + "\"\n";
 			}
 

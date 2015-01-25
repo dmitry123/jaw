@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/jaw/system/view">
+            <a class="navbar-brand" href="/jaw/system">
                 <img src="/jaw/images/logo-small.png" width="35" height="20">
             </a>
         </div>
@@ -48,19 +48,19 @@
                         Задачи <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="/jaw/tracker/current">Текущие</a></li>
-                        <li><a href="/jaw/tracker/company">Компания</a></li>
-                        <li><a href="/jaw/tracker/project">Проект</a></li>
+                        <li><a href="/jaw/system/tracker?action=current">Текущие</a></li>
+                        <li><a href="/jaw/system/tracker?action=company">Компания</a></li>
+                        <li><a href="/jaw/system/tracker?action=project">Проект</a></li>
                     </ul>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a id="btn-notification" type="button" href="javascript:void(0)">Уведомления <span style="background-color: #2c82af" class="badge">{{ EMPLOYEE_NOTIFICATION_COUNT }}</span></a></li>
-                <li><a id="btn-request" type="button" href="javascript:void(0)">Запросы <span style="background-color: #2c82af" class="badge">{{ EMPLOYEE_REQUEST_COUNT }}</span></a></li>
+                <li><a id="btn-notification" type="button" href="javascript:void(0)">Уведомления <span style="background-color: #2c82af" class="badge">${this.getNotificationCount()}</span></a></li>
+                <li><a id="btn-request" type="button" href="javascript:void(0)">Запросы <span style="background-color: #2c82af" class="badge">${this.getRequestCount()}</span></a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <span class="glyphicon glyphicon-user"></span>
-                        <span class="system-login">{{USER_LOGIN}}</span>
+                        <span class="system-login">${this.getLogin()}</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
@@ -78,11 +78,39 @@
 </nav>
 <div class="col-md-12 hidden" id="request-table">
     <table class="table">
-        <thead> {{{ EMPLOYEE_REQUEST_TABLE }}} </thead>
+        <thead>
+        #foreach ($request in $requests)
+            #set ($fio = $request.get("employee.surname") + " " +
+                $request.get("employee.name").substring(0, 1).toUpperCase() + "." +
+                $request.get("employee.patronymic").substring(0, 1).toUpperCase()
+            )
+            #set ($id = $request.get("request.id"))
+            <tr>
+                <td><a class="request" id="request-$id">${fio}</a></td>
+                <td>
+                    <a><span id="request-$id" class="request-ok glyphicon glyphicon-ok text-success"></span></a>
+                    <a><span id="request-$id" class="request-cancel glyphicon glyphicon-remove text-danger"></span></a>
+                </td>
+            </tr>
+        #end
+        </thead>
     </table>
 </div>
 <div class="col-md-12 hidden" id="notification-table">
     <table class="table">
-        <thead> {{{ EMPLOYEE_NOTIFICATION_TABLE }}} </thead>
+        <thead>
+        #foreach ($message in $messages)
+            #set ($fio = $message.get("employee.surname") + " " +
+                $message.get("employee.name").substring(0, 1).toUpperCase() + "." +
+                $message.get("employee.patronymic").substring(0, 1).toUpperCase()
+            )
+            <tr>
+                <td style="width: 100px; vertical-align: middle">
+                    <a class="notification" id="notification-$id">${fio}</a>
+                </td>
+                <td><div>$message.get("message.message")</div></td>
+            </tr>
+        #end
+        </thead>
     </table>
 </div>

@@ -14,7 +14,7 @@ public class Admin extends Controller {
 	@Override
 	public void actionView() throws Exception {
 		if (checkAccess()) {
-			render("View");
+			renderVm("View", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -22,7 +22,7 @@ public class Admin extends Controller {
 
 	public void actionUser() throws Exception {
 		if (checkAccess()) {
-			render("User");
+			renderVm("User", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -30,7 +30,7 @@ public class Admin extends Controller {
 
 	public void actionEmployee() throws Exception {
 		if (checkAccess()) {
-			render("Employee");
+			renderVm("Employee", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -38,7 +38,7 @@ public class Admin extends Controller {
 
 	public void actionCompany() throws Exception {
 		if (checkAccess()) {
-			render("Company");
+			renderVm("Company", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -46,7 +46,7 @@ public class Admin extends Controller {
 
 	public void actionGroup() throws Exception {
 		if (checkAccess()) {
-			render("Group");
+			renderVm("Group", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -54,7 +54,7 @@ public class Admin extends Controller {
 
 	public void actionPrivilege() throws Exception {
 		if (checkAccess()) {
-			render("Privilege");
+			renderVm("Privilege", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -62,7 +62,7 @@ public class Admin extends Controller {
 
 	public void actionProject() throws Exception {
 		if (checkAccess()) {
-			render("Project");
+			renderVm("Project", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -70,7 +70,7 @@ public class Admin extends Controller {
 
 	public void actionGroupPrivilege() throws Exception {
 		if (checkAccess()) {
-			render("GroupPrivilege");
+			renderVm("GroupPrivilege", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -78,7 +78,7 @@ public class Admin extends Controller {
 
 	public void actionEmployeeGroup() throws Exception {
 		if (checkAccess()) {
-			render("EmployeeGroup");
+			renderVm("EmployeeGroup", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -86,7 +86,7 @@ public class Admin extends Controller {
 
 	public void actionProductEmployee() throws Exception {
 		if (checkAccess()) {
-			render("ProductEmployee");
+			renderVm("ProductEmployee", "AdminMenu", "Table");
 		} else {
 			redirect("Index", "View");
 		}
@@ -94,32 +94,5 @@ public class Admin extends Controller {
 
 	public boolean checkAccess() throws Exception {
 		return checkAccess("jaw/admin");
-	}
-
-	/**
-	 * Check user's access
-	 * @param privileges - List with privileges
-	 * @return - True if user has that privileges
-	 * @throws Exception
-	 * @throws SQLException
-	 */
-	@Override
-	public boolean checkAccess(String... privileges) throws Exception {
-
-		Session session = getEnvironment().getSession();
-
-		if (session == null) {
-			return false;
-		}
-
-		Model employeeModel = getModel("Employee");
-
-		for (String privilege : privileges) {
-			if (!employeeModel.fetchSet("fetchPrivilegeByUserID", session.getID(), privilege).next()) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 }

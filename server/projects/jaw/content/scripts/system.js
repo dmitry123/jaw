@@ -25,7 +25,7 @@ var RequestButton = {
                     class: "popover-content"
                 })
             ).draggable({
-                containment: ".system-container",
+                containment: document.body,
                 handle: ".ui-handle"
             }).disableSelection();
         };
@@ -188,4 +188,6 @@ $(document).ready(function() {
 
     RequestButton.construct();
     RequestModal.construct();
+
+    $(document.body).css("height", "auto");
 });

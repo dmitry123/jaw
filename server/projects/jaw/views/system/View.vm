@@ -1,2 +1,6 @@
 <script type="text/javascript" src="/jaw/scripts/system.js"></script>
-<div class="system-container"></div>
+{{{ SYSTEM_MENU }}}
+{{{ SHOW_REQUEST }}}
+<div class="system-container">
+
+</div>

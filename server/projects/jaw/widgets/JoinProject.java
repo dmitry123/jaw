@@ -2,15 +2,14 @@ package jaw.widgets;
 
 import jaw.Core.Environment;
 import jaw.Core.Widget;
-
 import java.util.HashMap;
 
-public class Login extends Widget {
+public class JoinProject extends Widget {
 
 	/**
 	 * @param environment - Every core's extension must have environment with predeclared extensions
 	 */
-	public Login(Environment environment) {
+	public JoinProject(Environment environment) {
 		super(environment);
 	}
 
@@ -20,7 +19,7 @@ public class Login extends Widget {
 	 */
 	@Override
 	public void run(HashMap<String, Object> data) throws Exception {
-		render(data);
+		render();
 	}
 
 	/**
@@ -29,6 +28,6 @@ public class Login extends Widget {
 	 */
 	@Override
 	public String getAlias() {
-		return "LOGIN";
+		return "JOIN_PROJECT";
 	}
 }

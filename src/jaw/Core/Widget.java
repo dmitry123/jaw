@@ -57,14 +57,31 @@ public abstract class Widget extends Controller {
 	}
 
 	/**
+	 * Render widget with some action
+	 * @param action - Name of action to render
+	 * @throws Exception
+	 */
+	public void render(String action) throws Exception {
+		render(action, new HashMap<String, Object>());
+	}
+
+	/**
 	 * That method will render your widget
 	 * @param data - Render data
 	 */
 	public void render(HashMap<String, Object> data) throws Exception {
-
-		String action = getClass().getName().substring(
+		render(getClass().getName().substring(
 			getClass().getName().lastIndexOf(".") + 1
-		);
+		), data);
+	}
+
+	/**
+	 * That method will render your widget with action and it's data
+	 * @param action - Name of action to render
+	 * @param data - Map with data for view
+	 * @throws Exception
+	 */
+	public void render(String action, HashMap<String, Object> data) throws Exception {
 
 		data.put("url", "/" + getEnvironment().getProjectName());
 		data.put("this", getController());

@@ -217,11 +217,14 @@ public class WebServer extends NanoHttpd {
 
 			JSONObject errorResponse = new JSONObject();
 
+			boolean isAjax = session.getHeaders().containsKey("x-requested-with")
+				&& session.getHeaders().get("x-requested-with").equals("XMLHttpRequest");
+
 			errorResponse.put("status", false);
 			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
 			errorResponse.put("trace", "<pre>" + stringWriter.toString() + "</pre>");
 
-			if (e instanceof SQLException) {
+			if (isAjax) {
 				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
 					errorResponse.toString()
 				);

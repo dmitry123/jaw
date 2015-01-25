@@ -69,4 +69,9 @@
 </div>
 #if (!${this.checkAccess()})
     {{{ REGISTER }}}
+#else
+    {{{ JOIN_COMPANY }}}
+    {{{ JOIN_PROJECT }}}
+    {{{ REGISTER_COMPANY }}}
+    {{{ REGISTER_PROJECT }}}
 #end

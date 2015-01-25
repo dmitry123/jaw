@@ -1,3 +1,5 @@
+{{{ ADMIN_MENU }}}
+{{{ TABLE }}}
 <div class="jaw-table-wrapper">
     <div class="jaw-table jaw-table-product-employee"></div>
 </div>
