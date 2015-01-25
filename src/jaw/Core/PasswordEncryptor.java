@@ -1,13 +1,13 @@
 package jaw.Core;
 
+import com.sun.crypto.provider.SunJCE;
+import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
+
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-
-import com.sun.crypto.provider.SunJCE;
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 
 /**
  * Created by Savonin on 2014-11-08

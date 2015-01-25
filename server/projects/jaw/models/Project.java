@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 /**
  * Created by Savonin on 2014-12-05
  */
-public class Project extends Model<Project.Row> {
+public class Project extends Model {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
@@ -23,7 +23,7 @@ public class Project extends Model<Project.Row> {
 		super(environment, "project");
 	}
 
-	public Row register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws Exception {
+	public CortegeProtocol register(String name, Integer leaderID, Integer companyID, Integer creatorID) throws Exception {
 		Model productModel = getEnvironment().getModelManager().get("Product");
 		CortegeProtocol productProtocol = productModel.fetchRow("register", name, companyID, creatorID, 0);
 		getConnection().createCommand()
@@ -82,47 +82,5 @@ public class Project extends Model<Project.Row> {
 			.where("d.company_id = ?")
 			.execute(companyID)
 			.select();
-	}
-
-	/**
-	 *
-	 */
-	public static class Row extends CortegeRow {
-
-		/**
-		 * @param id Identifier
-		 */
-		public Row(int id) {
-			super(id);
-		}
-
-		/**
-		 *
-		 * @return
-		 */
-		public int getLeaderID() {
-			return leaderID;
-		}
-
-		/**
-		 *
-		 * @return
-		 */
-		public int getProductID() {
-			return productID;
-		}
-
-		private int leaderID;
-		private int productID;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return null;
 	}
 }

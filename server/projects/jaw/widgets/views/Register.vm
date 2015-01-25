@@ -1,0 +1,50 @@
+<div class="modal fade" id="modal-register">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    Регистрация
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-8 col-xs-offset-2">
+                            <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                                <input type="text" class="form-control mb-5 register-login" placeholder="Логин">
+                            </div>
+                            <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </span>
+                                <input type="password" class="form-control mb-5 register-password" placeholder="Пароль">
+                            </div>
+                            <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock"></span>
+                            </span>
+                                <input type="password" class="form-control mb-5 register-repeat" placeholder="Пароль">
+                            </div>
+                            <div class="input-group">
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-inbox"></span>
+                            </span>
+                                <input type="email" class="form-control mb-5 register-email" placeholder="Электронная почта">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary">Регистрация</button>
+            </div>
+        </div>
+    </div>
+</div>

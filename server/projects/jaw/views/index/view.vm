@@ -1,0 +1,77 @@
+#if (${this.checkAccess()})
+    <script type="text/javascript" src="/jaw/scripts/project.js"></script>
+#else
+    <script type="text/javascript" src="/jaw/scripts/index.js"></script>
+#end
+<div class="maximum-parent background">
+    <table class="hundred-percents"><tr><td>
+        <div class="logo-form">
+            <div class="logo-wrapper">
+                <div class="logo"></div>
+            </div>
+            #if (${this.checkAccess()})
+                <div class="login" id="project">
+                    <div class="index-project-wrapper">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation" id="create-company">
+                                <a href="javascript:void(0)"><b>Создать компанию</b></a>
+                            </li>
+                            <li role="presentation" id="join-company">
+                                <a href="javascript:void(0)"><b>Вступить в компанию</b></a>
+                            </li>
+                            <li role="presentation" id="create-project">
+                                <a href="javascript:void(0)"><b>Создать проект</b></a>
+                            </li>
+                            <li role="presentation" id="join-project">
+                                <a href="javascript:void(0)"><b>Вступить в проект</b></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="index-project-wrapper">
+                        <ul class="nav nav-pills nav-stacked index-project-list">
+                            #foreach ($employee in $employees)
+                                #set ($fio = $employee["employee.surname"] + " " +
+                                    $employee["employee.name"].substring(0, 1).toUpperCase() + "." +
+                                    $employee["employee.patronymic"].substring(0, 1).toUpperCase()
+                                )
+                            <li data-employee="$!employee["employee.id"]" role="presentation" class="index-project-employee"><a href="javascript:void(0)">
+                                <table width="100%"><thead><tr>
+                                    <td width="50%" style="text-align: left"><b>$employee["product.name"]</b></td>
+                                    <td style="text-align: right">$fio</td>
+                                </tr></thead></table>
+                            </a></li>
+                            #end
+                        </ul>
+                    </div>
+                    <button class="btn btn-danger logout">Выйти</button>
+                    <button class="btn btn-primary index-project-start active" data-loading-text="Начинаем...">Начать работу</button>
+                </div>
+                <span class="glyphicon glyphicon-refresh"></span>
+            #else
+                <div class="login" id="login">
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                        <input type="text" value="dmitry" class="form-control login-login" placeholder="Логин">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                        <input type="password" value="dmitry" class="form-control login-password" placeholder="Пароль">
+                    </div>
+                    <button class="btn btn-default login-register">Регистрация</button>
+                    <button class="btn btn-default login-submit">Вход</button>
+                </div>
+            #end
+        </div>
+    </td></tr></table>
+    #if (${this.checkAccess("jaw/admin")})
+        <a href="/jaw/admin"><img class="god-button" src="/jaw/images/god-2.png"></a>
+    #end
+</div>
+#if (!${this.checkAccess()})
+    {{{ REGISTER }}}
+#else
+    {{{ JOIN_COMPANY }}}
+    {{{ JOIN_PROJECT }}}
+    {{{ REGISTER_COMPANY }}}
+    {{{ REGISTER_PROJECT }}}
+#end

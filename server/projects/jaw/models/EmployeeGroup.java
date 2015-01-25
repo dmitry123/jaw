@@ -8,7 +8,7 @@ import jaw.Sql.CortegeRow;
 
 import java.sql.ResultSet;
 
-public class EmployeeGroup extends Model<EmployeeGroup.Row> {
+public class EmployeeGroup extends Model {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
@@ -30,33 +30,5 @@ public class EmployeeGroup extends Model<EmployeeGroup.Row> {
 			.from("employee_group")
 			.join("employee", "employee_group.employee_id = employee.id")
 			.join("groups", "employee_group.group_id = groups.id");
-	}
-
-	class Row extends CortegeRow {
-
-		public Row(int id, int employeeID, int groupID) {
-			super(id); this.employeeID = employeeID; this.groupID = groupID;
-		}
-
-		public int getEmployeeID() {
-			return employeeID;
-		}
-
-		public int getGroupID() {
-			return groupID;
-		}
-
-		private int employeeID;
-		private int groupID;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getInt("id"), result.getInt("employee_id"), result.getInt("group_id"));
 	}
 }

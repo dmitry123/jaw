@@ -30,7 +30,7 @@ public class Request extends Controller {
 			return;
 		}
 
-		int userID = getEnvironment().getSessionManager().get().getID();
+		int userID = getEnvironment().getSession().getID();
 		int receiverID = Integer.parseInt(GET("receiverID"));
 		int companyID = getModel("Company").fetchRow("fetchByEmployee", receiverID).getID();
 
@@ -147,7 +147,7 @@ public class Request extends Controller {
 				return;
 			}
 
-			getModel("ProductEmployee").insert(new LinkedHashMap<String, Object>() {{
+			getModel("ProductEmployee").insert(new LinkedHashMap<String, String>() {{
 				put("product_id", map.get("request.product_id"));
 				put("employee_id", map.get("request.sender_id"));
 			}});
@@ -164,7 +164,7 @@ public class Request extends Controller {
 			}
 
 			getModel("Employee").updateByID(map.get("request.sender_id"),
-				new LinkedHashMap<String, Object>() {{
+				new LinkedHashMap<String, String>() {{
 					put("company_id", map.get("company.id"));
 				}}
 			);

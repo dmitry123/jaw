@@ -1,0 +1,23 @@
+<form class="jaw-form" id="$!{id}" action="$!{action}">
+    <div class="row">
+        <div class="col-md-12">
+            #foreach ($field in $config)
+                <div class="col-md-12 form-group $!{field.required}">
+                    <label class="control-label col-md-5">${field.text}</label>
+                    <div class="col-md-7">
+                        #if ($field.type.equals("select"))
+                            <select class="form-control">
+                                <option value="-1">Нет</option>
+                                #foreach ($value in $field.data)
+                                    <option value="$value.id">$value.value</option>
+                                #end
+                            </select>
+                        #else
+                            <input type="${field.type}" class="form-control" placeholder="${field.text}">
+                        #end
+                    </div>
+                </div><br>
+            #end
+        </div>
+    </div>
+</form>

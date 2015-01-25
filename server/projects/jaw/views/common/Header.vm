@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jaw</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/jaw/images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/jaw/styles/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/jaw/styles/bootstrap-theme.css">
+    <link rel="stylesheet" type="text/css" href="/jaw/styles/index.css">
+    <link rel="stylesheet" type="text/css" href="/jaw/styles/jaw.css">
+    <link rel="stylesheet" type="text/css" href="/jaw/styles/jquery-ui.css">
+</head>
+<script> var jaw = { url: "${url}" }; </script>
+<script type="text/javascript" src="/jaw/scripts/jquery.js"></script>
+<script type="text/javascript" src="/jaw/scripts/jquery-ui.js"></script>
+<script type="text/javascript" src="/jaw/scripts/bootstrap.js"></script>
+<script type="text/javascript" src="/jaw/scripts/jaw.js"></script>
+<script type="text/javascript" src="/jaw/scripts/jaw-table.js"></script>
+<script type="text/javascript" src="/jaw/scripts/jaw-message.js"></script>
+<script type="text/javascript" src="/jaw/scripts/jaw-form.js"></script>
+<script type="text/javascript" src="/jaw/scripts/main.js"></script>
+<body>

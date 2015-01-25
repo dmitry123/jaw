@@ -1,4 +1,4 @@
-import jaw.Core.*;
+import jaw.Core.Logger;
 import jaw.Server.WebServer;
 
 /**

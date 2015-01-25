@@ -108,32 +108,39 @@ public class SessionManager extends Extension {
 	 * Load sessions from local driver after boot
 	 */
 	public void load() throws Exception {
+
 		File handle = new File(Config.SESSION_PATH + getEnvironment().getProjectName() + ".session");
+
 		if (!handle.exists()) {
 			return;
 		}
+
 		FileInputStream fileInputStream;
 		ObjectInputStream objectInputStream;
+
 		try {
 			fileInputStream = new FileInputStream(handle);
 			objectInputStream = new ObjectInputStream(fileInputStream);
 		} catch (IOException e) {
 			throw new Exception(e.getMessage());
 		}
+
 		userHashMap.clear();
+
 		try {
 			int countOfUsers = objectInputStream.readInt();
+			byte[] sessionBytes = new byte[40];
+
 			while (countOfUsers-- > 0) {
-				byte[] sessionBytes = new byte[40];
-				objectInputStream.read(sessionBytes);
-				String sessionID = new String(sessionBytes);
-				Session session = ((Session) objectInputStream.readObject());
-				userHashMap.put(sessionID, session);
+				if (objectInputStream.read(sessionBytes) != sessionBytes.length) {
+					continue;
+				}
+				userHashMap.put(new String(sessionBytes), ((Session)
+						objectInputStream.readObject()
+				));
 			}
 			fileInputStream.close();
-		} catch (ClassNotFoundException e) {
-			throw new Exception(e.getMessage());
-		} catch (IOException ignored) {
+		} catch (Exception ignored) {
 		}
 	}
 

@@ -47,7 +47,19 @@ public class Session extends HashMap<String, Object> implements UserProtocol, Se
 		return id;
 	}
 
+	/**
+	 * Get mustache definer
+	 * @return - Mustache definer
+	 */
+	public MustacheDefiner getMustacheDefiner() {
+		return mustacheDefiner;
+	}
+
+	private MustacheDefiner mustacheDefiner
+		= new MustacheDefiner();
+
 	private String login;
 	private String hash;
+
 	private int id;
 }

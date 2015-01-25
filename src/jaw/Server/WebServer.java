@@ -1,11 +1,12 @@
 package jaw.Server;
 
 import jaw.Core.*;
-
 import jaw.Terminal.Machine;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +69,8 @@ public class WebServer extends NanoHttpd {
 			// If we have mime type, then load file
 			if (mime != null) {
 				uri = uri.substring(1);
+				int slash = uri.indexOf('/');
+				uri = uri.substring(0, slash) + "/content" + uri.substring(slash);
 				try {
 					return new Response(Response.Status.OK, mime.getName(), mime.getLoader().load(Config.PROJECT_PATH + uri));
 				} catch (Exception ignored) {
@@ -131,13 +134,13 @@ public class WebServer extends NanoHttpd {
 			Session user = environment.getSessionManager().get();
 
 			if (user != null) {
-				environment.getMustacheDefiner().put("User.Login", user.getLogin());
-				environment.getMustacheDefiner().put("User.ID", Integer.toString(user.getID()));
+				environment.getMustacheDefiner().put("USER_LOGIN", user.getLogin());
+				environment.getMustacheDefiner().put("USER_ID", Integer.toString(user.getID()));
 			}
 
 			Controller controller;
 
-			environment.getControllerManager().get("Index").actionFilter(
+			environment.getControllerManager().get("Index").filterCheckAccess(
 					totalPath, actionName
 			);
 
@@ -173,9 +176,11 @@ public class WebServer extends NanoHttpd {
 			Response response;
 
 			if (view != null && view.getHtmlContent() != null) {
-				response = new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
-					environment.getMustacheDefiner().execute(view.getHtmlContent())
-				);
+				String content = view.getHtmlContent();
+				if (environment.getMustacheDefiner() != null) {
+					content = environment.getMustacheDefiner().execute(view.getHtmlContent());
+				}
+				response = new Response(Response.Status.OK, Mime.TEXT_HTML.getName(), content);
 			} else {
 				if (controller.getAjaxResponse() != null) {
 					response = new Response(controller.getAjaxResponse());
@@ -204,14 +209,22 @@ public class WebServer extends NanoHttpd {
 				stringWriter
 			);
 
+			Logger.getLogger().log(
+				e.getMessage()
+			);
+
 			e.printStackTrace(writer);
 
 			JSONObject errorResponse = new JSONObject();
 
+			boolean isAjax = session.getHeaders().containsKey("x-requested-with")
+				&& session.getHeaders().get("x-requested-with").equals("XMLHttpRequest");
+
 			errorResponse.put("status", false);
 			errorResponse.put("message", e.getMessage() == null ? "null" : e.getMessage());
+			errorResponse.put("trace", "<pre>" + stringWriter.toString() + "</pre>");
 
-			if (e instanceof SQLException) {
+			if (isAjax) {
 				return new Response(Response.Status.OK, Mime.TEXT_HTML.getName(),
 					errorResponse.toString()
 				);
@@ -243,7 +256,6 @@ public class WebServer extends NanoHttpd {
 			System.exit(-1);
 		}
 
-		logger.log("server started");
 		System.out.println("Server Terminal:");
 
 		terminal.register("terminal",
@@ -252,7 +264,6 @@ public class WebServer extends NanoHttpd {
 		terminal.start();
 
 		server.stop();
-		logger.log("server stopped");
 	}
 
 	/**

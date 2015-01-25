@@ -1,6 +1,0 @@
-00:04:54 [server started]
-00:04:54 [server stopped]
-00:08:37 [server started]
-00:08:37 [server stopped]
-20:47:11 [server started]
-20:47:11 [server stopped]

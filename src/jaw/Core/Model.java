@@ -1,11 +1,14 @@
 package jaw.Core;
 
-import jaw.Sql.*;
+import jaw.Sql.CommandProtocol;
+import jaw.Sql.Connection;
+import jaw.Sql.CortegeProtocol;
+import jaw.Sql.CortegeRow;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -13,18 +16,16 @@ import java.util.*;
 
 /**
  * AbstractTable
- * @param <T>
  */
-abstract public class Model<T extends CortegeProtocol> extends Component implements ModelProtocol {
+abstract public class Model extends Component implements ModelProtocol {
 
 	/**
 	 * Filter interface, which provides
 	 * implementation of 'test' method
 	 * to check object's fields
-	 * @param <T> - CortegeProtocol implementation
 	 */
-    public static interface Filter<T> {
-        boolean test(T u);
+    public static interface Filter {
+        boolean test(CortegeProtocol u);
     }
 
 	/**
@@ -38,20 +39,13 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
     }
 
 	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	public abstract CortegeProtocol createFromSet(ResultSet result) throws Exception;
-
-	/**
 	 * Fetch row from list via it's action name
 	 * @param fetchAction - Fetch action name
 	 * @param argumentList - List with arguments
 	 * @return - Found row
 	 * @throws Exception
 	 */
-	public T fetchRow(String fetchAction, Object... argumentList) throws Exception {
+	public CortegeProtocol fetchRow(String fetchAction, Object... argumentList) throws Exception {
 		Method method;
 		Class<?>[] typeList = new Class<?>[
 			argumentList.length
@@ -72,12 +66,12 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		try {
 			Object result = method.invoke(this, argumentList);
 			if (result instanceof ResultSet) {
-				if (((ResultSet) result).next()) {
-					return (T) createFromSet(((ResultSet) result));
+				if (!((ResultSet) result).next()) {
+					return null;
 				}
-				return null;
+				return new CortegeRow(((ResultSet) result).getInt("id"));
 			} else {
-				return ((T) result);
+				return ((CortegeProtocol) result);
 			}
 		} catch (IllegalAccessException e) {
 			throw new Exception(
@@ -163,10 +157,10 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 				this, argumentList
 			);
 			if (result instanceof ResultSet) {
-				ResultSet rs = ((ResultSet) result);
-				Vector<CortegeProtocol> rv = new Vector<CortegeProtocol>(rs.getFetchSize());
-				while (rs.next()) {
-					rv.add(createFromSet(rs));
+				ResultSet resultSet = ((ResultSet) result);
+				Vector<CortegeProtocol> rv = new Vector<CortegeProtocol>(resultSet.getFetchSize());
+				while (resultSet.next()) {
+					rv.add(new CortegeRow(resultSet.getInt("id")));
 				}
 				return rv;
 			}
@@ -174,7 +168,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 				return (Vector<CortegeProtocol>) result;
 			} catch (ClassCastException e) {
 				return new Vector<CortegeProtocol>() {{
-					add(((T) result));
+					add(((CortegeProtocol) result));
 				}};
 			}
 		} catch (IllegalAccessException e) {
@@ -289,17 +283,6 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 */
 	public CommandProtocol getReferences() throws Exception {
-		return null;
-	}
-
-	/**
-	 * Override that method to return dependencies for current table associated
-	 * with map's key as table name, it will increase performance and give more
-	 * suitable syntax with allowed aliases (getReferences still here for compatibility)
-	 * @return - Map with commands
-	 * @throws Exception
-	 */
-	public Map<String, CommandProtocol> getReferences2() throws Exception {
 		return null;
 	}
 
@@ -547,10 +530,10 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			}
 		}
 		return getConnection().createCommand()
-			.insert(getTableName(), columns)
-			.values(variables)
-			.execute(objects.toArray())
-			.insert();
+				.insert(getTableName(), columns)
+				.values(variables)
+				.execute(objects.toArray())
+				.insert();
 	}
 
 	/**
@@ -559,7 +542,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @throws Exception
 	 * @throws SQLException
 	 */
-	public T last() throws Exception {
+	public CortegeProtocol last() throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from(getTableName())
@@ -569,9 +552,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 		if (!resultSet.next()) {
 			return null;
 		}
-		return (T) createFromSet(
-			resultSet
-		);
+		return new CortegeRow(resultSet.getInt("id"));
 	}
 
 	/**
@@ -604,57 +585,40 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	}
 
 	/**
-	 * Execute/Update/Prepare query
-	 * and * change ${TABLE} macros
-	 * to table's name
-	 *
-	 * @param query
-	 * 		String with Sql query
-	 * @return Result with executed statement
-	 * @throws Exception
+	 * Associate columns with tables
+	 * @param resultSet - Set with results
+	 * @return - Map with names and values
 	 */
-    public PreparedStatement prepareStatement(String query) throws Exception {
-		try {
-			return getConnection().getSqlConnection().prepareStatement(query);
-		} catch (SQLException e) {
-			throw new Exception("Model/createStatementForSelect() : \"" + e.getMessage() + "\"");
-		}
-    }
-
-	/**
-	 * Execute/Update/Prepare query
-	 * and * change ${TABLE} macros
-	 * to table's name
-	 *
-	 * @param query - String with Sql query
-	 *
-	 * @param list - Argument fetchList with all elements
-	 * 		which have to be appended to query
-	 *
-	 * @return - Result with executed statement
-	 * @throws Exception
-	 */
-	public ResultSet execute(String query, Object... list) throws Exception {
-		try {
-			PreparedStatement preparedStatement = getConnection().getSqlConnection()
-				.prepareStatement(query);
-
-			SqlTypeBinder sqlTypeBinder = new SqlTypeBinder(
-				preparedStatement
-			);
-
-			for (Object a : list) {
-				sqlTypeBinder.bind(a);
+	public static LinkedHashMap<String, String> buildStaticMap(ResultSet resultSet) throws SQLException{
+		ResultSetMetaData columns = resultSet.getMetaData();
+		LinkedHashMap<String, String> columnMap
+				= new LinkedHashMap<String, String>();
+		for (int i = 1; i <= columns.getColumnCount(); i++) {
+			String field = columns.getColumnName(i);
+			if (columnMap.containsKey(field)) {
+				String value = columnMap.get(field);
+				if (value.startsWith("[")) {
+					try {
+						JSONArray array = new JSONArray(value);
+						array.put(resultSet.getString(i));
+						columnMap.put(field, array.toString());
+					} catch (JSONException ignored) {
+						JSONArray array = new JSONArray();
+						array.put(resultSet.getString(i));
+						array.put(columnMap.get(field));
+						columnMap.put(field, array.toString());
+					}
+				} else {
+					JSONArray array = new JSONArray();
+					array.put(resultSet.getString(i));
+					array.put(columnMap.get(field));
+					columnMap.put(field, array.toString());
+				}
+			} else {
+				columnMap.put(field, resultSet.getString(i));
 			}
-
-			if (query.startsWith("INSERT")) {
-				preparedStatement.execute(); return null;
-			}
-
-			return preparedStatement.executeQuery();
-		} catch (SQLException e) {
-			throw new Exception("Model/execute() : \"" + e.getMessage() + "\"");
 		}
+		return columnMap;
 	}
 
 	/**
@@ -669,7 +633,7 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
     public ResultSet fetchByID(Integer id) throws Exception {
 		return getConnection().createCommand()
 			.select("*")
-			.from(tableName)
+			.from(getTableName())
 			.where("id = ?")
 			.execute(id)
 			.select();
@@ -682,16 +646,16 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	 * @param where Where statement
 	 * @return Vector with founded rows
 	 */
-    public Vector<T> fetchList(String where) throws Exception {
+    public Vector<CortegeProtocol> fetchList(String where) throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("*")
 			.from(getTableName())
 			.where(where)
 			.execute()
 			.select();
-		Vector<T> result = new Vector<T>();
+		Vector<CortegeProtocol> result = new Vector<CortegeProtocol>();
 		while (resultSet.next()) {
-			result.add((T) createFromSet(resultSet));
+			result.add(new CortegeRow(resultSet.getInt("id")));
 		}
 		return result;
 	}
@@ -699,12 +663,12 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 	/**
 	 * @return Table's size
 	 */
-    public int fetchSize(String where) throws Exception {
+    public int fetchSize(String where, Object... arguments) throws Exception {
 		ResultSet resultSet = getConnection().createCommand()
 			.select("count(*) as c")
 			.from(getTableName())
 			.where(where)
-			.execute()
+			.execute(arguments)
 			.select();
 		if (resultSet.next()) {
 			return resultSet.getInt("c");
@@ -712,17 +676,6 @@ abstract public class Model<T extends CortegeProtocol> extends Component impleme
 			return 0;
 		}
 	}
-
-	/**
-	 * Check object for existence by
-	 * name or identifier
-	 *
-	 * @param id Row's identifier
-	 * @return Boolean state
-	 */
-    public boolean exists(int id) throws Exception {
-        return fetchByID(id) != null;
-    }
 
 	/**
 	 * Get MySql's helper object,

@@ -36,54 +36,60 @@ public class Environment {
 	}
 
 	/**
-	 * @return - Project's model manager
+	 * @return - Collection with all managers
 	 */
-	public ModelManager getModelManager() {
-		return modelManager;
+	public ManagerCollection getManagerCollection() {
+		return managerCollection;
 	}
 
-	private ModelManager modelManager
-			= new ModelManager(this);
+	/**
+	 * @return - Project's model manager
+	 */
+	public AbstractManager<Model> getModelManager() {
+		return modelManager;
+	}
 
 	/**
 	 * @return - Project's form manager
 	 */
-	public FormManager getFormManager() {
+	public AbstractManager<Form> getFormManager() {
 		return formManager;
 	}
-
-	private FormManager formManager
-			= new FormManager(this);
-
-	/**
-	 * @return - Component's manager
-	 */
-	public ComponentManager getComponentManager() {
-		return componentManager;
-	}
-
-	private ComponentManager componentManager
-			= new ComponentManager(this);
 
 	/**
 	 * @return - Controller manager
 	 */
-	public ControllerManager getControllerManager() {
+	public AbstractManager<Controller> getControllerManager() {
 		return controllerManager;
 	}
-
-	private ControllerManager controllerManager
-			= new ControllerManager(this);
 
 	/**
 	 * @return - View manager
 	 */
-	public ViewManager getViewManager() {
+	public AbstractManager<View> getViewManager() {
 		return viewManager;
 	}
 
-	private ViewManager viewManager
-			= new ViewManager(this);
+	/**
+	 * @return - Module manager
+	 */
+	public AbstractManager<Module> getModuleManager() {
+		return moduleManager;
+	}
+
+	/**
+	 * @return - Widget manager
+	 */
+	public AbstractManager<Widget> getWidgetManager() {
+		return widgetManager;
+	}
+
+	/**
+	 * @return - Validator manager
+	 */
+	public AbstractManager<Validator> getValidatorManager() {
+		return validatorManager;
+	}
 
 	/**
 	 * @return - Project's manager
@@ -92,18 +98,12 @@ public class Environment {
 		return projectManager;
 	}
 
-	private ProjectManager projectManager
-			= new ProjectManager(this);
-
 	/**
 	 * @return - Component's factory
 	 */
 	public ComponentFactory getComponentFactory() {
 		return componentFactory;
 	}
-
-	private ComponentFactory componentFactory
-			= new ComponentFactory(this);
 
 	/**
 	 * @return - Router
@@ -112,18 +112,12 @@ public class Environment {
 		return router;
 	}
 
-	private Router router
-			= new Router(this);
-
 	/**
 	 * @return - User session manager
 	 */
 	public SessionManager getSessionManager() {
 		return sessionManager;
 	}
-
-	private SessionManager sessionManager
-			= new SessionManager(this);
 
 	/**
 	 * @return - Current user's session
@@ -137,11 +131,14 @@ public class Environment {
 	 * @return - Mustache definer
 	 */
 	public MustacheDefiner getMustacheDefiner() {
-		return mustacheDefiner;
+		if (getSession() != null) {
+			return getSession().getMustacheDefiner();
+		} else {
+			return mustacheDefiner;
+		}
 	}
 
-	private MustacheDefiner mustacheDefiner
-			= new MustacheDefiner(this);
+	private MustacheDefiner mustacheDefiner = new MustacheDefiner();
 
 	/**
 	 * @return - Path to project
@@ -178,8 +175,20 @@ public class Environment {
 		this.sessionID = sessionID;
 	}
 
+	private ManagerCollection managerCollection = new ManagerCollection(this);
+	private AbstractManager<Model> modelManager = managerCollection.getModelManager();
+	private AbstractManager<Form> formManager = managerCollection.getFormManager();
+	private AbstractManager<Controller> controllerManager = managerCollection.getControllerManager();
+	private AbstractManager<View> viewManager = managerCollection.getViewManager();
+	private AbstractManager<Module> moduleManager = managerCollection.getModuleManager();
+	private AbstractManager<Widget> widgetManager = managerCollection.getWidgetManager();
+	private AbstractManager<Validator> validatorManager = managerCollection.getValidatorManager();
 	private String projectName;
 	private String projectPath;
 	private Connection connection;
 	private String sessionID;
+	private ProjectManager projectManager = new ProjectManager(this);
+	private ComponentFactory componentFactory = new ComponentFactory(this);
+	private Router router = new Router(this);
+	private SessionManager sessionManager = new SessionManager(this);
 }

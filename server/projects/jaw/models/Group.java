@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 /**
  * Created by Savonin on 2014-12-05
  */
-public class Group extends Model<Group.Row> {
+public class Group extends Model {
 	/**
 	 * Basic constructor with helper and table's name as arguments
 	 * @param environment - Current environment
@@ -54,7 +54,7 @@ public class Group extends Model<Group.Row> {
 			.select();
 	}
 
-	public Row bind(Integer groupID, Integer employeeID) throws Exception {
+	public CortegeProtocol bind(Integer groupID, Integer employeeID) throws Exception {
 		getConnection().createCommand()
 			.insert("employee_group", "employee_id, group_id")
 			.values("?, ?")
@@ -63,7 +63,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	public Row bindWithGroupName(String groupName, Integer employeeID) throws Exception {
+	public CortegeProtocol bindWithGroupName(String groupName, Integer employeeID) throws Exception {
 		ResultSet groupRow = fetchByName(groupName);
 		if (groupRow.next()) {
 			bind(groupRow.getInt("id"), employeeID);
@@ -71,7 +71,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	public Row unbind(Integer groupID, Integer employeeID) throws Exception {
+	public CortegeProtocol unbind(Integer groupID, Integer employeeID) throws Exception {
 		getConnection().createCommand()
 			.delete("employee_group")
 			.where("group_id = ?")
@@ -81,7 +81,7 @@ public class Group extends Model<Group.Row> {
 		return null;
 	}
 
-	public Row unbindWithGroupName(String groupName, Integer employeeID) throws Exception {
+	public CortegeProtocol unbindWithGroupName(String groupName, Integer employeeID) throws Exception {
 		ResultSet groupRow = fetchByName(groupName);
 		if (groupRow.next()) {
 			unbind(groupRow.getInt("id"), employeeID);
@@ -98,48 +98,5 @@ public class Group extends Model<Group.Row> {
 			.join("privilege", "group_privilege.privilege_id = privilege.id")
 			.join("employee_group", "employee_group.group_id = groups.id")
 			.join("employee", "employee_group.employee_id = employee.id");
-	}
-
-	/**
-	 *
-	 */
-	public static class Row extends CortegeRow {
-
-		/**
-		 *
-		 * @param name
-		 */
-		public Row(String name) {
-			this(0, name);
-		}
-
-		/**
-		 *
-		 * @param id
-		 * @param name
-		 */
-		public Row(int id, String name) {
-			super(id); this.name = name;
-		}
-
-		/**
-		 *
-		 * @return
-		 */
-		public String getName() {
-			return name;
-		}
-
-		String name;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getInt("id"), result.getString("name"));
 	}
 }

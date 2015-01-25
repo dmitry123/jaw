@@ -1,7 +1,7 @@
 package jaw.Terminal;
 
-import jaw.Core.*;
-
+import jaw.Core.Environment;
+import jaw.Core.Extension;
 
 import java.util.HashMap;
 import java.util.Map;

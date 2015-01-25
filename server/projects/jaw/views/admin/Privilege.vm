@@ -1,0 +1,47 @@
+{{{ ADMIN_MENU }}}
+{{{ TABLE }}}
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-privilege"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-privilege", {
+            header: [
+                {
+                    id: "privilege.id",
+                    name: "Идентификатор",
+                    style: "width: 175px; text-align: left;",
+                    type: "text"
+                },  {
+                    id: "privilege.name",
+                    name: "Название",
+                    style: "width: 275px;"
+                },  {
+                    id: "privilege.description",
+                    name: "Описание"
+                }
+            ],
+            reference: [
+                {
+                    id: "groups",
+                    name: "Группы",
+                    display: [
+                        "description"
+                    ],
+                    separator: ", "
+                }, {
+                    id: "employee",
+                    name: "Сотрудники",
+                    display: [
+                        "surname",
+                        "name",
+                        "patronymic"
+                    ],
+                    separator: " "
+                }
+            ],
+            table: "privilege",
+            url: "/jaw/privilege/getTable"
+        });
+    });
+</script>

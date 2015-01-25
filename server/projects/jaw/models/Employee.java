@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 /**
  * Created by Savonin on 2014-12-05
  */
-public class Employee extends Model<Employee.Row> {
+public class Employee extends Model {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
@@ -24,7 +24,7 @@ public class Employee extends Model<Employee.Row> {
 		super(environment, "employee");
 	}
 
-	public Row register(String name, String surname, String patronymic, Integer userID, Integer managerID, Integer directorID, Integer companyID) throws Exception {
+	public CortegeProtocol register(String name, String surname, String patronymic, Integer userID, Integer managerID, Integer directorID, Integer companyID) throws Exception {
 		getConnection().createCommand()
 			.insert("employee", "name, surname, user_id, manager_id, director_id, company_id, patronymic")
 			.values("?, ?, ?, ?, ?, ?, ?")
@@ -185,73 +185,5 @@ public class Employee extends Model<Employee.Row> {
 			.join("groups", "employee_group.group_id = groups.id")
 			.join("group_privilege", "group_privilege.group_id = groups.id")
 			.join("privilege", "privilege.id = group_privilege.privilege_id");
-	}
-
-	public static class Row extends CortegeRow {
-
-		public Row(String name, String surname, String patronymic, int userID, int managerID, int directorID, int companyID) {
-			this(0, name, surname, patronymic, userID, managerID, directorID, companyID);
-		}
-
-		public Row(int id, String name, String surname, String patronymic, int userID, int managerID, int directorID, int companyID) {
-			super(id); this.name = name; this.surname = surname; this.patronymic = patronymic; this.userID = userID;
-				this.managerID = managerID; this.directorID = directorID; this.companyID = companyID;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getSurname() {
-			return surname;
-		}
-
-		public String getPatronymic() {
-			return patronymic;
-		}
-
-		public int getUserID() {
-			return userID;
-		}
-
-		public int getManagerID() {
-			return managerID;
-		}
-
-		public int getDirectorID() {
-			return directorID;
-		}
-
-		public int getCompanyID() {
-			return companyID;
-		}
-
-		String name;
-		String surname;
-		String patronymic;
-
-		int userID;
-		int managerID;
-		int directorID;
-		int companyID;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return new Row(
-			result.getInt("id"),
-			result.getString("name"),
-			result.getString("surname"),
-			result.getString("patronymic"),
-			result.getInt("user_id"),
-			result.getInt("manager_id"),
-			result.getInt("director_id"),
-			result.getInt("company_id")
-		);
 	}
 }

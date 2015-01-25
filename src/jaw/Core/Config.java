@@ -59,7 +59,7 @@ public class Config {
 	 *  BINARY_PATH - path to all compiled binaries
 	 */
 	public static final String SERVER_PATH     = "server"      + File.separator;
-	public static final String TEMPLATE_PATH   = "templates"   + File.separator;
+	public static final String CONTENT_PATH    = "content"     + File.separator;
 	public static final String CONTROLLER_PATH = "controllers" + File.separator;
 	public static final String COMPONENT_PATH  = "components"  + File.separator;
 	public static final String MODEL_PATH      = "models"      + File.separator;
@@ -67,16 +67,17 @@ public class Config {
 	public static final String SCRIPT_PATH     = "scripts"     + File.separator;
 	public static final String MODULE_PATH     = "modules"     + File.separator;
 	public static final String WIDGET_PATH     = "widgets"     + File.separator;
+	public static final String VALIDATOR_PATH  = "validators"  + File.separator;
 	public static final String LOG_PATH        = "log"         + File.separator;
 	public static final String FORM_PATH       = "forms"       + File.separator;
+	public static final String TEMPLATE_PATH   = "templates"   + File.separator;
 
 	/**
-	 * Default index page
+	 * Extra constants
 	 */
-	public static final String SESSION_PATH = SERVER_PATH + "sessions" + File.separator;
-	public static final String INDEX_PATH = SERVER_PATH + "views/index.html";
-	public static final String PROJECT_PATH = SERVER_PATH + "projects" + File.separator;
-	public static final String BINARY_PATH = SERVER_PATH + "binaries" + File.separator;
+	public static final String SESSION_PATH = SERVER_PATH  + "sessions"  + File.separator;
+	public static final String PROJECT_PATH = SERVER_PATH  + "projects"  + File.separator;
+	public static final String BINARY_PATH  = SERVER_PATH  + "binaries"  + File.separator;
 
 	/**
 	 * Default server port

@@ -12,6 +12,7 @@ public enum ComponentType {
 	SCRIPT     ("script",     Config.SCRIPT_PATH),
 	MODULE     ("module",     Config.MODULE_PATH),
 	WIDGET     ("widget",     Config.WIDGET_PATH),
+	VALIDATOR  ("validator",  Config.VALIDATOR_PATH),
 	BINARY     ("binary",     Config.BINARY_PATH),
 	LOG        ("log",        Config.LOG_PATH),
 	COMPONENT  ("component",  Config.COMPONENT_PATH),

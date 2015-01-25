@@ -9,11 +9,4 @@ import java.sql.ResultSet;
  */
 public interface ModelProtocol {
 
-	/**
-	 * That method will adapt just fetched from table
-	 * result bind to it's basic cortege protocol
-	 *
-	 * @return - Adapted to CortegeProtocol row
-	 */
-	public CortegeProtocol createFromSet(ResultSet resultSet) throws Exception;
 }

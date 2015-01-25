@@ -1,7 +1,6 @@
 package jaw.Sql;
 
-import jaw.Core.*;
-
+import jaw.Core.Config;
 
 import java.sql.*;
 

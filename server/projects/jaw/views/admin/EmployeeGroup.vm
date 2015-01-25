@@ -1,0 +1,35 @@
+{{{ ADMIN_MENU }}}
+{{{ TABLE }}}
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-employee-group"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-employee-group", {
+            header: [
+                {
+                    id: "employee_group.id",
+                    name: "#",
+                    style: "width: 10px; text-align: center;"
+                },  {
+                    id: "employee_group.employee_id",
+                    display: [
+                        "employee.surname",
+                        "employee.name",
+                        "employee.patronymic"
+                    ],
+                    separator: " ",
+                    name: "Сотрудник",
+                    url: "/jaw/employee/getTable"
+                },  {
+                    id: "employee_group.group_id",
+                    display: "groups.description",
+                    name: "Группа",
+                    url: "/jaw/group/getTable"
+                }
+            ],
+            table: "employee_group",
+            url: "/jaw/employeegroup/getTable"
+        });
+    });
+</script>

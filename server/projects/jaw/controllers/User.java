@@ -4,6 +4,7 @@ import jaw.Core.*;
 
 import org.json.JSONObject;
 
+import java.lang.Exception;
 import java.sql.ResultSet;
 
 /**
@@ -25,10 +26,16 @@ public class User extends Controller {
 
 		JSONObject json = new JSONObject();
 		Model userModel = getModel("User");
+		String hash;
 
-		ResultSet resultSet = userModel.fetchSet("fetchByLoginAndHash", login,
-				PasswordEncryptor.crypt(login, password)
-		);
+		try {
+			hash = PasswordEncryptor.crypt(login, password);
+		} catch (Exception ignored) {
+			postErrorMessage("Неверный пароль или логин пользователя");
+			return;
+		}
+
+		ResultSet resultSet = userModel.fetchSet("fetchByLoginAndHash", login, hash);
 
 		if (resultSet.next()) {
 			Session session = new Session(
@@ -76,7 +83,10 @@ public class User extends Controller {
 
 		if (getEnvironment().getSessionManager().has()) {
 			getEnvironment().getSessionManager().remove();
+			getEnvironment().getSessionManager().save();
 		}
+
+		getSession().getCookies().delete("JAW_SESSION_ID");
 
 		JSONObject json = new JSONObject();
 		json.put("status", true);

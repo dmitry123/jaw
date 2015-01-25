@@ -1,0 +1,45 @@
+{{{ ADMIN_MENU }}}
+{{{ TABLE }}}
+<div class="jaw-table-wrapper">
+    <div class="jaw-table jaw-table-group"></div>
+</div>
+<script>
+    $(document).ready(function() {
+        Jaw.createTable(".jaw-table-group", {
+            header: [
+                {
+                    id: "groups.id",
+                    name: "#",
+                    style: "width: 10px; text-align: center;"
+                },  {
+                    id: "groups.name",
+                    name: "Название",
+                    style: "width: 200px;"
+                },  {
+                    id: "groups.description",
+                    name: "Описание"
+                }
+            ],
+            reference: [
+                {
+                    id: "privilege",
+                    name: "Привилегии",
+                    display: [
+                        "description"
+                    ]
+                }, {
+                    id: "employee",
+                    name: "Сотрудники",
+                    display: [
+                        "surname",
+                        "name",
+                        "patronymic"
+                    ],
+                    separator: ", "
+                }
+            ],
+            table: "groups",
+            url: "/jaw/group/getTable"
+        });
+    });
+</script>

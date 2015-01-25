@@ -9,7 +9,7 @@ import java.lang.Exception;
 import java.lang.Integer;
 import java.sql.ResultSet;
 
-public class Ticket extends Model<Ticket.Row> {
+public class Ticket extends Model {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
@@ -63,22 +63,5 @@ public class Ticket extends Model<Ticket.Row> {
 			.where("e.company_id = ?")
 			.execute(companyID)
 			.select();
-	}
-
-	public static class Row extends CortegeRow {
-
-		public Row(int id) {
-			super(id);
-		}
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return null;
 	}
 }

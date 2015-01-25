@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 /**
  * Created by Savonin on 2014-12-05
  */
-public class Company extends Model<Company.Row> {
+public class Company extends Model {
 
 	/**
 	 * Basic constructor with helper and table's name as arguments
@@ -93,7 +93,7 @@ public class Company extends Model<Company.Row> {
 		return null;
 	}
 
-	public CortegeRow register(String name) throws Exception {
+	public CortegeProtocol register(String name) throws Exception {
 		if (exists(name)) {
 			throw new Exception(
 				"Company/register() : \"Company with that name already registered\""
@@ -126,7 +126,7 @@ public class Company extends Model<Company.Row> {
 			.select();
 	}
 
-	public Row delete(Integer projectID) throws Exception {
+	public CortegeProtocol delete(Integer projectID) throws Exception {
 		getConnection().createCommand()
 			.delete("project")
 			.where("id = ?")
@@ -150,53 +150,5 @@ public class Company extends Model<Company.Row> {
 			.from("company")
 			.join("employee", "employee.company_id = company.id")
 			.join("product", "product.company_id = company.id");
-	}
-
-	public static class Row extends CortegeRow {
-
-		/**
-		 *
-		 * @param name
-		 */
-		public Row(String name, int directorID) {
-			this(0, name, directorID);
-		}
-
-		/**
-		 * @param id Identifier
-		 */
-		public Row(int id, String name, int directorID) {
-			super(id); this.name = name; this.directorID = directorID;
-		}
-
-		/**
-		 *
-		 * @return
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 *
-		 * @return
-		 */
-		public int getDirectorID() {
-			return directorID;
-		}
-
-		private String name;
-
-		private int directorID;
-	}
-
-	/**
-	 * @param result - Current cortege from query
-	 * @return - Created row from bind
-	 * @throws Exception
-	 */
-	@Override
-	public CortegeProtocol createFromSet(ResultSet result) throws Exception {
-		return new Row(result.getInt("id"), result.getString("name"), result.getInt("director_id"));
 	}
 }

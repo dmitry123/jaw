@@ -1,9 +1,13 @@
 package jaw.Server;
 
-import jaw.Core.*;
-
-import jaw.Terminal.*;
+import jaw.Core.Environment;
+import jaw.Core.EnvironmentManager;
+import jaw.Core.Logger;
+import jaw.Core.Session;
 import jaw.Terminal.Error;
+import jaw.Terminal.Instruction;
+import jaw.Terminal.Machine;
+import jaw.Terminal.Station;
 
 import java.util.Map;
 import java.util.Vector;
@@ -53,43 +57,30 @@ public class ServerTerminal extends Station {
 
 		register(new Instruction(this, "compile", "-c") {
 			@Override
-			public void run(String[] arguments) throws Exception, InterruptedException {
+			public void run(String[] arguments) throws Exception {
 				if (arguments.length != 1) {
-					throw new Error(this,
-							"That instruction can assume only one argument"
-					);
+					throw new Error(this, "That instruction can assume only one argument");
 				}
 				Environment e = EnvironmentManager.getInstance().get(arguments[0]);
 				if (e == null) {
-					throw new Error(this,
-							"Unresolved project name (" + arguments[0] + ")"
-					);
+					throw new Error(this, "Unresolved project name (" + arguments[0] + ")");
 				}
-				e.getModelManager().cleanup();
-				e.getViewManager().cleanup();
-				e.getControllerManager().cleanup();
-				e.getProjectManager().getCompiler().cleanup();
+				e.getManagerCollection().cleanup();
 				e.getProjectManager().getCompiler().compile();
 			}
 		});
 
 		register(new Instruction(this, "cleanup", "-r") {
 			@Override
-			public void run(String[] arguments) throws Exception, InterruptedException {
+			public void run(String[] arguments) throws Exception {
 				if (arguments.length != 1) {
-					throw new Error(this,
-							"That instruction can assume only one argument"
-					);
+					throw new Error(this, "That instruction can assume only one argument");
 				}
 				Environment e = EnvironmentManager.getInstance().get(arguments[0]);
 				if (e == null) {
-					throw new Error(this,
-							"Unresolved project name (" + arguments[0] + ")"
-					);
+					throw new Error(this, "Unresolved project name (" + arguments[0] + ")");
 				}
-				e.getModelManager().cleanup();
-				e.getViewManager().cleanup();
-				e.getControllerManager().cleanup();
+				e.getManagerCollection().cleanup();
 			}
 		});
 
@@ -97,11 +88,9 @@ public class ServerTerminal extends Station {
 			{
 				register(new Instruction(this, "show", "-s") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
-							throw new Error(this,
-									"That instruction can assume only one argument"
-							);
+							throw new Error(this, "That instruction can assume only one argument");
 						}
 						Environment e = EnvironmentManager.getInstance().get(arguments[0]);
 						for (Map.Entry<String, Session> i : e.getSessionManager().getEmployeeHashMap().entrySet()) {
@@ -115,11 +104,9 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "clear", "-c") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
-							throw new Error(this,
-									"That instruction can assume only one argument"
-							);
+							throw new Error(this, "That instruction can assume only one argument");
 						}
 						EnvironmentManager.getInstance().get(arguments[0])
 								.getSessionManager().getEmployeeHashMap().clear();
@@ -128,11 +115,9 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "drop", "-d") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 2) {
-							throw new Error(this,
-								"That instruction can assume only two arguments"
-							);
+							throw new Error(this, "That instruction can assume only two arguments");
 						}
 						Map<String, Session> stringUserMap = EnvironmentManager.getInstance().get(arguments[0])
 								.getSessionManager().getEmployeeHashMap();
@@ -147,11 +132,9 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "save", "-sf") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
-							throw new Error(this,
-								"That instruction can assume only two arguments"
-							);
+							throw new Error(this, "That instruction can assume only two arguments");
 						}
 						EnvironmentManager.getInstance().get(arguments[0]).getSessionManager().save();
 					}
@@ -159,11 +142,9 @@ public class ServerTerminal extends Station {
 
 				register(new Instruction(this, "load", "-lf") {
 					@Override
-					public void run(String[] arguments) throws Exception, InterruptedException {
+					public void run(String[] arguments) throws Exception {
 						if (arguments.length != 1) {
-							throw new Error(this,
-								"That instruction can assume only two arguments"
-							);
+							throw new Error(this, "That instruction can assume only two arguments");
 						}
 						EnvironmentManager.getInstance().get(arguments[0]).getSessionManager().load();
 					}

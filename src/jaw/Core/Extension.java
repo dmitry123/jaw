@@ -20,5 +20,15 @@ public class Extension {
 		return environment;
 	}
 
+	/**
+	 * Set environment (only for serializable classes)
+	 * @param environment - New environment
+	 */
+	protected void setEnvironment(Environment environment) {
+		if (this.environment != null) {
+			this.environment = environment;
+		}
+	}
+
 	private Environment environment;
 }

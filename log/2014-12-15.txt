@@ -1,3 +1,0 @@
-17:33:39 [Connection() : "�����: ���� ������ "jaw" �� ����������"]
-17:33:57 [server started]
-17:33:57 [server stopped]
