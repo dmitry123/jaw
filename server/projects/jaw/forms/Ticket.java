@@ -38,7 +38,7 @@ public class Ticket extends Form {
 				put("data", getModel("Employee").fetchSet("fetchByCompany",
 					getEnvironment().getSession().get("company")
 				));
-				put("format", "%{employee.surname} %{employee.name}, %{product.name}");
+				put("format", "%{employee.surname} %{employee.name}");
 			}});
 
 			// Precedence
@@ -59,15 +59,17 @@ public class Ticket extends Form {
 				put("data", getModel("Product").fetchSet("fetchByCompany",
 					getEnvironment().getSession().get("company")
 				));
+				put("format", "%{product.name}, %{product.created}");
 			}});
 
 			// Project
 			put("project_id", new HashMap<String, Object>() {{
-				put("text", "Проект, в которой находится задача");
+				put("text", "Текущий проект");
 				put("type", "select");
 				put("data", getModel("Project").fetchSet("fetchByCompany",
 					getEnvironment().getSession().get("company")
 				));
+				put("format", "%{product.name}, %{product.created}");
 			}});
 
 			// Parent
@@ -77,6 +79,7 @@ public class Ticket extends Form {
 				put("data", getModel("Ticket").fetchSet("fetchByCompany",
 					getEnvironment().getSession().get("company")
 				));
+				put("format", "%{ticket.name}");
 			}});
 		}};
 	}

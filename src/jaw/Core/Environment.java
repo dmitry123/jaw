@@ -36,6 +36,13 @@ public class Environment {
 	}
 
 	/**
+	 * @return - Collection with all managers
+	 */
+	public ManagerCollection getManagerCollection() {
+		return managerCollection;
+	}
+
+	/**
 	 * @return - Project's model manager
 	 */
 	public AbstractManager<Model> getModelManager() {
@@ -161,12 +168,13 @@ public class Environment {
 		this.sessionID = sessionID;
 	}
 
-	private AbstractManager<Model> modelManager = ManagerFactory.getManager().createModelManager(this);
-	private AbstractManager<Form> formManager = ManagerFactory.getManager().createFormManager(this);
-	private AbstractManager<Controller> controllerManager = ManagerFactory.getManager().createControllerManager(this);
-	private AbstractManager<View> viewManager = ManagerFactory.getManager().createViewManager(this);
-	private AbstractManager<Module> moduleManager = ManagerFactory.getManager().createModuleManager(this);
-	private AbstractManager<Widget> widgetManager = ManagerFactory.getManager().createWidgetManager(this);
+	private ManagerCollection managerCollection = new ManagerCollection(this);
+	private AbstractManager<Model> modelManager = managerCollection.getModelManager();
+	private AbstractManager<Form> formManager = managerCollection.getFormManager();
+	private AbstractManager<Controller> controllerManager = managerCollection.getControllerManager();
+	private AbstractManager<View> viewManager = managerCollection.getViewManager();
+	private AbstractManager<Module> moduleManager = managerCollection.getModuleManager();
+	private AbstractManager<Widget> widgetManager = managerCollection.getWidgetManager();
 	private String projectName;
 	private String projectPath;
 	private Connection connection;

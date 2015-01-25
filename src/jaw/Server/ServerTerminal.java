@@ -69,9 +69,7 @@ public class ServerTerminal extends Station {
 							"Unresolved project name (" + arguments[0] + ")"
 					);
 				}
-				e.getModelManager().cleanup();
-				e.getViewManager().cleanup();
-				e.getControllerManager().cleanup();
+				e.getManagerCollection().cleanup();
 				e.getProjectManager().getCompiler().cleanup();
 				e.getProjectManager().getCompiler().compile();
 			}
