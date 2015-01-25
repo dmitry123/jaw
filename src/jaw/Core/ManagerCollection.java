@@ -19,6 +19,7 @@ public class ManagerCollection extends Extension implements Serializable {
 		register(new AbstractManager<Form>(environment, ComponentType.FORM));
 		register(new AbstractManager<Form>(environment, ComponentType.MODULE));
 		register(new AbstractManager<Form>(environment, ComponentType.WIDGET));
+		register(new AbstractManager<Validator>(environment, ComponentType.VALIDATOR));
 	}
 
 	public void cleanup() throws Exception {
@@ -52,6 +53,10 @@ public class ManagerCollection extends Extension implements Serializable {
 
 	public AbstractManager<Widget> getWidgetManager() throws Exception {
 		return map.get(ComponentType.WIDGET.getName());
+	}
+
+	public AbstractManager<Validator> getValidatorManager() throws Exception {
+		return map.get(ComponentType.VALIDATOR.getName());
 	}
 
 	private <T extends Component> void register(AbstractManager<T> manager) {

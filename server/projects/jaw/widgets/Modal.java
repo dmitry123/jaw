@@ -3,6 +3,8 @@ package jaw.widgets;
 import jaw.Core.Environment;
 import jaw.Core.Widget;
 
+import java.lang.Exception;
+import java.lang.Object;
 import java.util.HashMap;
 
 /**
@@ -23,6 +25,18 @@ public class Modal extends Widget {
 	 */
 	@Override
 	public void run(HashMap<String, Object> data) throws Exception {
+		if (data.containsKey("alias")) {
+			alias = data.get("alias").toString();
+		}
+		if (data.containsKey("form")) {
+			Widget form = getEnvironment().getWidgetManager().get("Form");
+			if (form == null) {
+				throw new Exception("Widget 'Form' hasn't been declared in widget scope");
+			}
+			getEnvironment().getMustacheDefiner().remove("FORM");
+			form.run(((HashMap<String, Object>) data.get("form")));
+			data.put("body", getEnvironment().getMustacheDefiner().get("FORM"));
+		}
 		render(data);
 	}
 
@@ -32,6 +46,8 @@ public class Modal extends Widget {
 	 */
 	@Override
 	public String getAlias() {
-		return "MODAL";
+		return alias;
 	}
+
+	private String alias = "MODAL";
 }

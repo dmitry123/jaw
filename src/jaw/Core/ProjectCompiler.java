@@ -29,13 +29,11 @@ public class ProjectCompiler {
 
 		cleanup();
 
-		String projectPath = getProjectManager().getEnvironment()
-				.getProjectPath();
+		String projectPath = getProjectManager()
+			.getEnvironment()
+			.getProjectPath();
 
-		File projectHandle = new File(
-			projectPath
-		);
-
+		File projectHandle = new File(projectPath);
 		Vector<String> files = new Vector<String>();
 
 		if (!projectHandle.exists()) {
@@ -57,11 +55,8 @@ public class ProjectCompiler {
 				Config.BINARY_PATH
 			);
 
-			newFilePath = newFilePath.substring(0,
-				newFilePath.lastIndexOf(File.separator));
-
-			newFilePath = newFilePath.substring(0,
-				newFilePath.lastIndexOf(File.separator));
+			newFilePath = newFilePath.substring(0, newFilePath.lastIndexOf(File.separator));
+			newFilePath = newFilePath.substring(0, newFilePath.lastIndexOf(File.separator));
 
 			compile(s, newFilePath);
 		}
@@ -69,8 +64,9 @@ public class ProjectCompiler {
 
 	public void cleanup() throws Exception {
 
-		String projectName = getProjectManager().getEnvironment()
-				.getProjectName();
+		String projectName = getProjectManager()
+			.getEnvironment()
+			.getProjectName();
 
 		File projectHandle = new File(
 			Config.BINARY_PATH + projectName

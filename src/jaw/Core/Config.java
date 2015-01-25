@@ -67,6 +67,7 @@ public class Config {
 	public static final String SCRIPT_PATH     = "scripts"     + File.separator;
 	public static final String MODULE_PATH     = "modules"     + File.separator;
 	public static final String WIDGET_PATH     = "widgets"     + File.separator;
+	public static final String VALIDATOR_PATH  = "validators"  + File.separator;
 	public static final String LOG_PATH        = "log"         + File.separator;
 	public static final String FORM_PATH       = "forms"       + File.separator;
 	public static final String TEMPLATE_PATH   = "templates"   + File.separator;

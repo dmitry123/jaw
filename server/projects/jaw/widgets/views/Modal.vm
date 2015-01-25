@@ -6,7 +6,11 @@
                 <h4 class="modal-title">$!{title}</h4>
             </div>
             <div class="modal-body">
-                $!{body}
+                <div class="row">
+                    <div class="col-md-11">
+                        $!{body}
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>

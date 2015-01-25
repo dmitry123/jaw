@@ -29,6 +29,7 @@ public class Ticket extends Form {
 			put("name", new HashMap<String, Object>() {{
 				put("text", "Название задачи");
 				put("type", "text");
+				put("validate", "required");
 			}});
 
 			// Owner
@@ -39,27 +40,32 @@ public class Ticket extends Form {
 					getEnvironment().getSession().get("company")
 				));
 				put("format", "%{employee.surname} %{employee.name}");
+				put("id", "%{employee.id}");
+				put("validate", "required");
 			}});
 
 			// Precedence
 			put("precedence", new HashMap<String, Object>() {{
 				put("text", "Приоритет");
 				put("type", "select");
-				put("data", new Vector<Integer>() {{
+				put("data", new Vector<Object>() {{
 					for (int i = 0; i < 5; i++) {
 						add(i + 1);
 					}
 				}});
+				put("validate", "required");
 			}});
 
 			// Product
 			put("product_id", new HashMap<String, Object>() {{
-				put("text", "Продукт, к которой будет привязана задача");
+				put("text", "Продукт, к которому будет привязана задача");
 				put("type", "select");
 				put("data", getModel("Product").fetchSet("fetchByCompany",
 					getEnvironment().getSession().get("company")
 				));
 				put("format", "%{product.name}, %{product.created}");
+				put("id", "%{product.id}");
+				put("validate", "required");
 			}});
 
 			// Project
@@ -70,6 +76,7 @@ public class Ticket extends Form {
 					getEnvironment().getSession().get("company")
 				));
 				put("format", "%{product.name}, %{product.created}");
+				put("id", "%{project.id}");
 			}});
 
 			// Parent
@@ -80,6 +87,7 @@ public class Ticket extends Form {
 					getEnvironment().getSession().get("company")
 				));
 				put("format", "%{ticket.name}");
+				put("id", "%{ticket.id}");
 			}});
 		}};
 	}

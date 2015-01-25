@@ -261,6 +261,7 @@ body > .popover-notification {
 .system-container {
 	width: calc(100% - 20px);
 	min-height: 100%;
+	margin-left: 10px;
 }
 
 .ticket-table {

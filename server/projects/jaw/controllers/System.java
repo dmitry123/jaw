@@ -58,7 +58,6 @@ public class System extends Controller {
 
 		renderVm("Tracker",
 			"SystemMenu",
-			"RegisterTicket",
 			"ShowRequest",
 			"TrackerCurrent"
 		);

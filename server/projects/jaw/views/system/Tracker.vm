@@ -1,12 +1,9 @@
 <script type="text/javascript" src="/jaw/scripts/system.js"></script>
 {{{ SYSTEM_MENU }}}
 {{{ SHOW_REQUEST }}}
-{{{ REGISTER_TICKET }}}
 <div class="system-container">
 	<br><br><br>
-	#if (!$this.getSession().getParms().containsKey("action"))
-        {{{ TRACKER_COMPANY }}}
-	#elseif ($this.GET("action").equals("current"))
+	#if ($this.GET("action").equals("current"))
         {{{ TRACKER_CURRENT }}}
 	#elseif ($this.GET("action").equals("company"))
         {{{ TRACKER_COMPANY }}}
@@ -14,9 +11,24 @@
         {{{ TRACKER_PROJECT }}}
 	#end
 	#if ($this.checkAccess("ticket/register"))
-		<button class="btn btn-primary" data-toggle="modal" data-target="#register-ticket">Создать задачу</button>
-		$this.runWidget("Form", "{ form: 'Ticket', id: 'register-ticket-form', title: 'Добавить задачу' }")
-		<br>
-        {{{ FORM }}}
+		$this.runWidget("Modal", "{
+			id: 'register-ticket-modal',
+			title: 'Регистрация задачи',
+			buttons: [
+				{
+					text: 'Отправить',
+					id: 'register-ticket-modal-submit',
+					cls: 'btn btn-primary'
+				}
+			],
+			form: {
+				form: 'Ticket',
+				id: 'register-ticket-form',
+				title: 'Регистрация задачи'
+			},
+			alias: 'REGISTER_TICKET_MODAL'
+		}")
+        {{{ REGISTER_TICKET_MODAL }}}
+        <button class="btn btn-primary" data-toggle="modal" data-target="#register-ticket-modal">Создать задачу</button>
 	#end
 </div>

@@ -85,6 +85,13 @@ public class Environment {
 	}
 
 	/**
+	 * @return - Validator manager
+	 */
+	public AbstractManager<Validator> getValidatorManager() {
+		return validatorManager;
+	}
+
+	/**
 	 * @return - Project's manager
 	 */
 	public ProjectManager getProjectManager() {
@@ -175,6 +182,7 @@ public class Environment {
 	private AbstractManager<View> viewManager = managerCollection.getViewManager();
 	private AbstractManager<Module> moduleManager = managerCollection.getModuleManager();
 	private AbstractManager<Widget> widgetManager = managerCollection.getWidgetManager();
+	private AbstractManager<Validator> validatorManager = managerCollection.getValidatorManager();
 	private String projectName;
 	private String projectPath;
 	private Connection connection;

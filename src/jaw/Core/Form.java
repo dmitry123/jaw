@@ -23,6 +23,33 @@ public abstract class Form extends Component {
 	public abstract Map<String, Object> getConfig() throws Exception;
 
 	/**
+	 * Validate model with specific form
+	 * @param model - Map with model fields (static map for single table)
+	 * @throws Exception
+	 */
+	public final void validate(Map<String, Object> model) throws Exception {
+		Map<String, Object> config = getConfig();
+		for (Map.Entry<String, Object> entry : config.entrySet()) {
+			if (!(entry.getValue() instanceof Map)) {
+				continue;
+			}
+			Map<String, Object> map = ((Map) entry.getValue());
+			if (!map.containsKey("validate")) {
+				continue;
+			}
+			String[] validators = map.get("validate").toString().split("\\s*,\\s*");
+			for (String validatorName : validators) {
+				Validator validator = getEnvironment().getValidatorManager().get(validatorName);
+				validator.setForm(this);
+				validator.setField(entry.getKey());
+				validator.setValue(model.get(entry.getKey()));
+				validator.setModel(model);
+				validator.setConfig(map);
+				validator.validate();
+			}
+		}
+	}
+	/**
 	 * Set form's model
 	 * @param model - Model
 	 */
