@@ -560,7 +560,7 @@ abstract public class Model extends Component implements ModelProtocol {
 	 * @param resultSet - Set with results
 	 * @return - Map with names and values
 	 */
-	public static LinkedHashMap<String, String> buildMap(ResultSet resultSet) throws SQLException{
+	public static LinkedHashMap<String, String> buildMap(ResultSet resultSet) throws SQLException {
 		ResultSetMetaData columns = resultSet.getMetaData();
 		LinkedHashMap<String, String> columnMap
 			= new LinkedHashMap<String, String>();
@@ -585,6 +585,20 @@ abstract public class Model extends Component implements ModelProtocol {
 	}
 
 	/**
+	 * Associate columns with tables but split with "_" symbol
+	 * @param resultSet - Set with results
+	 * @return - Map with names and values
+	 * @throws SQLException
+	 */
+	public static LinkedHashMap<String, String> buildPrefixMap(ResultSet resultSet) throws SQLException {
+		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+		for (Map.Entry<String, String> entry : buildMap(resultSet).entrySet()) {
+			map.put(entry.getKey().replace(".", "_"), entry.getValue());
+		}
+		return map;
+	}
+
+	/**
 	 * Associate columns with tables
 	 * @param resultSet - Set with results
 	 * @return - Map with names and values
@@ -597,7 +611,7 @@ abstract public class Model extends Component implements ModelProtocol {
 			String field = columns.getColumnName(i);
 			if (columnMap.containsKey(field)) {
 				String value = columnMap.get(field);
-				if (value.startsWith("[")) {
+				if (value != null && value.startsWith("[")) {
 					try {
 						JSONArray array = new JSONArray(value);
 						array.put(resultSet.getString(i));

@@ -34,16 +34,39 @@ var Jaw = Jaw || {};
     };
 
     /**
-     * Override that method to return jquery item
+     * Override that method to return jQuery item
      */
     Jaw.Component.prototype.render = function() {
         throw new Error("Component/render() : Not-Implemented");
     };
 
     /**
-     * Override that method to activate just created jquery item
+     * Override that method to activate just created jQuery item
      */
     Jaw.Component.prototype.activate = function() {
+        /* Ignored */
+    };
+
+    /**
+     * Override that method to reset your component
+     */
+    Jaw.Component.prototype.reset = function() {
+        /* Ignored */
+    };
+
+    /**
+     * Override that method to provide some actions
+     * before update
+     */
+    Jaw.Component.prototype.before = function() {
+        /* Ignored */
+    };
+
+    /**
+     * Override that method to provide some actions
+     * after update
+     */
+    Jaw.Component.prototype.after = function() {
         /* Ignored */
     };
 
@@ -54,6 +77,9 @@ var Jaw = Jaw || {};
      */
     Jaw.Component.prototype.selector = function(selector) {
         if (arguments.length > 0) {
+            if (selector && selector instanceof $ && !selector.data("jaw")) {
+                selector.data("jaw", this);
+            }
             this._selector = selector;
         }
         return this._selector;
@@ -85,12 +111,14 @@ var Jaw = Jaw || {};
      * new, activate it and append to previous parent
      */
     Jaw.Component.prototype.update = function() {
+        this.before();
         var parent = this.selector().parent();
         this.selector().remove();
         this.selector(
             this.render()
         ).appendTo(parent);
         this.activate();
+        this.after();
     };
 
     /**
@@ -122,12 +150,15 @@ var Jaw = Jaw || {};
      * Create new component's instance and render to DOM
      * @param component {Jaw.Component|Object} - Component's instance
      * @param selector {HTMLElement|string} - Parent's selector
+     * @param [manualUpdate] {Boolean} - Don't update element after create
      */
-    Jaw.create = function(component, selector) {
+    Jaw.create = function(component, selector, manualUpdate) {
         $(selector).data("jaw", component).append(
             component.selector()
         );
-        component.update();
+        if (manualUpdate !== true) {
+            component.update();
+        }
         return component;
     };
 

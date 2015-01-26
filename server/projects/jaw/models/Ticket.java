@@ -21,36 +21,26 @@ public class Ticket extends Model {
 
 	public ResultSet fetchByEmployee(Integer employeeID) throws Exception {
 		return getConnection().createCommand()
-			.select("t.*, r.*")
+			.select("t.*, p.*, o.*")
 			.from("ticket as t")
-			.join("project as p", "p.id = t.project_id")
-			.join("product as r", "r.id = p.product_id")
+			.join("product as p", "p.id = t.product_id")
+			.join("employee as o", "o.id = t.owner_id")
 			.where("t.owner_id = ?")
+			.order("t.precedence")
 			.execute(employeeID)
 			.select();
 	}
 
 	public ResultSet fetchCompanyByEmployee(Integer employeeID) throws Exception {
 		return getConnection().createCommand()
-			.select("t.*, p.*")
+			.select("t.*, p.*, o.*")
 			.from("ticket as t")
-			.join("project as r", "r.id = t.project_id")
-			.join("product as p", "p.id = r.product_id")
-			.join("company as c", "c.id = p.company_id")
-			.join("employee as e", "e.id = t.owner_id")
-			.where("e.id = ?")
-			.execute(employeeID)
-			.select();
-	}
-
-	public ResultSet fetchProjectByEmployee(Integer employeeID) throws Exception {
-		return getConnection().createCommand()
-			.select("t.*, p.*")
-			.from("ticket as t")
-			.join("project as r", "r.id = t.project_id")
-			.join("product as p", "p.id = r.product_id")
-			.join("employee as e", "e.id = t.owner_id")
-			.where("e.id = ?")
+			.join("product as p", "p.id = t.product_id")
+			.join("employee as e", "e.id = t.creator_id")
+			.join("employee as e2", "e2.company_id = e.company_id")
+			.join("employee as o", "o.id = t.owner_id")
+			.where("e2.id = ?")
+			.order("t.precedence")
 			.execute(employeeID)
 			.select();
 	}

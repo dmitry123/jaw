@@ -1,20 +1,45 @@
-<table class="table table-striped table-bordered ticket-table">
+<table class="table table-bordered table-condensed ticket-table">
     <thead>
     <tr>
-        <td><b>Номер</b></td>
-        <td><b>Название</b></td>
-        <td><b>Проект</b></td>
-        <td><b>Приоритет</b></td>
-        <td><b>Создан</b></td>
+        <td width="5%"><b>Номер</b></td>
+        <td width="40%"><b>Краткое описание</b></td>
+        <td width=""><b>Владелец</b></td>
+        <td width="20%"><b>Проект</b></td>
+        <td width="5%"><b>Приоритет</b></td>
+        <td width=""><b>Создан</b></td>
     </tr>
     </thead>
     <tbody>
-	#foreach ($ticket in $tickets.entrySet())
-		
+	#foreach ($ticket in $tickets)
+        #if ($ticket.ticket_precedence == 1)
+            #set ($class = "danger")
+        #elseif ($ticket.ticket_precedence == 2)
+            #set ($class = "warning")
+        #elseif ($ticket.ticket_precedence == 3)
+            #set ($class = "info")
+        #elseif ($ticket.ticket_precedence == 4)
+            #set ($class = "success")
+        #elseif ($ticket.ticket_precedence == 5)
+            #set ($class = "primary")
+        #else
+            #set ($class = "default")
+        #end
+        #set ($fio = $ticket.employee_surname + " " +
+            $ticket.employee_name.substring(0, 1).toUpperCase() + "." +
+            $ticket.employee_patronymic.substring(0, 1).toUpperCase()
+        )
+		<tr class="$class">
+			<td align="middle">$ticket.ticket_id</td>
+            <td>$ticket.ticket_name</td>
+            <td>$fio</td>
+            <td>$ticket.product_name, $ticket.product_created.substring(0, $ticket.product_created.lastIndexOf(' '))</td>
+            <td align="middle">$ticket.ticket_precedence</td>
+            <td>$ticket.ticket_creation_date.substring(0, $ticket.ticket_creation_date.lastIndexOf(':'))</td>
+		</tr>
 	#end
 	#if ($tickets.size() == 0)
 		<tr>
-			<td colspan="5" align="middle">
+			<td colspan="6" align="middle">
 				<h4>Нет активных задач</h4>
 			</td>
 		</tr>

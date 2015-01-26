@@ -88,6 +88,12 @@ public class Ticket extends Form {
 				put("format", "%{ticket.name}");
 				put("id", "%{ticket.id}");
 			}});
+
+			// Description
+			put("description", new HashMap<String, Object>() {{
+				put("text", "Описание задачи");
+				put("type", "textarea");
+			}});
 		}};
 	}
 }

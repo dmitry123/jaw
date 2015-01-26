@@ -30,7 +30,7 @@ public class TrackerCompany extends Widget {
 					getEnvironment().getSession().get("employee")
 				);
 				while (set.next()) {
-					add(Model.buildStaticMap(set));
+					add(Model.buildPrefixMap(set));
 				}
 			}});
 		}});

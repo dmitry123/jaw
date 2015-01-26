@@ -9,6 +9,7 @@ import java.lang.Object;
 import java.lang.String;
 import java.sql.ResultSet;
 import java.util.*;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,10 +96,15 @@ public class Form extends Widget {
 		if (data.containsKey("alias")) {
 			alias = data.get("alias").toString();
 		}
+		for (Map.Entry<String, Object> entry : config.entrySet()) {
+			((Map<String, Object>) entry.getValue()).put("id", entry.getKey());
+		}
 		render(new HashMap<String, Object>() {{
 			put("config", config);
 			put("id", data.get("id"));
 			put("title", data.get("title"));
+			put("form", data.get("form"));
+			put("action", data.get("action"));
 		}});
 	}
 

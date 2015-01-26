@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -212,31 +213,20 @@ public abstract class Controller extends Component {
 	 * @throws Exception
 	 */
 	public void actionGetForm() throws Exception {
-
-		final String formName = GET("form");
-
 		JSONObject json = new JSONObject();
-		Form form = getForm(formName);
-
-//		if (form != null) {
-//			form.setModel(getModel());
-//			Map<String, ResultSet> map = form.getForm();
-//			Map<String, Collection<Object>> collection
-//				= new LinkedHashMap<String, Collection<Object>>();
-//			for (Map.Entry<String, ResultSet> entry : map.entrySet()) {
-//				Collection<Object> vector = new Vector<Object>();
-//				while (entry.getValue().next()) {
-//					vector.add(Model.buildStaticMap(entry.getValue()));
-//				}
-//				collection.put(entry.getKey(), vector);
-//			}
-//			json.put("model", collection);
-//			json.put("status", true);
-//		} else {
-//			json.put("message", "Невозможно найти форму для получения данных");
-//			json.put("status", false);
-//		}
-
+		Form form = getForm(GET("form"));
+		if (form != null) {
+			Map<String, Object> model = Form.buildFromUrl(GET("model"));
+			runWidget("Form", "{ form: '" + GET("form") + "', id: '" + GET("id") + "', action: '" +
+					"/" + getEnvironment().getProjectName() + "/" + getClass().getSimpleName().toLowerCase() + "/getForm"
+				+ "' }");
+			json.put("component", getEnvironment().getMustacheDefiner().get("FORM"));
+			json.put("model", model);
+			json.put("status", true);
+		} else {
+			json.put("message", "Невозможно найти форму для получения данных");
+			json.put("status", false);
+		}
 		setAjaxResponse(json.toString());
 	}
 

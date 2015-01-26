@@ -210,6 +210,8 @@ body + .popover-request {
 }
 body > .popover-notification {
 	margin-bottom: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
 .popover-notification,
@@ -281,4 +283,15 @@ body > .popover-notification {
 .index-project-wrapper ul li {
 	padding-left: 10px;
 	padding-right: 10px;
+}
+
+.panel-ticket .panel-body {
+	padding: 0;
+}
+.panel-ticket .ticket-table {
+	margin: 0;
+}
+
+.form-group textarea {
+	resize: vertical;
 }

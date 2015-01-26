@@ -38,14 +38,15 @@ public class System extends Controller {
 	 */
 	@Override
 	public void actionView() throws Exception {
+		actionTracker();
 
-		Session session = getEnvironment().getSession();
-
-		if (session == null || !session.containsKey("employee")) {
-			redirect("Index", "View"); return;
-		}
-
-		renderVm("View", "SystemMenu", "ShowRequest");
+//		Session session = getEnvironment().getSession();
+//
+//		if (session == null || !session.containsKey("employee")) {
+//			redirect("Index", "View"); return;
+//		}
+//
+//		renderVm("View", "SystemMenu", "ShowRequest");
 	}
 
 	public void actionTracker() throws Exception {
@@ -59,7 +60,8 @@ public class System extends Controller {
 		renderVm("Tracker",
 			"SystemMenu",
 			"ShowRequest",
-			"TrackerCurrent"
+			"TrackerCurrent",
+			"TrackerCompany"
 		);
 	}
 }

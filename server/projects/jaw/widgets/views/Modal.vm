@@ -13,16 +13,22 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                #foreach ($button in $buttons)
-                    <button type="button" class="$!{button.cls}">$!{button.text}</button>
-                #end
+                <table width="100%">
+                    <tbody>
+                    <tr>
+                        <td align="left">
+                            <span class="glyphicon glyphicon-refresh refresh hidden" style="font-size: 25px; margin-left: 10px; cursor: pointer"></span>
+                        </td>
+                        <td align="right">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                            #foreach ($button in $buttons)
+                                <button type="button" class="$!{button.cls}">$!{button.text}</button>
+                            #end
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
         </div>
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        $("#$!{id}").modal();
-    });
-</script>

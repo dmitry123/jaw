@@ -44,14 +44,7 @@
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        Задачи <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="/jaw/system/tracker?action=current">Текущие</a></li>
-                        <li><a href="/jaw/system/tracker?action=company">Компания</a></li>
-                        <li><a href="/jaw/system/tracker?action=project">Проект</a></li>
-                    </ul>
+                    <a href="/jaw/system/tracker" role="button">Задачи</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -65,9 +58,6 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#">Настройки</a></li>
-                        <!--<li><a href="javascript:void(0)" class="dark-interface">-->
-                        <!--<div>Инверсия</div>-->
-                        <!--</a></li>-->
                         <li><a class="employee-logout" href="javascript:void(0)">Закрыть сессию</a></li>
                         <li><a class="logout" href="javascript:void(0)">Выйти</a></li>
                     </ul>

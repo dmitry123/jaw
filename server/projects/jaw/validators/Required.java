@@ -21,9 +21,9 @@ public class Required extends Validator {
 			return false;
 		}
 		if (getConfig().containsKey("type") && getConfig().get("type").toString().equals("select")) {
-			if (getValue() instanceof Integer) {
-				return ((Integer) getValue()) != -1;
-			}
+			return !getValue().toString().equals("-1");
+		} else if (getValue().toString().equals("")) {
+			return false;
 		}
 		return true;
 	}

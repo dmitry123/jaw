@@ -3,13 +3,22 @@
 {{{ SHOW_REQUEST }}}
 <div class="system-container">
 	<br><br><br>
-	#if ($this.GET("action").equals("current"))
-        {{{ TRACKER_CURRENT }}}
-	#elseif ($this.GET("action").equals("company"))
-        {{{ TRACKER_COMPANY }}}
-	#elseif ($this.GET("action").equals("project"))
-        {{{ TRACKER_PROJECT }}}
-	#end
+    <div class="panel panel-default panel-ticket">
+        <div class="panel-heading">
+			<b>Текущие задачи</b>
+		</div>
+        <div class="panel-body">
+            {{{ TRACKER_CURRENT }}}
+        </div>
+    </div>
+    <div class="panel panel-default panel-ticket">
+        <div class="panel-heading">
+            <b>Все задачи</b>
+        </div>
+        <div class="panel-body">
+            {{{ TRACKER_COMPANY }}}
+        </div>
+    </div>
 	#if ($this.checkAccess("ticket/register"))
 		$this.runWidget("Modal", "{
 			id: 'register-ticket-modal',
@@ -24,7 +33,7 @@
 			form: {
 				form: 'Ticket',
 				id: 'register-ticket-form',
-				title: 'Регистрация задачи'
+				action: '/jaw/ticket/register'
 			},
 			alias: 'REGISTER_TICKET_MODAL'
 		}")

@@ -15,11 +15,7 @@ public class MustacheDefiner extends HashMap<String, String> implements Serializ
 	 * @param htmlText - Text with html
 	 * @return - Compiled html text
 	 */
-	public String execute(String htmlText) {
-		try {
-			return Mustache.compiler().compile(htmlText).execute(this);
-		} catch (Exception ignored) {
-		}
-		return htmlText;
+	public String execute(String htmlText) throws Exception {
+		return Mustache.compiler().compile(htmlText).execute(this);
 	}
 }
