@@ -40,7 +40,7 @@ public class Ticket extends Form {
 				));
 				put("format", "%{employee.surname} %{employee.name}");
 				put("id", "%{employee.id}");
-				put("validate", "required");
+				put("validate", "required, numeric");
 			}});
 
 			// Precedence
@@ -52,7 +52,7 @@ public class Ticket extends Form {
 						add(i + 1);
 					}
 				}});
-				put("validate", "required");
+				put("validate", "required, numeric");
 			}});
 
 			// Product
@@ -64,7 +64,7 @@ public class Ticket extends Form {
 				));
 				put("format", "%{product.name}, %{product.created}");
 				put("id", "%{product.id}");
-				put("validate", "required");
+				put("validate", "required, numeric");
 			}});
 
 			// Project
@@ -76,6 +76,7 @@ public class Ticket extends Form {
 				));
 				put("format", "%{product.name}, %{product.created}");
 				put("id", "%{project.id}");
+				put("validate", "numeric");
 			}});
 
 			// Parent
@@ -87,6 +88,7 @@ public class Ticket extends Form {
 				));
 				put("format", "%{ticket.name}");
 				put("id", "%{ticket.id}");
+				put("validate", "numeric");
 			}});
 
 			// Description

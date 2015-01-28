@@ -28,14 +28,15 @@
             $ticket.employee_name.substring(0, 1).toUpperCase() + "." +
             $ticket.employee_patronymic.substring(0, 1).toUpperCase()
         )
-		<tr class="$class">
-			<td align="middle">$ticket.ticket_id</td>
+        #set ($href = "/jaw/system/tracker?ticket=$ticket.ticket_id")
+        <tr class="$class" onclick="window.location.href='$href'">
+            <td align="middle">$ticket.ticket_id</td>
             <td>$ticket.ticket_name</td>
             <td>$fio</td>
             <td>$ticket.product_name, $ticket.product_created.substring(0, $ticket.product_created.lastIndexOf(' '))</td>
             <td align="middle">$ticket.ticket_precedence</td>
             <td>$ticket.ticket_creation_date.substring(0, $ticket.ticket_creation_date.lastIndexOf(':'))</td>
-		</tr>
+        </tr>
 	#end
 	#if ($tickets.size() == 0)
 		<tr>

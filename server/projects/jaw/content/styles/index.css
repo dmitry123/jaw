@@ -295,3 +295,11 @@ body > .popover-notification {
 .form-group textarea {
 	resize: vertical;
 }
+
+.ticket-table tbody tr {
+	cursor: pointer;
+}
+.ticket-table tbody tr:hover {
+	cursor: pointer;
+	opacity: 0.75;
+}

@@ -57,11 +57,14 @@ public class System extends Controller {
 			redirect("Index", "View"); return;
 		}
 
-		renderVm("Tracker",
-			"SystemMenu",
-			"ShowRequest",
-			"TrackerCurrent",
-			"TrackerCompany"
-		);
+		String[] widgets = new String[] {
+			"SystemMenu", "ShowRequest", "TrackerCurrent", "TrackerCompany"
+		};
+
+		if (getSession().getParms().containsKey("id")) {
+			
+		} else {
+			renderVm("Tracker", widgets);
+		}
 	}
 }
